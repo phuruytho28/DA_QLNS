@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewBag.Title = "Thông tin nhân sự";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row mx-3">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="page-title" id="page-header">Nhân sự</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Nhân sự</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh sách nhân sự</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mx-1" style="border:none">
+    <div class="col-12">
+        <div class="card ms-3">
+            <div class="card-body">
+                <!--input search-->
+                <div class="row mb-2">
+                    <div class="col-sm-6 col-lg-3 mb-1">
+                        <p class="mb-1 fw-bold text-muted">Từ khóa</p>
+                        <input type="search" class="form-control" id="searchTuKhoa" placeholder="Nhập từ khóa cần tìm" />
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_company">
+                        <p class="mb-1 fw-bold text-muted">Công ty</p>
+                        <select id="searchDropCongTy" class="form-control select2" data-placeholder="Chọn công ty">
+                            <option value="">-- Chọn công ty --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_CoSo">
+                        <p class="mb-1 fw-bold text-muted">Cơ sở</p>
+                        <select id="searchDropCoSo" class="form-control select2" data-placeholder="Chọn cơ sở">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_PhongBan">
+                        <p class="mb-1 fw-bold text-muted">Phòng ban</p>
+                        <select id="searchDropPhongBan" class="form-control select2" data-placeholder="Chọn phòng ban">
+                            <option value="">-- Chọn phòng ban --</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="dieukientimkiem" style="display: none">
+                    <div class="row mb-0">
+                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_ChucVu">
+                            <p class="mb-1 fw-bold text-muted">Chức vụ</p>
+                            <select id="searchDropChucVu" class="form-control select2" data-placeholder="Chọn chức vụ">
+                                <option value="">-- Chọn chức vụ --</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_QueQuan">
+                            <p class="mb-1 fw-bold text-muted">Quê quán</p>
+                            <select id="searchDropQueQuan" class="form-control select2" data-placeholder="Chọn quê quán">
+                                <option value="">-- Chọn quê quán --</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-lg-3 mb-1">
+                            <p class="mb-1 fw-bold text-muted">Trạng thái</p>
+                            <select id="DropTrangThai" class="form-control select2" data-no-search>
+                                <option value="1">Đang hoạt động </option>
+                                <option value="2">Đã xoá </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @*nút mở rộng tk*@
+                <div class="col-lg-12" style="text-align: right">
+                    <button id="btnAnDieuKien" type="button" class="btn btn-link text-decoration-none text-success"
+                            style="padding-right: 0px; padding-top: 0px;">
+                        <i class="fa-solid fa-arrow-down-wide-short me-1"></i>Hiển thị thêm
+                    </button>
+                </div>
+
+                <!--action search-->
+                <div class="row mb-2">
+                    <div class="col-sm-5 col-6">
+                        <button type="button" class="btn btn-success mb-2 me-sm-1" id="btnTimKiem"><i class="fa-solid fa-magnifying-glass me-1"></i>Tìm kiếm</button>
+                        <button type="button" class="btn btn-secondary mb-2" id="btnHuyTimKiem"><i class="fa-solid fa-rotate me-1"></i>Hủy tìm kiếm</button>
+                    </div>
+                    <div class="col-sm-7 col-6">
+                        <div class="text-sm-end">
+                            <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
+                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt"></i>Thùng rác</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="panel">
+                    <div class="panel-body table-responsive-sm table-centered table-hover tbl-pagination">
+                        <table id="tbldata" class="table table-bordered table-striped border-bottom-0 mt-2">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" hidden="hidden">Id</th>
+                                    <th style="width: 30px" class="text-center">Stt</th>
+                                    <th class="text-center">Mã Nhân sự</th>
+                                    <th class="text-center">Tên Nhân sự</th>
+                                    <th class="text-center">Ngày sinh</th>
+                                    <th class="text-center">Phòng ban</th>
+                                    <th class="text-center">Chức vụ</th>
+                                    <th class="text-center">Ngày vào</th>
+                                    <th style="width: 30px">NB</th>
+                                    <th style="width: 30px">Sửa</th>
+                                    <th style="width: 30px">Xóa</th>
+                                    <th style="width: 30px; text-align: center">
+                                        <input type="checkbox" class="form-check-input" name="chkSelectAll" id="chkSelectAll" />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/JS/NhanSu/ListNhanSu.js"></script>
+    <script>
+        $(document).ready(function () {
+            var ListNhanSuInstance = new ListNhanSu();
+            ListNhanSuInstance.init();
+        });
+    </script>
+}

@@ -1,0 +1,426 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Quản lý nhân sự</title>
+    <meta name="description" content="Phần mềm Quản lý nhân sự">
+    <meta name="keywords" content="Quản lý nhân sự">
+
+    <!-- Favicons -->
+    <link href="~/Content/img/Logo.jpg" rel="icon">
+    <link href="~/Content//img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/Content//vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content//vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/Content//vendor/aos/aos.css" rel="stylesheet">
+    <link href="~/Content//vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="~/Content//css/main.css" rel="stylesheet">
+
+</head>
+
+<body class="index-page">
+
+    <header id="header" class="header d-flex align-items-center sticky-top">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+            <a href="" class="logo d-flex align-items-center">
+                <img src="~/Content/img/LogoDark.png" />
+            </a>
+
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="#hero" class="active">Trang chủ</a></li>
+                    <li><a href="#about">Về chúng tôi</a></li>
+                    <li><a href="#services">Dịch vụ</a></li>
+                    <li><a href="#pricing">Gói dịch vụ</a></li>
+                    <li><a href="#contact">Liên hệ</a></li>
+                    <li class="ms-3">
+                        @Html.ActionLink("Đăng ký", "RegisterView", "Register", new { area = "" }, new { @class = "btn btn-outline-success rounded-pill", style = "padding: 0.25rem 0.75rem; font-size: 0.875rem;" })
+                    </li>
+                    <li class="ms-1">
+                        @Html.ActionLink("Đăng nhập", "LoginView", "Login", new { area = "" }, new { @class = "btn btn-outline-success rounded-pill", style = "padding: 0.25rem 0.75rem; font-size: 0.875rem;" })
+                    </li>
+                </ul>
+
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="main">
+
+        <!-- Hero Section -->
+        <section id="hero" class="hero section light-background">
+
+            <div class="container position-relative" data-aos="fade-up" data-aos-delay="100">
+                <div class="row gy-5">
+                    <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+                        <h2>QUẢN LÝ NHÂN SỰ</h2>
+                        <p>Giải pháp quản lý nhân sự cho doanh nghiệp của bạn!</p>
+                        <div class="d-flex">
+                            <a href="#about" class="btn-get-started">Bắt đầu</a>
+                            <a href="https://www.youtube.com/watch?v=fgsJB3URPss&ab_channel=AIHR-AcademytoInnovateHR" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Xem Video</span></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-1 order-lg-2">
+                        <img src="~/Content/img/BackgrHeader.png" class="img-fluid" alt="" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="icon-boxes position-relative" data-aos="fade-up" data-aos-delay="200">
+                <div class="container position-relative">
+                    <div class="row gy-4 mt-5">
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="icon-box">
+                                <div class="icon"><i class="bi bi-search"></i></div>
+                                <h4 class="title"><a href="" class="stretched-link">Tuyển dụng</a></h4>
+                            </div>
+                        </div><!--End Icon Box -->
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="icon-box">
+                                <div class="icon"><i class="bi bi-people-fill"></i></div>
+                                <h4 class="title"><a href="" class="stretched-link">Nhân sự</a></h4>
+                            </div>
+                        </div><!--End Icon Box -->
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="icon-box">
+                                <div class="icon"><i class="bi bi-activity"></i></div>
+                                <h4 class="title"><a href="" class="stretched-link">Hoạt động</a></h4>
+                            </div>
+                        </div><!--End Icon Box -->
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="icon-box">
+                                <div class="icon"><i class="bi bi-cash-coin"></i></div>
+                                <h4 class="title"><a href="" class="stretched-link">Lương thưởng</a></h4>
+                            </div>
+                        </div><!--End Icon Box -->
+
+                    </div>
+                </div>
+            </div>
+
+        </section><!-- /Hero Section -->
+        <!-- About Section -->
+        <section id="about" class="about section">
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+                        <p class="who-we-are">Về chúng tôi</p>
+                        <h3>Chúng tôi giúp việc quản lý đến mọi hoạt động nhân sự trở nên dễ dàng hơn</h3>
+                        <p class="fst-italic">
+                            Là một doanh nghiệp chuyên cung cấp các phần mềm quản lý về hành chính nhân sự, kế toán, tổng hợp,...
+                        </p>
+                        <ul>
+                            <li><i class="bi bi-check-circle"></i> <span>Nhanh chóng, thuận tiện</span></li>
+                            <li><i class="bi bi-check-circle"></i> <span>Rõ ràng, minh bạch.</span></li>
+                            <li><i class="bi bi-check-circle"></i> <span>Dễ dàng sử dụng.</span></li>
+                        </ul>
+                        <a href="#" class="read-more"><span>Chi tiết</span><i class="bi bi-arrow-right"></i></a>
+                    </div>
+
+                    <div class="col-lg-6 about-images" data-aos="fade-up" data-aos-delay="200">
+                        <div class="row gy-4">
+                            <div class="col-lg-6">
+                                <img src="~/Content//img/about-company-1.jpg" class="img-fluid" alt="">
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row gy-4">
+                                    <div class="col-lg-12">
+                                        <img src="~/Content//img/about-company-2.jpg" class="img-fluid" alt="">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <img src="~/Content//img/about-company-3.jpg" class="img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section><!-- /About Section -->
+        <!-- Services Section -->
+        <section id="services" class="services section">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Dịch vụ</h2>
+                <div><span>Danh sách</span> <span class="description-title">Dịch vụ chính</span></div>
+            </div><!-- End Section Title -->
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-item  position-relative">
+                            <div class="icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <a href="" class="stretched-link">
+                                <h3>Tuyển dụng</h3>
+                            </a>
+                            <p>Lên chiến lược tuyển dụng nhân sự bài bản cho doanh nghiệp của bạn</p>
+                        </div>
+                    </div><!-- End Service Item -->
+
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <a href="" class="stretched-link">
+                                <h3>Nhân sự</h3>
+                            </a>
+                            <p>Quản lý số lượng nhân sự mà doanh nghiệp bạn đang có.</p>
+                        </div>
+                    </div><!-- End Service Item -->
+
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <a href="" class="stretched-link">
+                                <h3>Hoạt động </h3>
+                            </a>
+                            <p>Tổ chức và quản lý những hoạt động trong doang nghiệp của bạn</p>
+                        </div>
+                    </div><!-- End Service Item -->
+
+                    <div class="col-lg-2 col-md-0" data-aos="fade-up" data-aos-delay="400"></div>
+
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="bi bi-cash-coin"></i>
+                            </div>
+                            <a href="" class="stretched-link">
+                                <h3>Lương thưởng</h3>
+                            </a>
+                            <p>Quản lý lương thưởng và những hoạt động thu chi cho nhân sự của bạn.</p>
+                            <a href="" class="stretched-link"></a>
+                        </div>
+                    </div><!-- End Service Item -->
+
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="bi bi-calendar4-week"></i>
+                            </div>
+                            <a href="" class="stretched-link">
+                                <h3>Dịch vụ khác</h3>
+                            </a>
+                            <p>Dịch vụ giúp bạn quản lý doanh nghiệp dễ dàng.</p>
+                            <a href="" class="stretched-link"></a>
+                        </div>
+                    </div><!-- End Service Item -->
+
+                    <div class="col-lg-2 col-md-0" data-aos="fade-up" data-aos-delay="500"></div>
+
+                </div>
+
+            </div>
+
+        </section><!-- /Services Section -->
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing section">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Gói dịch vụ</h2>
+                <div><span>Giá cả</span> <span class="description-title">Dịch vụ</span></div>
+            </div><!-- End Section Title -->
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="pricing-tem">
+                            <h3 style="color: #20c997;">Miễn phí</h3>
+                            <div class="price"><sup>VNĐ</sup>0<span> / tháng</span></div>
+                            <div class="icon">
+                                <i class="bi bi-box" style="color: #20c997;"></i>
+                            </div>
+                            <ul>
+                                <li>Quản lý nhân viên(Giới hạn)</li>
+                                <li class="na">Tuyển dụng</li>
+                                <li class="na">Hoạt động</li>
+                                <li class="na">Lương thưởng</li>
+                            </ul>
+                            <a href="#contact" class="btn-buy">Liên hệ</a>
+                        </div>
+                    </div><!-- End Pricing Item -->
+
+                    <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="pricing-tem">
+                            <span class="featured">Phố biến</span>
+                            <h3 style="color: #0dcaf0;">Đại lý</h3>
+                            <div class="price"><sup>VNĐ</sup>500.000<span> / tháng</span></div>
+                            <div class="icon">
+                                <i class="bi bi-send" style="color: #0dcaf0;"></i>
+                            </div>
+                            <ul>
+                                <li>Quản lý nhân viên(Đủ chức năng)</li>
+                                <li class="na">Tuyển dụng</li>
+                                <li class="na">Hoạt động</li>
+                                <li class="na">Lương thưởng</li>
+                            </ul>
+                            <a href="#contact" class="btn-buy">Liên hệ</a>
+                        </div>
+                    </div><!-- End Pricing Item -->
+
+                    <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="pricing-tem">
+                            <h3 style="color: #fd7e14;">Doanh nghiệp vừa và nhỏ</h3>
+                            <div class="price"><sup>VNĐ</sup>700.000<span> / tháng</span></div>
+                            <div class="icon">
+                                <i class="bi bi-airplane" style="color: #fd7e14;"></i>
+                            </div>
+                            <ul>
+                                <li>Quản lý nhân viên(Đủ chức năng)</li>
+                                <li>Lương thưởng</li>
+                                <li class="na">Hoạt động</li>
+                                <li class="na">Tuyển dụng</li>
+                            </ul>
+                            <a href="#contact" class="btn-buy">Liên hệ</a>
+                        </div>
+                    </div><!-- End Pricing Item -->
+
+                    <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="pricing-tem">
+                            <h3 style="color: #0d6efd;">Doanh nghiệp</h3>
+                            <div class="price"><sup>VNĐ</sup>999.999<span> / tháng</span></div>
+                            <div class="icon">
+                                <i class="bi bi-rocket" style="color: #0d6efd;"></i>
+                            </div>
+                            <ul>
+                                <li>Quản lý nhân viên(Đủ chức năng)</li>
+                                <li>Lương thưởng</li>
+                                <li>Tuyển dụng</li>
+                                <li>Hoạt động</li>
+                            </ul>
+                            <a href="#contact" class="btn-buy">Liên hệ</a>
+                        </div>
+                    </div><!-- End Pricing Item -->
+
+                </div><!-- End pricing row -->
+
+            </div>
+
+        </section><!-- /Pricing Section -->
+        <!-- Contact Section -->
+        <section id="contact" class="contact section">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Liên hệ</h2>
+                <div><span>Bạn cần giúp đỡ?</span> <span class="description-title">Liên hệ với chúng tôi</span></div>
+            </div><!-- End Section Title -->
+
+            <div class="container" data-aos="fade" data-aos-delay="100">
+
+                <div class="row text-center">
+
+                    <div class="col-lg-3 info-item d-flex" data-aos="fade-up" data-aos-delay="200">
+                        <i class="bi bi-geo-alt flex-shrink-0"></i>
+                        <div>
+                            <h3>Địa chỉ</h3>
+                            <p>Hoài Đức, Hà Nội</p>
+                        </div>
+                    </div><!-- End Info Item -->
+
+                    <div class="col-lg-3 info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                        <i class="bi bi-telephone flex-shrink-0"></i>
+                        <div>
+                            <h3>Đường dây nóng</h3>
+                            <p>+84 348114566</p>
+                        </div>
+                    </div><!-- End Info Item -->
+
+                    <div class="col-lg-3 info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                        <i class="bi bi-facebook flex-shrink-0"></i>
+                        <div>
+                            <h3>Mạng xã hội</h3>
+                            <a href="https://www.facebook.com/fcbduythovu2002" target="_blank" class="text-primary">FaceBook</a>
+                        </div>
+                    </div> <!-- End Info Item -->
+
+                    <div class="col-lg-3 info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+                        <i class="bi bi-envelope flex-shrink-0"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>cufau13@gmail.com</p>
+                        </div>
+                    </div><!-- End Info Item -->
+                </div>
+
+            </div>
+
+        </section><!-- /Contact Section -->
+
+    </main>
+
+    <footer id="footer" class="footer light-background">
+
+        <div class="container">
+            <div class="copyright text-center ">
+                <p>© <span>Copyright</span> <strong class="px-1 sitename">Vuduytho</strong> <span>All Rights Reserved</span></p>
+            </div>
+            <div class="social-links d-flex justify-content-center">
+                <a href=""><i class="bi bi-twitter-x"></i></a>
+                <a href=""><i class="bi bi-facebook"></i></a>
+                <a href=""><i class="bi bi-instagram"></i></a>
+                <a href=""><i class="bi bi-linkedin"></i></a>
+            </div>
+            <div class="credits">
+                Designed by <a href="https://www.facebook.com/fcbduythovu2002">Vuduytho</a>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="~/Content//vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content//vendor/php-email-form/validate.js"></script>
+    <script src="~/Content//vendor/aos/aos.js"></script>
+    <script src="~/Content//vendor/glightbox/js/glightbox.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="~/Content//js/main.js"></script>
+
+</body>
+
+</html>

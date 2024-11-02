@@ -1,0 +1,171 @@
+﻿@{
+    var rolesInNavbar = ViewBag.RolesInNavbar as List<QuanLyNhanSu_WebApp.Models.RoleInNavbarModel>;
+    var userRoleId = Session["RoleId"]?.ToString(); // Lấy RoleId của người dùng từ Session
+
+    // Tạo danh sách phần tử của từng BranchInNav
+    var danhMucItems = rolesInNavbar?.Where(r => r.BranchInNav == 1).OrderBy(r => r.PositionInNav).ToList();
+    var nhanSuItems = rolesInNavbar?.Where(r => r.BranchInNav == 2).OrderBy(r => r.PositionInNav).ToList();
+    var congViecItems = rolesInNavbar?.Where(r => r.BranchInNav == 3).OrderBy(r => r.PositionInNav).ToList();
+    var luongThuongItems = rolesInNavbar?.Where(r => r.BranchInNav == 4).OrderBy(r => r.PositionInNav).ToList();
+    var hoatDongItems = rolesInNavbar?.Where(r => r.BranchInNav == 5).OrderBy(r => r.PositionInNav).ToList();
+    var hoTroItems = rolesInNavbar?.Where(r => r.BranchInNav == 6).OrderBy(r => r.PositionInNav).ToList();
+} 
+
+<nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top">
+    <div class="container container-fluid">
+        <a class="navbar-brand" href="@Url.Action("DashboardView", "Dashboard")">
+            <img src="@Url.Content("~/Content/img/LogoDark.png")" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("DashboardView", "Dashboard")">Trang chủ</a>
+                </li>
+
+                <!-- Dropdown cho Danh mục -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav_DanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Danh mục <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav_DanhMuc">
+                        @if (danhMucItems != null && !string.IsNullOrEmpty(userRoleId))
+                        {
+                            foreach (var item in danhMucItems)
+                            {
+                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                if (roleIds.Contains(userRoleId))
+                                {
+                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+
+                <!-- Dropdown cho Nhân sự -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav_NhanSu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Nhân sự <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav_NhanSu">
+                        @if (nhanSuItems != null && !string.IsNullOrEmpty(userRoleId))
+                        {
+                            foreach (var item in nhanSuItems)
+                            {
+                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                if (roleIds.Contains(userRoleId))
+                                {
+                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+
+                <!-- Dropdown cho Công việc -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav_CongViec" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Công việc <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav_CongViec">
+                        @if (congViecItems != null && !string.IsNullOrEmpty(userRoleId))
+                        {
+                            foreach (var item in congViecItems)
+                            {
+                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                if (roleIds.Contains(userRoleId))
+                                {
+                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+
+                <!-- Dropdown cho Lương thưởng -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav_LuongThuong" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Lương thưởng <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav_LuongThuong">
+                        @if (luongThuongItems != null && !string.IsNullOrEmpty(userRoleId))
+                        {
+                            foreach (var item in luongThuongItems)
+                            {
+                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                if (roleIds.Contains(userRoleId))
+                                {
+                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+
+                <!-- Dropdown cho Hoạt động -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav_HoatDong" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hoạt động <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav_HoatDong">
+                        @if (hoatDongItems != null && !string.IsNullOrEmpty(userRoleId))
+                        {
+                            foreach (var item in hoatDongItems)
+                            {
+                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                if (roleIds.Contains(userRoleId))
+                                {
+                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+
+                <!-- Dropdown cho Hỗ trợ -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="nav_HoTro" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hỗ trợ <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="nav_HoTro">
+                        @if (hoTroItems != null && !string.IsNullOrEmpty(userRoleId))
+                        {
+                            foreach (var item in hoTroItems)
+                            {
+                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                if (roleIds.Contains(userRoleId))
+                                {
+                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="auth-buttons">
+                <a href="@Url.Action("UpdateAcountView", "Login")" class="text-success me-3" style="text-decoration: none">
+                    <i class="bi bi-person-circle me-1"></i>Xin chào, @Session["UserName"]
+                </a>
+                <a href="@Url.Action("Logout", "Login")" class="text-success" style="text-decoration: none">
+                    <i class="bi bi-box-arrow-right me-1"></i>Đăng xuất
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<script>
+    $(document).ready(function () {
+        $('.navbar-toggler, .navbar-toggler-icon').on('click', function () {
+            var navbarCollapse = $('#navbarNav');
+            if (navbarCollapse.hasClass('show')) {
+                navbarCollapse.collapse('hide');
+            } else {
+                navbarCollapse.collapse('show');
+            }
+        });
+    });
+</script>

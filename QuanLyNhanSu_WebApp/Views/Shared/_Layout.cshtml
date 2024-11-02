@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>QLNS-@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="@Url.Content("~/Content/img/Logo.jpg")" type="image/jpeg">
+
+    <!-- CSS Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/css/table.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/css/navbar.css")" rel="stylesheet" />
+    <link href="~/Content/css/select2.css" rel="stylesheet" />
+
+    <!-- JavaScript Libraries -->
+    <!-- jQuery first, then other libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    @RenderSection("Styles", required: false)
+</head>
+<body style="overflow-x: hidden;">
+    <div id="preloader">
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div style="background-color: #fafbfe">
+        <header class="navbar navbar-expand-lg" style="height:60px">
+            @Html.Partial("Navbar")
+        </header>
+        <div class="content btn-group-sm" style="background-color: #fafbfe">
+            <div class="row">
+                <div class="col-lg-12 mx-1">
+                    @RenderBody()
+                </div>
+            </div>
+        </div> 
+        <footer>
+            <div style=" bottom: 0px; left: 0rem; height: 4rem; right: 0rem; background-color: #f9fffb ">
+                <hr style="border: 0; height: 1px; margin-bottom: 0px; margin-top: 0px; background: linear-gradient(to right, #e0ece0, #e0ece0);">
+                <p class="text-center mt-2 mb-0">© @DateTime.Now.Year - Quản Lý Nhân Sự</p>
+                <p class="text-center mb-1">Contact us: <a href="https://www.facebook.com/fcbduythovu2002" class="text-black">Vuduytho.com</a> | Phone: +84 348 114 566</p>
+            </div>
+        </footer>
+    </div>
+    <!-- Thông báo Toast -->
+    <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div class="toast-header">
+                <strong class="mr-auto">Thông báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" style="margin-left: auto;"></button>
+            </div>
+            <div class="toast-progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="toast-body">
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modalconfirm" tabindex="-1" role="dialog" style="z-index: 9999;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content custom-modal-border">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close border-0" data-bs-dismiss="modal" aria-label="Close">
+                        <span class="text-dark" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg me-2"></i>Đóng</button>
+                    <button type="button" id="btnYes" class="btn btn-success"><i class="bi bi-check-lg me-2"></i>Đồng ý</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Preloader script -->
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#preloader').fadeOut('slow', function () {
+                $(this).remove();
+            });
+            $('#content').css('visibility', 'visible');
+        });
+    </script>
+    <!-- Bootstrap Datepicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- Core Js -->
+    <script src="~/JS/CoreRoot/Core.js"></script>
+    <script type="text/javascript">
+        function PrammaterCommon() {
+            var companyId = '@Session["CompanyId"]';
+            var roleId = '@Session["RoleId"]';
+            var userId = '@Session["UserId"]';
+            var userName = '@Session["UserName"]';
+
+            var arr_session = [];
+            arr_session.push(companyId);
+            arr_session.push(roleId);
+            arr_session.push(userId);
+            arr_session.push(userName); 
+            return arr_session;
+        };
+        var Core = new CoreJs();
+        $(document).ready(function () {
+            Core.init();
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,179 @@
+﻿
+@{
+    ViewBag.Title = "Danh mục chung";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row mx-3">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="page-title" id="page-header">Danh mục chung</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Danh mục</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh mục chung</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mx-1" style="border:none">
+    <div class="col-12">
+        <div class="card ms-3">
+            <div class="card-body">
+                <!--input search-->
+                <div class="row mb-2">
+                    <div class="col-sm-6 col-lg-3 mb-1">
+                        <p class="mb-1 fw-bold text-muted">Từ khóa</p>
+                        <input type="search" class="form-control" id="txtKeyword" placeholder="Nhập từ khóa cần tìm" />
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_company">
+                        <p class="mb-1 fw-bold text-muted">Công ty</p>
+                        <select id="searchDropCongTy" class="form-control select2" data-placeholder="Chọn công ty">
+                            <option value="">-- Chọn công ty --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_danhmuc">
+                        <p class="mb-1 fw-bold text-muted">Phân loại danh mục</p>
+                        <select id="searchDropDanhMuc" class="form-control select2" data-placeholder="Chọn danh mục"> 
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1"> 
+                            <p class="mb-1 fw-bold text-muted">Cấp bậc danh mục</p>
+                            <select id="DropCapDM" class="form-control select2" data-no-search>
+                                <option value="10">Cấp 1</option>
+                                <option selected="selected" value="9">Cấp 2</option>
+                            </select>
+                        </div>
+                     </div>
+
+                <div id="dieukientimkiem" style="display: none">
+                    <div class="row mb-0">
+                        <div class="col-sm-6 col-lg-3 mb-1">
+                            <p class="mb-1 fw-bold text-muted">Trạng thái</p>
+                            <select id="DropTrangThai" class="form-control select2" data-no-search>
+                                <option value="1">Đang hoạt động </option>
+                                <option value="2">Đã xoá </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @*nút mở rộng tk*@
+                <div class="col-lg-12" style="text-align: right">
+                    <button id="btnAnDieuKien" type="button" class="btn btn-link text-decoration-none text-success"
+                            style="padding-right: 0px; padding-top: 0px;">
+                        <i class="fa-solid fa-arrow-down-wide-short me-1"></i>Hiển thị thêm
+                    </button>
+                </div>
+
+                <!--action search-->
+                <div class="row mb-2">
+                    <div class="col-sm-5 col-6">
+                        <button type="button" class="btn btn-success mb-2 me-sm-1" id="btnTimKiem"><i class="fa-solid fa-magnifying-glass me-1"></i>Tìm kiếm</button>
+                        <button type="button" class="btn btn-secondary mb-2" id="btnHuyTimKiem"><i class="fa-solid fa-rotate me-1"></i>Hủy tìm kiếm</button>
+                    </div>
+                    <div class="col-sm-7 col-6">
+                        <div class="text-sm-end">
+                            <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
+                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt"></i>Thùng rác</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="panel">
+                    <div class="panel-body table-responsive-sm table-centered table-hover tbl-pagination">
+                        <table id="tbldata" class="table table-bordered table-striped border-bottom-0 mt-2">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" hidden="hidden">Id</th>
+                                    <th style="width: 30px" class="text-center">Stt</th>
+                                    <th class="text-center">Mã danh mục</th>
+                                    <th class="text-center">Tên danh mục</th>
+                                    <th class="text-center">Chú thích</th>
+                                    <th style="width: 30px">NB</th>
+                                    <th style="width: 30px">Sửa</th>
+                                    <th style="width: 30px">Xóa</th>
+                                    <th style="width: 30px; text-align: center">
+                                        <input type="checkbox" class="form-check-input" name="chkSelectAll" id="chkSelectAll" />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal CRUD -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Thêm mới danh mục Danh mục chung</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbMaDanhMuc" for="txtMaDanhMuc" class="form-label">Mã danh mục (*)</label>
+                        <input type="text" id="txtMaDanhMuc" class="form-control" placeholder="Nhập mã danh mục" required="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbTenDanhMuc" for="txtTenDanhMuc" class="form-label">Tên danh mục (*)</label>
+                        <input type="text" id="txtTenDanhMuc" class="form-control" placeholder="Nhập tên danh mục" required="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbTenDanhMuc" for="txtTenDanhMuc" class="form-label">Chọn danh mục cha</label>
+                        <select id="editDropDanhMuc" class="form-control select2" data-placeholder="Chọn danh mục">
+                        </select>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbGhiChu" for="txtGhiChu" class="form-label">Mô tả</label>
+                        <input type="text" id="txtGhiChu" class="form-control" placeholder="Nhập mô tả" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-2"></i>Đóng
+                </button>
+                <button type="button" class="btn btn-success" id="btnSave">
+                    <i class="bi bi-floppy me-2"></i>Lưu
+                </button>
+                <button type="button" class="btn btn-success" id="btnSaveAndNew">
+                    <i class="bi bi-plus-circle me-2"></i>Lưu và Thêm mới
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end modal-->
+
+@section Scripts {
+    <script src="~/JS/DanhMuc/DanhMucChung.js"></script>
+    <script>
+        $(document).ready(function () {
+            var CategoryInstance = new Category();
+            CategoryInstance.init();
+        });
+    </script>
+}

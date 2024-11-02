@@ -1,0 +1,196 @@
+﻿/* Set padding to keep content from hitting the edges */
+.body-content {
+    font-family: 'Nunito', sans-serif;
+    margin-top: 15px; /* Tạo khoảng cách phía trên */
+    padding-left: 15px;
+    padding-right: 15px;
+}
+h1, h2, h3, h4, h5, h6, p, input, select, textarea, .btn, .toast, .modal-content {
+    font-family: 'Nunito', sans-serif;
+}
+.btn-success,
+.bg-success
+{
+    background-color: #28a745 !important; 
+    border-color: #28a745 !important;  
+}
+
+/* Đặt khoảng cách cho nội dung phía trên footer */
+.content {
+    padding-bottom: 4rem; /* Tạo khoảng cách để không bị đè lên footer */
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select, 
+textarea {
+    max-width: 1000px;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+/* Pre-loader styles */
+#preloader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    #preloader .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+
+#content {
+    visibility: hidden; /* Hide the content until fully loaded */
+}
+
+/* Styles cho toast */
+.toast {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.toast-success {
+    background-color: #28a745 !important;
+    color: #fff;
+}
+
+.toast-danger {
+    background-color: #dc3545 !important;
+    color: #fff;
+}
+
+.toast-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.toast-info {
+    background-color: #17a2b8 !important;
+    color: #fff;
+}
+
+/* Styles cho thanh tiến trình */
+.toast-progress {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+    .toast-progress .progress-bar {
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+        transition: width 0.1s linear;
+    }
+
+/* Styles cho nút đóng */
+.toast .btn-close {
+    color: inherit;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+    opacity: 0.8;
+}
+
+    .toast .btn-close:hover {
+        opacity: 1;
+    }
+
+/* Thêm phần padding cho nội dung chính để không bị đè lên bởi navbar */
+.navbar {
+    margin-bottom: 20px; /* Tạo khoảng cách dưới navbar */
+}
+
+.shrink-to-fit {
+    width: 100%; /* Đảm bảo thẻ div sử dụng toàn bộ chiều rộng */
+    height: auto;
+    overflow: hidden; /* Đảm bảo nội dung không bị tràn ra ngoài */
+    transform: scale(0.5); /* Thu nhỏ toàn bộ nội dung */
+    transform-origin: top left; /* Thu nhỏ từ góc trên bên trái */
+}
+
+ 
+
+.btn-close {
+    border: none;  
+    outline: none;  
+    box-shadow: none; 
+}
+
+    .btn-close:focus {
+        outline: none;  
+        box-shadow: none; 
+    }
+
+.select2-container--bootstrap-5 .select2-selection--single:focus {
+    outline: none !important; /* Remove the focus outline */
+    box-shadow: none !important; /* Remove box-shadow if any */
+}
+
+.select2-container--bootstrap-5 .select2-selection--multiple:focus {
+    outline: none !important; /* Remove the focus outline for multiple select */
+    box-shadow: none !important;
+}
+
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+
+.modal .close {
+    background: transparent;
+    border: none;  
+    outline: none; 
+}
+    .modal .close span {
+        font-size: 30px;  
+    }
+.fs-7 {
+    font-size: 0.87rem;  
+}
+
+
+.form-custom {
+    display: block;
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
+    padding: .375rem .75rem; /* Padding tương tự như form-control */
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: none;
+    border-bottom: 1px dashed #000; /* Viền dưới dạng nét đứt */
+    border-radius: 0; /* Loại bỏ bo góc */
+    outline: none;
+    box-shadow: none;
+    transition: border-bottom-color 0.3s ease; /* Hiệu ứng mượt mà khi chuyển màu */
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */
+}
+
+    .form-custom:focus {
+        border-bottom: 1px dashed #28a745; /* Viền dưới màu xanh success khi focus */
+        outline: none; /* Loại bỏ outline khi focus */
+        box-shadow: none; /* Loại bỏ box-shadow của Bootstrap khi focus */
+    }
+
+textarea {
+    height: calc(1.5em * 6); /* 6 rows initially, assuming 1.5em per line */
+    max-height: calc(1.5em * 12); /* Max height for up to 12 rows */
+    resize: vertical; /* Allow vertical resizing only */
+    overflow-y: auto; /* Show scroll if content exceeds max height */
+}

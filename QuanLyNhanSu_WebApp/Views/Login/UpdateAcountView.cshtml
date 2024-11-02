@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Cập nhật thông tin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .form-label {
+            color: blueviolet;
+        }
+
+        .update-password-view {
+            margin-top: 50px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control {
+            border-radius: 6px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+    </style>
+}
+
+<div class="update-password-view mx-auto col-md-6">
+    <h2 class="text-center mb-4">Đổi Mật Khẩu</h2>
+    <div class="container">
+        <form>
+            <div class="mb-3">
+                <label for="oldPassword" class="form-label">Mật khẩu cũ *</label>
+                <input type="password" class="form-control" id="oldPassword" required>
+            </div>
+            <div class="mb-3">
+                <label for="newPassword" class="form-label">Mật khẩu mới *</label>
+                <input type="password" class="form-control" id="newPassword" required>
+            </div>
+            <div class="mb-3">
+                <label for="confirmNewPassword" class="form-label">Xác nhận mật khẩu mới *</label>
+                <input type="password" class="form-control" id="confirmNewPassword" required>
+            </div>
+            <button type="submit" id="capnhat" class="btn btn-primary w-100">ĐỔI MẬT KHẨU</button>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#capnhat").click(function (event) {
+            event.preventDefault();
+
+            var oldPassword = $("#oldPassword").val();
+            var newPassword = $("#newPassword").val();
+            var confirmNewPassword = $("#confirmNewPassword").val();
+
+            if (newPassword !== confirmNewPassword) {
+                Core.showToast("Mật khẩu mới và xác nhận mật khẩu không khớp.", "warning");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("UpdatePassword", "Login")',
+                type: 'POST',
+                data: {
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                },
+                success: function (response) {
+                    if (response.Success) {
+                        Core.showToast("Đổi mật khẩu thành công.", 'success');
+                        setTimeout(function () {
+                            window.location.href = '@Url.Action("LoginView", "Login")';
+                        }, 3000);
+                    } else {
+                        Core.showToast(response.Message, 'warning');
+                    }
+                },
+                error: function () {
+                    Core.showToast("Có lỗi xảy ra. Vui lòng thử lại.", 'danger');
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,197 @@
+﻿
+@{
+    ViewBag.Title = "Phòng ban";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mx-3">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="page-title" id="page-header">Phòng ban</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Danh mục</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Phòng ban</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mx-1" style="border:none">
+    <div class="col-12">
+        <div class="card ms-3">
+            <div class="card-body">
+                <!--input search-->
+                <div class="row mb-2">
+                    <div class="col-sm-6 col-lg-3 mb-1">
+                        <p class="mb-1 fw-bold text-muted">Từ khóa</p>
+                        <input type="search" class="form-control" id="searchTenCoSo" placeholder="Nhập từ khóa cần tìm" />
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_company">
+                        <p class="mb-1 fw-bold text-muted">Công ty</p>
+                        <select id="searchDropCongTy" class="form-control select2" data-placeholder="Chọn công ty">
+                            <option value="">-- Chọn công ty --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_CoSo">
+                        <p class="mb-1 fw-bold text-muted">Cơ sở</p>
+                        <select id="searchDropCoSo" class="form-control select2" data-placeholder="Chọn cơ sở">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1">
+                        <p class="mb-1 fw-bold text-muted">Tình trạng</p>
+                        <select id="DropTinhTrang_search" class="form-control select2" data-no-search>
+                            <option value=""></option>
+                            <option value="1">Đang khởi tạo(chờ duyệt) </option>
+                            <option value="2">Đang hoạt động(đã duyệt) </option>
+                            <option value="3">Dừng hoạt động </option>
+                        </select>
+                    </div>
+
+                </div>
+                <div id="dieukientimkiem" style="display: none">
+                    <div class="row mb-0">
+                        <div class="col-sm-6 col-lg-3 mb-1">
+                            <p class="mb-1 fw-bold text-muted">Trạng thái</p>
+                            <select id="DropTrangThai" class="form-control select2" data-no-search>
+                                <option value="1">Đang hoạt động </option>
+                                <option value="2">Đã xoá </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @*nút mở rộng tk*@
+                <div class="col-lg-12" style="text-align: right">
+                    <button id="btnAnDieuKien" type="button" class="btn btn-link text-decoration-none text-success"
+                            style="padding-right: 0px; padding-top: 0px;">
+                        <i class="fa-solid fa-arrow-down-wide-short me-1"></i>Hiển thị thêm
+                    </button>
+                </div>
+
+                <!--action search-->
+                <div class="row mb-2">
+                    <div class="col-sm-5 col-6">
+                        <button type="button" class="btn btn-success mb-2 me-sm-1" id="btnTimKiem"><i class="fa-solid fa-magnifying-glass me-1"></i>Tìm kiếm</button>
+                        <button type="button" class="btn btn-secondary mb-2" id="btnHuyTimKiem"><i class="fa-solid fa-rotate me-1"></i>Hủy tìm kiếm</button>
+                    </div>
+                    <div class="col-sm-7 col-6">
+                        <div class="text-sm-end">
+                            <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
+                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt"></i>Thùng rác</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="panel">
+                    <div class="panel-body table-responsive-sm table-centered table-hover tbl-pagination">
+                        <table id="tbldata" class="table table-bordered table-striped border-bottom-0 mt-2">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" hidden="hidden">Id</th>
+                                    <th style="width: 30px" class="text-center">Stt</th>
+                                    <th class="text-center">Mã phòng ban</th>
+                                    <th class="text-center">Tên phòng ban</th>
+                                    <th class="text-center">Thuộc cơ sở</th>
+                                    <th class="text-center">Người điều hành</th>
+                                    <th class="text-center" style="width: 100px">Trạng thái</th>
+                                    <th style="width: 30px">NB</th>
+                                    <th style="width: 30px">Sửa</th>
+                                    <th style="width: 30px">Xóa</th>
+                                    <th style="width: 30px; text-align: center">
+                                        <input type="checkbox" class="form-check-input" name="chkSelectAll" id="chkSelectAll" />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal CRUD -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Thêm mới danh mục Phòng ban</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbTenPB" for="txTenPB" class="form-label">Tên phòng ban (*)</label>
+                        <input type="text" id="txTenPB" class="form-control" placeholder="Nhập tên phòng ban" required="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbMaPB" for="txMaPB" class="form-label">Mã phòng ban (*)</label>
+                        <input type="text" id="txMaPB" class="form-control" placeholder="Nhập mã phòng ban" required="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbDropCoSo" for="editDropCoSo" class="form-label">Thuộc cơ sở (*)</label>
+                        <select id="editDropCoSo" class="form-control select2" data-placeholder="Chọn cơ sở" required="">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbGhiChu" for="txtGhiChu" class="form-label">Ghi chú</label>
+                        <input type="text" id="txtGhiChu" class="form-control" placeholder="Nhập ghi chú" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbTinhTrang" for="DropTinhTrang" class="form-label">Tình trạng</label>
+                        <select id="DropTinhTrang" class="form-control select2" data-no-search>
+                            <option value="">--- Chọn tình trạng --- </option>
+                            <option value="1">Đang khởi tạo(chờ duyệt) </option>
+                            <option value="2">Đang hoạt động(đã duyệt) </option>
+                            <option value="3">Dừng hoạt động </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-2"></i>Đóng
+                </button>
+                <button type="button" class="btn btn-success" id="btnSave">
+                    <i class="bi bi-floppy me-2"></i>Lưu
+                </button>
+                <button type="button" class="btn btn-success" id="btnSaveAndNew">
+                    <i class="bi bi-plus-circle me-2"></i>Lưu và Thêm mới
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end modal-->
+
+
+
+@section Scripts {
+    <script src="~/JS/DanhMuc/PhongBan.js"></script>
+    <script>
+        $(document).ready(function () {
+            var PhongBanInstance = new PhongBan();
+            PhongBanInstance.init();
+        });
+    </script>
+}
