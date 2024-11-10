@@ -44,6 +44,11 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 Session["UserId"] = account.Id;
                 Session["UserName"] = account.Name;
                 Session["CompanyId"] = account.CompanyId;
+                Session["NhanSuId"] = account.NhanSuId;
+                Session["PhongBanId"] = account.PhongBanId;
+                Session["CoSoId"] = account.CoSoId;
+                Session["C3"] = account.C3;
+                Session["ChucVuId"] = account.ChucVuId;
 
                 //var infoCompany = CompanyDAL.GetCompanyId(account.Id);
                 //if(infoCompany != null)
@@ -68,7 +73,12 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 CompanyId = Session["CompanyId"],
                 RoleId = Session["RoleId"],
                 UserId = Session["UserId"],
-                UserName = Session["UserName"]
+                UserName = Session["UserName"],
+                NhanSuId = Session["NhanSuId"],
+                PhongBanId = Session["PhongBanId"],
+                CoSoId = Session["CoSoId"],
+                C3 = Session["C3"],
+                ChucVuId = Session["ChucVuId"],
             };
 
             return Json(sessionVariables, JsonRequestBehavior.AllowGet);

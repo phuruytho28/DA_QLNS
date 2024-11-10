@@ -17,6 +17,10 @@ namespace QuanLyNhanSu_WebApp.Models
         public int RoleId { get; set; }
         public string Gmail { get; set; }
         public string CompanyId { get; set; }
+        public string NhanSuId { get; set; }
+        public string PhongBanId { get; set; }
+        public string CoSoId { get; set; }
+        public string ChucVuId { get; set; }
 
 
         /// đây là phần của bảng Company

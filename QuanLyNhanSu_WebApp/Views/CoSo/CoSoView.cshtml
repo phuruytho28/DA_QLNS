@@ -20,8 +20,7 @@
         </div>
     </div>
 </div>
-
-
+ 
 <div class="row mx-1" style="border:none">
     <div class="col-12">
         <div class="card ms-3">
@@ -32,7 +31,7 @@
                         <p class="mb-1 fw-bold text-muted">Từ khóa</p>
                         <input type="search" class="form-control" id="searchTenCoSo" placeholder="Nhập từ khóa cần tìm" />
                     </div>
-                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_company">
+                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_company" hidden="hidden">
                         <p class="mb-1 fw-bold text-muted">Công ty</p>
                         <select id="searchDropCongTy" class="form-control select2" data-placeholder="Chọn công ty">
                             <option value="">-- Chọn công ty --</option>
@@ -41,10 +40,9 @@
                     <div class="col-sm-6 col-lg-3 mb-1">
                         <p class="mb-1 fw-bold text-muted">Tình trạng</p>
                         <select id="DropTinhTrang_search" class="form-control select2" data-no-search>
-                            <option value=""></option> 
-                            <option value="1">Đang khởi tạo(chờ duyệt) </option> 
-                            <option value="2">Đang hoạt động(đã duyệt) </option> 
-                            <option value="3">Dừng hoạt động </option>
+                            <option value="">Chọn dữ liệu</option>  
+                            <option value="1">Đang hoạt động </option> 
+                            <option value="2">Dừng hoạt động </option>
                         </select>
                     </div>
                     <div class="col-sm-6 col-lg-3 mb-1">
@@ -80,7 +78,7 @@
                                     <th style="width: 30px" class="text-center">Stt</th>
                                     <th class="text-center">Tên cơ sở</th>
                                     <th class="text-center">Địa chỉ</th>
-                                    <th class="text-center">Người điều hành</th> 
+                                    <th class="text-center">Mô tả</th> 
                                     <th class="text-center"  style="width: 80px">Trạng thái</th>
                                     <th style="width: 30px">NB</th>
                                     <th style="width: 30px">Sửa</th>
@@ -133,10 +131,10 @@
                 <div class="row">
                     <div class="col-12">
                         <label id="lbTinhTrang" for="DropTinhTrang" class="form-label">Tình trạng</label>
-                        <select id="DropTinhTrang" class="form-control select2" data-no-search>
-                            <option value="1">Đang khởi tạo(chờ duyệt) </option>
-                            <option value="2">Đang hoạt động(đã duyệt) </option>
-                            <option value="3">Dừng hoạt động </option>
+                        <select id="DropTinhTrang" class="form-control select2" data-no-search> 
+                            <option value="">Chọn giá trị </option>
+                            <option value="1">Đang hoạt động </option>
+                            <option value="2">Dừng hoạt động </option>
                         </select>
                     </div>
                 </div>

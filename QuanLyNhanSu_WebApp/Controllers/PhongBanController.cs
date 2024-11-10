@@ -12,9 +12,9 @@ using System.Web.Mvc;
 
 namespace QuanLyNhanSu_WebApp.Controllers
 {
+    [CustomAuthorize]
     public class PhongBanController : Controller
     {
-        [CustomAuthorize]
         // GET: PhongBan
         public ActionResult PhongBanView()
         {

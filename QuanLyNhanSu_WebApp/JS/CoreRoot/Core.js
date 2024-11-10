@@ -5,6 +5,11 @@ CoreJs.prototype = {
     roleId: 0,
     userId: '',
     userName: '',
+    tknhansuId: '',
+    tkphongbanId: '',
+    tkcosoId: '',
+    tkC3: '',
+    tkchucvuId: '',
     sessionVariables: {},
     /*Trạng thái bản ghi*/
     StatusCode: Object.freeze({
@@ -24,6 +29,11 @@ CoreJs.prototype = {
         me.roleId = arr_thamsohethong[1];
         me.userId = arr_thamsohethong[2];
         me.userName = arr_thamsohethong[3];
+        me.tknhansuId = arr_thamsohethong[4];
+        me.tkphongbanId = arr_thamsohethong[5];
+        me.tkcosoId = arr_thamsohethong[6];
+        me.tkC3 = arr_thamsohethong[7];
+        me.tkchucvuId = arr_thamsohethong[8];
         me.init_event();
         me.init_action();
     },
@@ -284,9 +294,9 @@ CoreJs.prototype = {
         var me = this; 
         var jsonData = {
             TenCoSo: '',
-            tbl_CompanyId: me.roleId === 1 ? '' : me.companyId,
+            tbl_CompanyId: me.roleId == 99 ? '' : me.companyId,
             StatusId: 1,
-            TinhTrang: 2,
+            TinhTrang: 1,
             PageIndex: 1,
             PageSize: 10000000
         };
@@ -329,7 +339,9 @@ CoreJs.prototype = {
         var jsonData = {
             Keyword: '',
             PhanLoaiDM: loaiDM,
-            tbl_CompanyId: me.roleId === 1 ? '' : me.companyId,
+            tbl_CompanyId: me.roleId == 99 ? '' : me.companyId,
+            tbl_CoSoId: me.roleId == 99 ? '' : me.tkcosoId,
+            tbl_PhongBanId: me.roleId == 99 ? '' : me.tkphongbanId,
             StatusId: 1,
             TinhTrang: dmCha,
             PageIndex: 1,
@@ -357,7 +369,7 @@ CoreJs.prototype = {
                         }
                         getList += "<option value=''>" + strTitle + "</option>";
                         for (i = 0; i < mlen; i++) {
-                            getList += "<option name='" + json[i].Name + "' value='" + json[i].Id + "'>" + json[i].MoTa + "</option>";
+                            getList += "<option name='" + json[i].Name + "' role='" + json[i].RoleId + "' value='" + json[i].Id + "'>" + json[i].MoTa + "</option>";
                         }
                         tbCombo.html(getList);
                     }
@@ -369,14 +381,16 @@ CoreJs.prototype = {
             }
         });
     }, 
+
+
     loadDrop_PhongBan: function (zone_id, strTitle, defaultValue) {
         var me = this;
         var jsonData = {
             TenPhongBan: '',
-            tbl_CoSoId: me.CoSoId ? me.CoSoId : '',
-            tbl_CompanyId: me.roleId === 1 ? '' : me.companyId,
+            tbl_CoSoId: me.tkcosoId ? me.tkcosoId : '',
+            tbl_CompanyId: me.roleId === 99 ? '' : me.companyId,
             StatusId: 1,
-            TinhTrang: 2,
+            TinhTrang: 1,
             PageIndex: 1,
             PageSize: 10000000
         };
@@ -403,6 +417,52 @@ CoreJs.prototype = {
                         getList += "<option value=''>" + strTitle + "</option>";
                         for (i = 0; i < mlen; i++) {
                             getList += "<option name='" + json[i].MaPhongBan + "' value='" + json[i].Id + "'>" + json[i].TenPhongBan + "</option>";
+                        }
+                        tbCombo.html(getList);
+                    }
+                    tbCombo.val(defaultValue).trigger("change");
+                }
+            },
+            error: function (error) {
+                console.error('AJAX request failed:', error);
+            }
+        });
+    }, 
+    loadDrop_NhanSu: function (zone_id, strTitle, defaultValue, cosoId, phongbanId) {
+        var me = this;
+        var jsonData = {
+            Keyword: '',
+            tbl_CoSoId: me.roleId === 99 ? '' : me.cosoId,
+            tbl_PhongBanId: me.roleId === 99 ? '' : me.phongbanId,
+            tbl_CompanyId: me.roleId === 99 ? '' : me.companyId, 
+            StatusId: 1,
+            TinhTrang: 2,
+            PageIndex: 1,
+            PageSize: 10000000
+        };
+        $.ajax({
+            url: '/NhanSu/FilterNhanSu',
+            type: 'POST',
+            data: jsonData,
+            success: function (data) {
+                if (data.Success) {
+                    var mystring = JSON.stringify(data.Data);
+                    var json = $.parseJSON(mystring);
+                    var mlen = json.length;
+                    var tbCombo = $('[id$=' + zone_id + ']');
+                    tbCombo.html('');
+                    if (mlen > 0) {
+                        var i;
+                        var getList = "";
+                        if (strTitle == "" || strTitle == null || strTitle == undefined) {
+                            strTitle = "-- Chọn dữ liệu --";
+                        }
+                        else {
+                            strTitle = "--- " + strTitle + " ---";
+                        }
+                        getList += "<option value=''>" + strTitle + "</option>";
+                        for (i = 0; i < mlen; i++) {
+                            getList += "<option name='" + json[i].MaNhanVien + "' value='" + json[i].Id + "'>" + json[i].HoTen + "</option>";
                         }
                         tbCombo.html(getList);
                     }
@@ -461,5 +521,55 @@ CoreJs.prototype = {
             }
         });
     }, 
-     
+    loadDrop_DiaChi_callback: function (zone_id, LoaiDC, defaultValue, callback) {
+        var me = this;
+        var jsonData = {
+            loai: LoaiDC
+        };
+        $.ajax({
+            url: '/TinhHuyen/GetTinhHuyenById',
+            type: 'POST',
+            data: jsonData,
+            success: function (data) {
+                if (data.Success) {
+                    var mystring = JSON.stringify(data.Data);
+                    var json = $.parseJSON(mystring);
+                    var mlen = json.length;
+                    var tbCombo = $('[id$=' + zone_id + ']');
+                    tbCombo.html('');
+                    if (mlen > 0) {
+                        var getList = "";
+                        var ten, ma;
+
+                        var strTitle = "-- Chọn dữ liệu --";
+                        getList += "<option value=''>" + strTitle + "</option>";
+                        for (var i = 0; i < mlen; i++) {
+                            if (LoaiDC === "Tinh") {
+                                ten = json[i].TenTinh || "Unknown Tinh";
+                                ma = json[i].MaTinh || "Unknown MaTinh";
+                            } else {
+                                ten = json[i].TenHuyen || "Unknown Huyen";
+                                ma = json[i].MaHuyen || "Unknown MaHuyen";
+                            }
+
+                            getList += "<option name='" + ma + "' value='" + json[i].Id + "'>" + ten + "</option>";
+                        }
+                        tbCombo.html(getList);
+                    }
+                    tbCombo.val(defaultValue).trigger("change");
+
+                    // Gọi callback nếu có
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                }
+            },
+            error: function (error) {
+                console.error('AJAX request failed:', error);
+                if (typeof callback === 'function') {
+                    callback(error);
+                }
+            }
+        });
+    },
 }

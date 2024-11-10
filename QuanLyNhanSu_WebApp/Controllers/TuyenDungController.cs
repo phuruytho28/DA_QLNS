@@ -3,6 +3,7 @@ using QuanLyNhanSu_WebApp.Controllers.CommonController;
 using QuanLyNhanSu_WebApp.DataAccessLayer;
 using QuanLyNhanSu_WebApp.Filter;
 using QuanLyNhanSu_WebApp.Models;
+using QuanLyTuyenDung_WebApp.DataAccessLayer;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -13,30 +14,34 @@ using System.Web.Mvc;
 namespace QuanLyNhanSu_WebApp.Controllers
 {
     [CustomAuthorize]
-    public class CoSoController : Controller
-    { 
-        // GET: CoSo
-        public ActionResult CoSoView()
+    public class TuyenDungController : Controller
+    {
+        // GET: TuyenDung
+        public ActionResult ListTuyenDungView()
+        {
+            return View();
+        }
+        public ActionResult DetailTuyenDungView()
         {
             return View();
         }
 
-        private readonly CoSoDAL coSoDAL = new CoSoDAL();
+        private readonly TuyenDungDAL TuyenDungDAL = new TuyenDungDAL();
 
         [HttpPost]
-        public JsonResult FilterCoSo(CoSoModel coso)
+        public JsonResult FilterTuyenDung(TuyenDungModel TuyenDung)
         {
             int totalRows = 0;  
-            List<CoSoModel> coSoList = new List<CoSoModel>();
+            List<TuyenDungModel> TuyenDungList = new List<TuyenDungModel>();
 
             try
             {
-                coSoList = coSoDAL.CoSo_Search(coso, out totalRows);
+                TuyenDungList = TuyenDungDAL.TuyenDung_Search(TuyenDung, out totalRows);
 
                 return Json(new
                 {
                     Success = true,
-                    Data = coSoList,
+                    Data = TuyenDungList,
                     TotalRows = totalRows
                 });
             }
@@ -53,7 +58,7 @@ namespace QuanLyNhanSu_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult save(CoSoModel obj)
+        public JsonResult save(TuyenDungModel obj)
         {
             var response = new JsonResponse();
             try
@@ -62,7 +67,7 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 if (string.IsNullOrEmpty(obj.Id))
                 {
                     obj.CreatedDate = DateTime.Now.ToString();
-                    var result = CoSoDAL.CoSo_Insert(obj, ref newId);
+                    var result = TuyenDungDAL.TuyenDung_Insert(obj, ref newId);
                     if (!string.IsNullOrEmpty(newId))
                     {
                         response.Success = true;
@@ -78,7 +83,7 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 else
                 { 
                     obj.ModifyDate = DateTime.Now.ToString();
-                    CoSoDAL.CoSo_Update(obj);   
+                    TuyenDungDAL.TuyenDung_Update(obj);   
                     response.Success = true;
                     response.Message = "Cập nhật thành công!";
                 }
@@ -93,16 +98,16 @@ namespace QuanLyNhanSu_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetCoSoById(string id)
+        public JsonResult GetTuyenDungById(string id)
         {
             var response = new JsonResponse();
             try
             {
-                var coSo = CoSoDAL.CoSo_GetById(id);
-                if (coSo != null)
+                var TuyenDung = TuyenDungDAL.TuyenDung_GetById(id);
+                if (TuyenDung != null)
                 {
                     response.Success = true;
-                    response.Data = coSo;
+                    response.Data = TuyenDung;
                 }
                 else
                 {
@@ -120,30 +125,30 @@ namespace QuanLyNhanSu_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateStatusId(CoSoModel coso)
+        public JsonResult UpdateStatusId(TuyenDungModel TuyenDung)
         {
             var response = new JsonResponse();
             try
             {
-                if (string.IsNullOrEmpty(coso.C1))
+                if (string.IsNullOrEmpty(TuyenDung.C1))
                 {
                     response.Success = false;
                     response.Message = "Danh sách Id không được để trống.";
                     return Json(response);
                 }
 
-                if (coso.StatusId <= 0)
+                if (TuyenDung.StatusId <= 0)
                 {
                     response.Success = false;
                     response.Message = "StatusId không hợp lệ.";
                     return Json(response);
                 }
 
-                coso.ModifyDate = DateTime.Now.ToString(); 
+                TuyenDung.ModifyDate = DateTime.Now.ToString(); 
 
-                CoSoDAL.CoSo_UpdateStatusId(coso);
+                TuyenDungDAL.TuyenDung_UpdateStatusId(TuyenDung);
                 var trangthai = ""; 
-                switch (coso.StatusId) {
+                switch (TuyenDung.StatusId) {
                     case 1:
                         trangthai = "khôi phục trạng thái hoạt động";
                             break;
@@ -153,7 +158,60 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 }
 
                 response.Success = true;
-                response.Message = "Cơ sở đã " + trangthai;
+                response.Message = "Tin tuyển dụng đã " + trangthai;
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Success = false;
+                response.Message = $"Lỗi SQL: {sqlEx.Message}";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Đã xảy ra lỗi khi cập nhật trạng thái: {ex.Message}";
+            }
+
+            return Json(response);
+        }
+
+        [HttpPost]
+        public JsonResult TuyenDung_UpdateTinhTrangYeuCauTD(TuyenDungModel TuyenDung)
+        {
+            var response = new JsonResponse();
+            try
+            {
+                if (string.IsNullOrEmpty(TuyenDung.C1))
+                {
+                    response.Success = false;
+                    response.Message = "Danh sách Id không được để trống.";
+                    return Json(response);
+                }
+
+                if (TuyenDung.TinhTrang <= 0)
+                {
+                    response.Success = false;
+                    response.Message = "TinhTrang không hợp lệ.";
+                    return Json(response);
+                }
+
+                TuyenDung.ModifyDate = DateTime.Now.ToString(); 
+
+                TuyenDungDAL.TuyenDung_UpdateTinhTrangYeuCauTD(TuyenDung);
+                var trangthai = ""; 
+                switch (TuyenDung.TinhTrang) {
+                    case 2:
+                        trangthai = "được duyệt";
+                            break;
+                    case 3:
+                        trangthai = "được chuyển hoàn thành";
+                            break; 
+                    case 4:
+                        trangthai = "bị từ chối duyệt";
+                            break; 
+                }
+
+                response.Success = true;
+                response.Message = "Tin tuyển dụng đã " + trangthai;
             }
             catch (SqlException sqlEx)
             {

@@ -12,9 +12,9 @@ using System.Web.Mvc;
 
 namespace QuanLyNhanSu_WebApp.Controllers
 {
+    [CustomAuthorize]
     public class NhanSuController : Controller
     {
-        [CustomAuthorize]
         // GET: NhanSu
         public ActionResult ListNhanSuView()
         {
@@ -111,7 +111,7 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 else
                 {
                     response.Success = false;
-                    response.Message = "Không tìm thấy cơ sở với Id này.";
+                    response.Message = "Không tìm thấy nhân sự với Id này.";
                 }
             }
             catch (Exception ex)
@@ -157,7 +157,57 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 }
 
                 response.Success = true;
-                response.Message = "Cơ sở đã " + trangthai;
+                response.Message = "Nhân sự đã " + trangthai;
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Success = false;
+                response.Message = $"Lỗi SQL: {sqlEx.Message}";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Đã xảy ra lỗi khi cập nhật trạng thái: {ex.Message}";
+            }
+
+            return Json(response);
+        }
+
+        [HttpPost]
+        public JsonResult UpdateTinhTrangNS(NhanSuModel NhanSu)
+        {
+            var response = new JsonResponse();
+            try
+            {
+                if (string.IsNullOrEmpty(NhanSu.C1))
+                {
+                    response.Success = false;
+                    response.Message = "Danh sách Id không được để trống.";
+                    return Json(response);
+                }
+
+                if (NhanSu.TinhTrang <= 0)
+                {
+                    response.Success = false;
+                    response.Message = "Tinh trạng không hợp lệ.";
+                    return Json(response);
+                }
+
+                NhanSu.ModifyDate = DateTime.Now.ToString(); 
+
+                NhanSuDAL.UpdateTinhTrangNS(NhanSu);
+                var trangthai = ""; 
+                switch (NhanSu.TinhTrang) {
+                    case 2:
+                        trangthai = "được duyệt (đang hoạt động)";
+                            break;
+                    case 3:
+                        trangthai = "bị từ chối (nghỉ việc)";
+                            break; 
+                }
+
+                response.Success = true;
+                response.Message = "Tình trạng nhân sự đã " + trangthai;
             }
             catch (SqlException sqlEx)
             {

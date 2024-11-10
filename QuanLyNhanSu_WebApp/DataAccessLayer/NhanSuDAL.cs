@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.Helpers;
 
 namespace QuanLyNhanSu_WebApp.DataAccessLayer
 {
@@ -23,7 +24,10 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
                 new SqlParameter("@tbl_PhongBanId", NhanSu.tbl_PhongBanId ?? ""),
                 new SqlParameter("@tbl_Category_ChucVuId", NhanSu.tbl_Category_ChucVuId ?? ""),
                 new SqlParameter("@tblCategory_Que_TinhId", NhanSu.tblCategory_Que_TinhId ?? ""),   
+                new SqlParameter("@tbl_TuyenDungId", NhanSu.tbl_TuyenDungId ?? ""),   
                 new SqlParameter("@TinhTrang", NhanSu.TinhTrang),
+                new SqlParameter("@TinhTrangHoSoTD", NhanSu.TinhTrangHoSoTD),
+                new SqlParameter("@RoleId", NhanSu.RoleId),
                 new SqlParameter("@StatusId", NhanSu.StatusId),
                 new SqlParameter("@PageIndex", NhanSu.pageIndex),
                 new SqlParameter("@PageSize", NhanSu.pageSize),
@@ -46,7 +50,7 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
         public static string NhanSu_Insert(NhanSuModel NhanSu, ref string newId)
         {
             SqlParameter[] parameters = new SqlParameter[]
-            {
+            { 
                 new SqlParameter("@MaNhanVien", NhanSu.MaNhanVien ?? ""),
                 new SqlParameter("@HoTen", NhanSu.HoTen ?? ""),
                 new SqlParameter("@GioiTinh", NhanSu.GioiTinh ?? ""),
@@ -73,7 +77,13 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
                 new SqlParameter("@TinhTrang", NhanSu.TinhTrang),
                 new SqlParameter("@CreatedDate", NhanSu.CreatedDate ?? ""),
                 new SqlParameter("@CreatedBy", NhanSu.CreatedBy ?? ""),
-                new SqlParameter("@Note", NhanSu.Note ?? ""),
+                new SqlParameter("@Note", NhanSu.Note ?? ""),  
+
+                new SqlParameter("@TinhTrangHoSoTD", NhanSu.TinhTrangHoSoTD),
+                new SqlParameter("@tbl_TuyenDungId", NhanSu.tbl_TuyenDungId ?? ""),
+                new SqlParameter("@RoleId", NhanSu.RoleId),
+                new SqlParameter("@C3", NhanSu.C3),
+
                 new SqlParameter("@Id", SqlDbType.VarChar, 36) { Direction = ParameterDirection.Output }
             };
 
@@ -117,10 +127,16 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
                 new SqlParameter("@SDT", NhanSu.SDT != 0 ? (object)NhanSu.SDT : DBNull.Value),
                 new SqlParameter("@NgayBatDauLamViec", NhanSu.NgayBatDauLamViec ?? ""),
                 new SqlParameter("@StatusId", NhanSu.StatusId),
-                new SqlParameter("@TinhTrang", NhanSu.TinhTrang),
-                new SqlParameter("@CreatedDate", NhanSu.CreatedDate ?? ""),
-                new SqlParameter("@CreatedBy", NhanSu.CreatedBy ?? ""),
-                new SqlParameter("@Note", NhanSu.Note ?? "")
+                new SqlParameter("@TinhTrang", NhanSu.TinhTrang), 
+                new SqlParameter("@Note", NhanSu.Note ?? ""),
+                new SqlParameter("@ModifyDate", NhanSu.ModifyDate ?? ""),
+                new SqlParameter("@ModifyBy", NhanSu.ModifyBy ?? ""),
+
+
+                new SqlParameter("@TinhTrangHoSoTD", NhanSu.TinhTrangHoSoTD),
+                new SqlParameter("@tbl_TuyenDungId", NhanSu.tbl_TuyenDungId ?? ""),
+                new SqlParameter("@RoleId", NhanSu.RoleId),
+                new SqlParameter("@C3", NhanSu.C3),
             };
 
             try
@@ -172,7 +188,27 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
 
             try
             {
-                DataAccessHelper.ExecuteNonQuery("tbl_NhanSu_UpdateStatusId", parameters);
+                DataAccessHelper.ExecuteNonQuery("tbl_NhanSu_UpdateStatusById", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating status: {ex.Message}");
+            }
+        }
+        public static void UpdateTinhTrangNS(NhanSuModel NhanSu)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", NhanSu.C1),
+                new SqlParameter("@TinhTrang", NhanSu.TinhTrang),
+                new SqlParameter("@Note", NhanSu.Note ?? ""),
+                new SqlParameter("@ModifyDate", NhanSu.ModifyDate),
+                new SqlParameter("@ModifyBy", NhanSu.ModifyBy ?? "")
+            };
+
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_NhanSu_XetDuyet_NhanSu", parameters);
             }
             catch (SqlException ex)
             {

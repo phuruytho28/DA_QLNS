@@ -88,3 +88,18 @@
     box-shadow: none;
     outline: 0;
 }
+.custom-textarea {
+    width: 100%;
+}
+.custom-textarea {
+    width: 100%;
+    height: 7em; /* Sets height to approximately 2 lines */
+    border: 0.5px solid #ccc; /* Thin border */
+    border-radius: 5px;
+    resize: vertical; /* Allows resizing only vertically */
+}
+
+    .custom-textarea:focus {
+        border-color: blue; /* Changes border color to blue on focus */
+        outline: none; /* Removes default outline for a cleaner look */
+    }

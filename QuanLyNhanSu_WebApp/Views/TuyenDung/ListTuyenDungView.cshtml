@@ -1,19 +1,18 @@
 ﻿
 @{
-    ViewBag.Title = "Thông tin nhân sự";
+    ViewBag.Title = "Tuyển dụng & bổ sung";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 <div class="row mx-3 my-2">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="page-title" id="page-header">Nhân sự</h4>
+            <h4 class="page-title" id="page-header">Tuyển dụng & bổ sung</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Nhân sự</a></li>
-                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh sách nhân sự</li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Tuyển dụng & bổ sung</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh sách Tuyển dụng & bổ sung</li>
                 </ol>
             </div>
         </div>
@@ -49,30 +48,24 @@
                     </div>
                 </div>
                 <div id="dieukientimkiem" style="display: none">
-                    <div class="row mb-0" id="row_hidden">
+                    <div class="row mb-0">
                         <div class="col-sm-6 col-lg-3 mb-1" id="zone_ChucVu">
                             <p class="mb-1 fw-bold text-muted">Chức vụ</p>
                             <select id="searchDropChucVu" class="form-control select2" data-placeholder="Chọn chức vụ">
                                 <option value="">-- Chọn chức vụ --</option>
                             </select>
                         </div>
-                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_QueQuan">
-                            <p class="mb-1 fw-bold text-muted">Quê quán</p>
-                            <select id="searchDropQueQuan" class="form-control select2" data-placeholder="Chọn quê quán">
-                                <option value="">-- Chọn quê quán --</option>
-                            </select>
-                        </div>
                         <div class="col-sm-6 col-lg-3 mb-1" id="zone_TinhTrang">
                             <p class="mb-1 fw-bold text-muted">Tình trạng</p>
                             <select id="DropTinhTrang_search" class="form-control select2" data-no-search>
                                 <option value="">Chọn giá trị</option>
-                                <option value="0">Trong quá trình tuyển dụng</option>
-                                <option value="1">Khởi tạo (chờ xét duyệt)</option>
-                                <option value="2">Hoạt động (đang làm việc) </option>
-                                <option value="3">Từ chối duyệt (nghỉ việc) </option>
+                                <option value="1">Chờ xét duyệt</option>
+                                <option value="2">Đã duyệt(Đang tuyển) </option>
+                                <option value="3">Hoàn thành </option>
+                                <option value="4">Từ chối duyệt</option>
                             </select>
                         </div>
-                        <div class="col-sm-6 col-lg-3 mb-1">
+                        <div class="col-sm-6 col-lg-3 mb-1" id="z_TrangThai">
                             <p class="mb-1 fw-bold text-muted">Trạng thái</p>
                             <select id="DropTrangThai" class="form-control select2" data-no-search>
                                 <option value="1">Đang hoạt động </option>
@@ -97,16 +90,12 @@
                     </div>
                     <div class="col-sm-7 col-6">
                         <div class="text-sm-end">
-                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnBoSung_NhanSu"><i class="bi bi-person-add me-1"></i>Bổ sung nhân sự</button>
-                            <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnXetDuyet_HSNS"><i class="bi bi-check-circle me-1"></i>Xét duyệt hồ sơ</button>
+                            <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnXetDuyet_HSNS"><i class="bi bi-check-circle me-1"></i>Xét duyệt yêu cầu</button>
                             <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
-                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt"></i>Thùng rác</button>
+                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt me-1"></i>Thùng rác</button>
                         </div>
                     </div>
                 </div>
-
-
-
                 <div class="panel">
                     <div class="panel-body table-responsive-sm table-centered table-hover tbl-pagination">
                         <table id="tbldata" class="table table-bordered table-striped border-bottom-0 mt-2">
@@ -114,12 +103,12 @@
                                 <tr>
                                     <th class="text-center" hidden="hidden">Id</th>
                                     <th style="width: 30px" class="text-center">Stt</th>
-                                    <th class="text-center">Mã Nhân sự</th>
-                                    <th class="text-center">Tên Nhân sự</th>
-                                    <th class="text-center">Ngày sinh</th>
+                                    <th class="text-center">Mã tuyển dụng</th>
+                                    <th class="text-center">Tên tuyển dụng</th>
+                                    <th class="text-center">Số lượng</th>
                                     <th class="text-center">Phòng ban</th>
                                     <th class="text-center">Chức vụ</th>
-                                    <th class="text-center">Trạng thái hồ sơ</th>
+                                    <th class="text-center">Trạng thái yêu cầu</th>
                                     <th style="width: 30px" id="col_NB">NB</th>
                                     <th style="width: 30px" id="col_Sua">Sửa</th>
                                     <th style="width: 30px" id="col_Xoa">Xóa</th>
@@ -144,23 +133,24 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Xét duyệt nhân sự</h4>
+                <h4 class="modal-title" id="myModalLabel">Xét duyệt yêu cầu</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
+                @*<div class="row">
                     <div class="col-12">
                         <label id="lbGhiChu" for="txtGhiChu" class="form-label">Lý do</label>
                         <input type="text" id="txtGhiChu" class="form-control" placeholder="Nhập lý do" />
                     </div>
-                </div>
+                </div>*@
                 <div class="row">
                     <div class="col-12">
                         <label id="lbTinhTrang" for="DropTinhTrang_Duyet" class="form-label">Tình trạng xét duyệt (*)</label>
                         <select id="DropTinhTrang_Duyet" class="form-control select2" data-no-search>
                             <option value="">--- Chọn tình trạng --- </option>
-                            <option value="2">Hoạt động (đang làm việc) </option>
-                            <option value="3">Từ chối duyệt (nghỉ việc) </option>
+                            <option value="2">Đã duyệt(Đang tuyển)</option>
+                            <option value="3">Hoàn thành</option>
+                            <option value="4">Từ chối duyệt</option>
                         </select>
                     </div>
                 </div>
@@ -170,8 +160,7 @@
                         <label class="col-form-label" id="LuuY">Lưu ý</label>
                     </div>
                     <div class="col-12">
-                        <p><i>- Nếu xét duyệt với tình trạng Từ chối duyệt (nghỉ việc) thì thông tin lý do sẽ được lưu vào phần ghi chú của nhân sự!</i></p>
-                        <p><i>- Tình trạng sử dụng tài khoản của nhân sự cũng sẽ thay đổi theo tình trạng của hồ sơ xét duyệt!</i></p>
+                        <p><i>- Khi yêu cầu tuyển dụng được chuyển sang trạng thái hoàn thành bạn sẽ không thể thay đổi được thông tin</i></p> 
                     </div>
                 </div>
             </div>
@@ -188,60 +177,12 @@
 </div>
 <!-- end modal-->
 
-<!-- Modal bổ sung NS -->
-<div class="modal fade" id="staticBackdrop_BoSungNS" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel_BSNS">Thêm mới yêu cầu bổ sung nhân sự</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <label id="lbGhiChu" for="txtGhiChu" class="form-label">Lý do</label>
-                        <input type="text" id="txtGhiChu" class="form-control" placeholder="Nhập lý do" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <label id="lbTinhTrang" for="DropTinhTrang_Duyet" class="form-label">Tình trạng xét duyệt (*)</label>
-                        <select id="DropTinhTrang_Duyet" class="form-control select2" data-no-search>
-                            <option value="">--- Chọn tình trạng --- </option>
-                            <option value="2">Hoạt động (đang làm việc) </option>
-                            <option value="3">Từ chối duyệt (nghỉ việc) </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row my-3">
-                    <div class="col-12 text-primary" style="font-size: large">
-                        <i class="bi bi-info-circle-fill"></i>
-                        <label class="col-form-label" id="LuuY">Lưu ý</label>
-                    </div>
-                    <div class="col-12">
-                        <p><i>- Nếu xét duyệt với tình trạng Từ chối duyệt (nghỉ việc) thì thông tin lý do sẽ được lưu vào phần ghi chú của nhân sự!</i></p>
-                        <p><i>- Tình trạng sử dụng tài khoản của nhân sự cũng sẽ thay đổi theo tình trạng của hồ sơ xét duyệt!</i></p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark me-2"></i>Đóng
-                </button>
-                <button type="button" class="btn btn-success" id="btnSave">
-                    <i class="bi bi-floppy me-2"></i>Duyệt
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end modal-->
 @section Scripts {
-    <script src="~/JS/NhanSu/ListNhanSu.js"></script>
+    <script src="~/JS/NhanSu/ListTuyenDung.js"></script>
     <script>
         $(document).ready(function () {
-            var ListNhanSuInstance = new ListNhanSu();
-            ListNhanSuInstance.init();
+            var ListTuyenDungInstance = new ListTuyenDung();
+            ListTuyenDungInstance.init();
         });
     </script>
 }

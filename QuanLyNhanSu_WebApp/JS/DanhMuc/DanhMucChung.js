@@ -5,8 +5,10 @@ Category.prototype = {
     StatusId_Edit: 1,
     CongTyId: '',
     userName: '',
+    tkcosoId: '',
     RecoverMode: false,
-    jsValid: '#txtMaDanhMuc, #txtTenDanhMuc',
+    jsValid_AD: '#txtMaDanhMuc, #txtTenDanhMuc',
+    jsValid: '#txtMaDanhMuc, #txtTenDanhMuc,#editDropDanhMuc',
     session: {},
 
     StatusCode: Object.freeze({
@@ -29,12 +31,17 @@ Category.prototype = {
         var me = this; 
         me.roleId = Core.roleId; 
         me.CongTyId = Core.companyId;
+        me.tkcosoId = Core.tkcosoId;
         if (me.roleId != 90) {
             $('#zone_company').hide();
         } 
         Core.loadDrop_Company('searchDropCongTy', 'Chọn công ty', '');
         me.loadDrop_TenDanhMuc('searchDropDanhMuc', 'Chọn danh mục', '');
         me.loadDrop_TenDanhMuc('editDropDanhMuc', 'Chọn danh mục', '');
+        if ((me.roleId == 3) || (me.roleId == 4)) {
+            $("#btnThemMoi").prop('hidden', true);
+            $("#btnRecycleBin").prop('hidden', true);
+        }
         this.filterCategory();
     },
     init_event: function () {
@@ -48,10 +55,16 @@ Category.prototype = {
         }); 
         $("#btnThemMoi").on("click", function () {
             me.resetPopup();
+            $("#myModalLabel").html("Thêm mới danh mục");
         }); 
         $("#btnSave").click(function (e) {
             e.preventDefault();
-            var valid = Core.validateRequiredFields(me.jsValid);
+            var valid;
+            if (me.roleId === 99) {
+                valid = Core.validateRequiredFields(me.jsValid_AD);
+            } else {
+                valid = Core.validateRequiredFields(me.jsValid);
+            }
             if (valid == true) {
                 me.save(0);
             }
@@ -79,7 +92,7 @@ Category.prototype = {
                     me.Id = id;
                     me.getDataById(id);
                     $("#staticBackdrop").modal('show');
-                    $("#myModalLabel").html("Cập nhật cơ sở");
+                    $("#myModalLabel").html("Cập nhật danh mục");
                     break;
                 case 'delete':
                     Core.showModal_Confirm('Thông báo', 'Bạn có chắc chắn muốn xóa vào thùng rác?');
@@ -138,6 +151,14 @@ Category.prototype = {
                 $(this).attr('checked', checked_status);
                 $(this).prop('checked', checked_status);
             });
+        });
+        $('#editDropDanhMuc').on('change', function () {
+            var selectedValue = $(this).val();
+            if (selectedValue == 'AFE9D16B-A8FA-454D-8E1F-873491A092D8') { 
+                $('#row_check').prop('hidden', false);
+            } else {
+                $('#row_check').prop('hidden', true);
+            }
         }); 
          
     },
@@ -162,7 +183,8 @@ Category.prototype = {
             Keyword: $("#txtKeyword").val() || '',
             TinhTrang: $("#DropCapDM").val(),
             PhanLoaiDM: $("#searchDropDanhMuc option:selected").attr("name"),
-            tbl_CompanyId: (me.roleId === 90) ? $("#searchDropCongTy").val() : '',  
+            tbl_CompanyId: (me.roleId === 90) ? '' : me.CongTyId,  
+            tbl_CoSoId: (me.roleId === 90) ? '' : me.tkcosoId,  
             StatusId: $("#DropTrangThai").val() || -1,
         }; 
 
@@ -180,7 +202,7 @@ Category.prototype = {
             "serverSide": true,
             "destroy": true,
             "ajax": {
-                "url": '/Category/FilterCategory',
+                "url": '/Category/FilterPrivate_Category',
                 "type": 'POST',
                 "data": function (d) {
                     $.extend(d, jsonData);
@@ -212,30 +234,55 @@ Category.prototype = {
                 { "data": "Note", "className": "text-center" },
                 {
                     "mData": "Id",
-                    "mRender": function (data) {
-                        var dropdown = '<a title="Sao chép" id="' + data + '" type="copy" class="action-icon text-success btnNhanBan" href="javascript:void(0);"><i class="fa-regular fa-copy"></i></a>';  
+                    "mRender": function (data, type, row) {
+                        var isDisabled = (me.roleId != 99 && !row.tbl_CompanyId) || (me.roleId == 3) || (me.roleId == 4);
+                        var disableClass = 'disabled';
+                        var ariaDisabled = 'aria-disabled="true"';
+                        var dropdown = '<div class="atp-nowrap">';
+                        if (isDisabled) {
+                            dropdown += '<a title="Sao chép" id="' + data + '" class="action-icon-disabled text-muted btnNhanBan ' + disableClass + '" href="javascript:void(0);" ' + ariaDisabled + '><i class="fa-regular fa-copy"></i></a>';
+                        } else {
+                            dropdown += '<a title="Sao chép" id="' + data + '" type="copy" class="action-icon text-success btnNhanBan" href="javascript:void(0);"><i class="fa-regular fa-copy"></i></a>';
+                        }
+                        dropdown += '</div>';
+                        return dropdown;
+                    }
+                },
+                {
+                    "mData": "Id",
+                    "mRender": function (data, type, row) {
+                        var isDisabled = (me.roleId != 99 && !row.tbl_CompanyId) || (me.roleId == 3) || (me.roleId == 4);
+                        var disableClass = 'disabled';
+                        var ariaDisabled = 'aria-disabled="true"';
+                        var dropdown = '<div class="atp-nowrap">';
+                        if (isDisabled) {
+                            dropdown += '<a title="Chỉnh sửa" id="' + data + '" class="action-icon-disabled text-muted btnSua ' + disableClass + '" href="javascript:void(0);" ' + ariaDisabled + '><i class="fa-regular fa-pen-to-square"></i></a>';
+                        } else {
+                            dropdown += '<a title="Chỉnh sửa" id="' + data + '" type="edit" class="action-icon text-success btnSua" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';
+                        }
+                        dropdown += '</div>';
                         return dropdown;
                     }
                 }
                 ,
                 {
                     "mData": "Id",
-                    "mRender": function (data) {
-                        var dropdown = '<a title="Chỉnh sửa" id="' + data + '" type="edit" class="action-icon text-success btnSua" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';  
-                        return dropdown;
-                    }
-                }
-                ,
-                {
-                    "mData": "Id",
-                    "mRender": function (data) {
+                    "mRender": function (data, type, row) {
                         var str = '<div class="atp-nowrap">';
-                        if (!me.RecoverMode) {
-                            str += '<a title="Xóa dữ liệu" id="' + data + '" type="delete" class="action-icon text-success btnXoa" href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>';
+                        if ((me.roleId != 99 && !row.tbl_CompanyId) || (me.roleId == 3) || (me.roleId == 4)) {
+                            if (!me.RecoverMode) {
+                                str += '<a title="Xóa dữ liệu" id="' + row.Id + '"  class="action-icon-disabled text-muted btnXoa disabled" href="javascript:void(0);" aria-disabled="true"><i class="fa-solid fa-trash"></i></a>';
+                            } else {
+                                str += '<a title="Khôi phục dữ liệu" id="' + row.Id + '" class="action-icon-disabled text-success btnKhoiPhuc disabled" href="javascript:void(0);" aria-disabled="true"><i class="fa-solid fa-rotate-right"></i></a>';
+                            }
+                        } else {
+                            if (!me.RecoverMode) {
+                                str += '<a title="Xóa dữ liệu" id="' + row.Id + '" type="delete" class="action-icon text-success btnXoa" href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>';
+                            } else {
+                                str += '<a title="Khôi phục dữ liệu" id="' + row.Id + '" type="recover" class="action-icon text-success btnKhoiPhuc" href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>';
+                            }
                         }
-                        else {
-                            str += '<a title="Khôi phục dữ liệu" id="' + data + '" type="recover" class="action-icon text-success btnKhoiPhuc" href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>';
-                        }
+                        str += '</div>';
                         return str;
                     }
                 },
@@ -286,13 +333,16 @@ Category.prototype = {
         let TenDanhMuc = $("#txtTenDanhMuc").val();
         let chkLoaiDM = $("#editDropDanhMuc").val();
         let LoaiDM = $("#editDropDanhMuc option:selected").attr("name");
+        let valchk = document.getElementById("chkDanhMuc").checked ? 3 : 0;
         console.log(LoaiDM, 'kkkkk')
         let GhiChu = $("#txtGhiChu").val(); 
         let jsonData = {
             'Name': MaDanhMuc,
             'MoTa': TenDanhMuc,
             'Note': GhiChu,
+            'RoleId': valchk,
             'tbl_CompanyId': me.CongTyId,
+            'tbl_CoSoId': me.tkcosoId,
             'CreatedBy': Core.userName,
             'PhanLoaiDM': chkLoaiDM ? LoaiDM : MaDanhMuc,
             'TinhTrang': chkLoaiDM ? 9 : 10,
@@ -319,7 +369,7 @@ Category.prototype = {
                     me.resetSearch(); 
                     
                     if (action == 1) {
-                        $("#myModalLabel").html("Thêm cơ sở");
+                        $("#myModalLabel").html("Thêm danh mục");
                         me.resetPopup();
                     }
                     else {
@@ -356,16 +406,18 @@ Category.prototype = {
             success: function (response) {
                 if (response.Success) {
                     var obj = response.Data;
-                    console.log(obj)
-                    if (obj != null) {
-                        try { 
-                            $("#txtMaDanhMuc").val(obj.Name);  
-                            $("#editDropDanhMuc").val(obj.DanhMucChaId);
-                            $("#txtTenDanhMuc").val(obj.MoTa);
-                            $("#txtGhiChu").val(obj.Note);
-                        } catch (error) {
-                            console.error('Error accessing property:', error);
-                            Core.showToast('Lỗi: Một số thuộc tính không có trong dữ liệu trả về', 'danger');
+                    console.log(obj) 
+                    if (obj != null) { 
+                        $("#txtMaDanhMuc").val(obj[0].Name);  
+                        $("#editDropDanhMuc").val(obj[0].DanhMucChaId);
+                        $("#txtTenDanhMuc").val(obj[0].MoTa);
+                        $("#txtGhiChu").val(obj[0].Note);
+
+                        if (obj[0].PhanLoaiDM == 'DMCV') {
+                            $('#row_check').prop('hidden', false);
+                        }
+                        if (obj[0].RoleId != 0) {
+                            $("#chkDanhMuc").prop('checked', true);
                         }
                     }
                     else {

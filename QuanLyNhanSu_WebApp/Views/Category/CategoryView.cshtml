@@ -61,15 +61,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                @*nút mở rộng tk*@
-                <div class="col-lg-12" style="text-align: right">
-                    <button id="btnAnDieuKien" type="button" class="btn btn-link text-decoration-none text-success"
-                            style="padding-right: 0px; padding-top: 0px;">
-                        <i class="fa-solid fa-arrow-down-wide-short me-1"></i>Hiển thị thêm
-                    </button>
-                </div>
-
+                </div>  
                 <!--action search-->
                 <div class="row mb-2">
                     <div class="col-sm-5 col-6">
@@ -122,7 +114,7 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Thêm mới danh mục Danh mục chung</h4>
+                <h4 class="modal-title" id="myModalLabel">Thêm mới Danh mục chung</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body">
@@ -144,7 +136,13 @@
                         <select id="editDropDanhMuc" class="form-control select2" data-placeholder="Chọn danh mục">
                         </select>
                     </div>
-                </div> 
+                </div>
+                <div class="row mt-2" hidden="hidden" id="row_check">
+                    <div class="col-12">
+                        <label for="chkDanhMuc" class="form-check-label me-2">Vai trò cấp quản lý</label>
+                        <input type="checkbox" id="chkDanhMuc" class="form-check-input" />
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-12">
                         <label id="lbGhiChu" for="txtGhiChu" class="form-label">Mô tả</label>

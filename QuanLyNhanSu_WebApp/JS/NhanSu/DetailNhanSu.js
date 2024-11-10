@@ -4,10 +4,18 @@ DetailNhanSu.prototype = {
     roleId: '',
     StatusId_Edit: 1,
     CongTyId: '',
+    tkcosoId: '',
+    tkphongbanId: '',
     userName: '',
     RecoverMode: false,
-    jsValid: '#txtMaNhanVien, #txtHoTen, #txtNgaySinh, #txtEmail, #txtSDT, #txtDiaChiQue, #txtSoCCCD, #DropGioiTinh, #DropHocVan, #DropDanToc, #DropTonGiao, #DropQueQuan_Tinh, #DropQueQuan_Huyen, #DropHienTai_Tinh, #DropHienTai_Huyen, #DropChucVu, #DropPhongBan, #DropCoSo, #DropNoiCapCCCD_Tinh',
-    session: {},
+    jsValid: '#txtHoTen, #txtNgaySinh, #txtEmail, #txtSDT, #txtDiaChiQue,  #txtDiaChiHienTai, #txtSoCCCD,  #DropGioiTinh, #DropHocVan, #DropDanToc, #DropTonGiao, #DropQueQuan_Tinh, #DropQueQuan_Huyen, #DropHienTai_Tinh, #DropHienTai_Huyen, #DropChucVu,  #DropNoiCapCCCD_Tinh', /*, #DropCoSo,#DropPhongBan,*/
+    session: '',
+    queQuanHuyenId: '',
+    hienTaiHuyenId: '',
+    type: '',
+    TuyenDungId: '',
+    TT_HoSoNS: '',
+    tkC3: '',
 
     StatusCode: Object.freeze({
         Actived: 1, 
@@ -15,29 +23,56 @@ DetailNhanSu.prototype = {
     }),
     init: function () {
         this.init_data();
+        this.init_bfLoad();
         this.init_event();
         this.init_action();
     },
     init_data: function () {
         var me = this; 
-        me.Id = Core.exportValueUrl('id');
+        me.Id = Core.exportValueUrl('id'); 
+        me.type = Core.exportValueUrl('type'); 
+        me.TuyenDungId = Core.exportValueUrl('TuyenDungId'); //check xem có phải là hồ sơ tuyển dụng không để thêm mới trạng thái tuyển dụng
         me.roleId = Core.roleId; 
-        me.CongTyId = Core.companyId; 
-        Core.loadDrop_CoSo('DropCoSo', 'Chọn công ty', '');
+        me.CongTyId = Core.companyId;   
+        me.tkcosoId = Core.tkcosoId;   
+        me.tkphongbanId = Core.tkphongbanId;
+        me.tkC3 = Core.tkC3;
+        Core.loadDrop_CoSo('DropCoSo', 'Chọn cơ sở', ''); 
+        Core.loadDrop_Category('DropDanToc', 'Chọn dân tộc', '', 'DMDT', 9);
+        Core.loadDrop_Category('DropHocVan', 'Chọn học vấn', '', 'DMHV', 9);
         Core.loadDrop_PhongBan('DropPhongBan', 'Chọn phòng ban', '');
-        Core.loadDrop_Category('DropDanToc', 'Chọn dân tộc', '', 'DMDT', 9); 
-        Core.loadDrop_Category('DropHocVan', 'Chọn học vấn', '', 'DMHV', 9); 
-        Core.loadDrop_Category('DropTonGiao', 'Chọn Tôn giáo', '', 'DMTG', 9); 
-        Core.loadDrop_Category('DropChucVu', 'Chọn chức vụ', '', 'DMCV', 9); 
-
-        Core.loadDrop_DiaChi('DropQueQuan_Tinh', 'Tinh', ''); 
-        Core.loadDrop_DiaChi('DropHienTai_Tinh', 'Tinh', ''); 
+        Core.loadDrop_Category('DropTonGiao', 'Chọn Tôn giáo', '', 'DMTG', 9);
+        Core.loadDrop_Category('DropChucVu', 'Chọn chức vụ', '', 'DMCV', 9);
+        Core.loadDrop_DiaChi('DropHienTai_Tinh', 'Tinh', '');
+        //Core.loadDrop_DiaChi('DropHienTai_Huyen', '', '');
+        Core.loadDrop_DiaChi('DropQueQuan_Tinh', 'Tinh', '');
+        //Core.loadDrop_DiaChi('DropQueQuan_Huyen', '', '');
         Core.loadDrop_DiaChi('DropNoiCapCCCD_Tinh', 'Tinh', '');
-        Core.loadDrop_DiaChi('DropHienTai_Huyen', '', '');
-        Core.loadDrop_DiaChi('DropQueQuan_Huyen', '', '');
+         
+        if (me.Id) { 
+            setTimeout(function () {
+                me.getDataById(me.Id);
+            }, 1050);  
+        }
+        if (me.TuyenDungId) { 
+            setTimeout(function () {
+                me.getData_ByTuyenDungId(me.TuyenDungId);
+            }, 1050);  
+        }  
+        me.disableByRoleId(); 
 
-        me.Id ? me.getDataById(me.Id) :
-        this.filterNhanSu();
+    },
+    init_bfLoad: function () {
+        var me = this;  
+        if (me.tkcosoId) {
+            var checkDropdown = setInterval(function () {
+                if ($("#DropCoSo option").length > 0) {
+                    $("#DropCoSo").val(me.tkcosoId).trigger('change');
+                    clearInterval(checkDropdown);
+                }
+                $("#DropCoSo").prop('disabled', true);
+            }, 100);
+        } 
     },
     init_event: function () {
         var me = this;
@@ -45,54 +80,108 @@ DetailNhanSu.prototype = {
             e.preventDefault();
             var valid = Core.validateRequiredFields(me.jsValid);
             if (valid == true) {
-                me.save(0);
+                me.save();
             }
             else {
                 Core.showToast('Vui lòng không bỏ trống các trường có dấu (*)!', 'warning');
             }
         });
-        $("#btnSaveAndNew").click(function (e) {
-            e.preventDefault();
-            var valid = Core.validateRequiredFields(me.jsValid);
-            if (valid == true) {
-                me.save(1);
+        $("#btnBack_T").click(function (e) {
+            if (me.TuyenDungId) {
+                window.open('/TuyenDung/DetailTuyenDungView?id=' + me.TuyenDungId, '_self');
+            } else {
+                window.open('/NhanSu/ListNhanSuView', '_self');
             }
-            else {
-                Core.showToast('Vui lòng không bỏ trống các trường có dấu (*)!', 'warning');
-            }
-        });  
+        });
+        $("#btnReset_T").click(function (e) { 
+            me.reset(); 
+        });
+        $("#btnThemMoi_T").click(function (e) {
+            window.open('/NhanSu/DetailNhanSuView', '_self');
+        }); 
         $('#imageUpload').on('change', function (event) {
             me.previewImage(event);
         }); 
+        $('#DropCoSo').on('change', function () {
+            var selectedValue = $(this).val();  
+            if (selectedValue) {  
+                $('#DropPhongBan').prop('disabled', false);
+                if (me.type == 'HSTD' || ((me.roleId == 4) && (me.type != 'HSTD'))) {
+                    $('#DropPhongBan').prop('disabled', true);
+                }
+            } else {
+                $('#DropPhongBan').prop('disabled', true);  
+            }
+        });
+
         $('#DropQueQuan_Tinh').on('change', function () {
             var selectedOption = $(this).find('option:selected');
-            var selectedValue = selectedOption.attr('name');
+            var selectedValue = selectedOption.attr('name'); 
             if (selectedValue) {
-                $("#DropQueQuan_Huyen").prop('disabled', false)
+                if ($("#DropQueQuan_Tinh").is(":disabled")) {  
+                    $("#DropQueQuan_Huyen").prop('disabled', true);
+                } else {
+                    $("#DropQueQuan_Huyen").prop('disabled', false); 
+                }
+                Core.loadDrop_DiaChi_callback('DropQueQuan_Huyen', selectedValue, '', function () {
+                    if (me.queQuanHuyenId) {
+                        $("#DropQueQuan_Huyen").val(me.queQuanHuyenId).trigger('change');
+                        me.queQuanHuyenId = null; // Reset sau khi đã sử dụng
+                    }
+                });
             }
-            Core.loadDrop_DiaChi('DropQueQuan_Huyen', selectedValue, '');
         });
 
         $('#DropHienTai_Tinh').on('change', function () {
             var selectedOption = $(this).find('option:selected');
             var selectedValue = selectedOption.attr('name');
             if (selectedValue) {
-                $("#DropHienTai_Huyen").prop('disabled', false)
+                $("#DropHienTai_Huyen").prop('disabled', false);
+                Core.loadDrop_DiaChi_callback('DropHienTai_Huyen', selectedValue, '', function () {
+                    if (me.hienTaiHuyenId) {
+                        $("#DropHienTai_Huyen").val(me.hienTaiHuyenId).trigger('change');
+                        me.hienTaiHuyenId = null; // Reset sau khi đã sử dụng
+                    }
+                });
             }
-            Core.loadDrop_DiaChi('DropHienTai_Huyen', selectedValue, '');
         });
+
+        $('#DropChucVu').on('change', function () {
+            var selectedValue = $(this).val();
+            var selectedName = $(this).find("option:selected").attr("name");
+
+            if (selectedName === 'PTGD') {
+                $('#zone_phongban, #z_CoSo').prop('hidden', true);
+                $("#DropPhongBan").val('').trigger('change');
+                $("#DropCoSo").val('').trigger('change');
+
+            } else if (selectedName === 'GD' || selectedName === 'PGD') {
+                $('#zone_phongban').prop('hidden', true);
+                $('#z_CoSo').prop('hidden', false);
+                $("#DropPhongBan").val('').trigger('change'); 
+            } else {
+                $("#DropCoSo").val(me.tkcosoId).trigger('change');
+                $('#zone_phongban, #z_CoSo').prop('hidden', false);
+            }
+            role = $("#DropChucVu").find("option:selected").attr("name");
+            
+            console.log(selectedValue, selectedName, role);
+        });
+
     },
     init_action: function () {
         var me = this;
-    }, 
-
+    },  
     previewImage: function (event) {
         const imageContainer = $('#imageContainer');
-        const uploadButton = $('#uploadButton');
+        const imagePreview = $('#imagePreview');
         const file = event.target.files[0];
 
         if (file) {
-            // Tạo phần tử img để hiển thị ảnh
+            // Xóa ảnh cũ nếu có
+            imagePreview.empty();
+
+            // Tạo phần tử img để hiển thị ảnh mới
             const img = $('<img>').attr('src', URL.createObjectURL(file))
                 .css({
                     'width': '100%',
@@ -103,176 +192,14 @@ DetailNhanSu.prototype = {
                     'left': '0'
                 });
 
-            // Ẩn nút "Chọn ảnh" và thêm ảnh vào khung
-            imageContainer.append(img);
-
-            // Giữ nút "Chọn ảnh" hiển thị nhưng cho nó độ mờ
-            uploadButton.addClass('opacity-50');
+            // Thêm ảnh vào khung preview
+            imagePreview.append(img);
         }
     },
-    /*CRUD*/
-    filterNhanSu: function () {
+    /*CRUD*/ 
+    save: function () {
         var me = this;
-        if ($("#DropTrangThai").val() != 1) {
-            $('#btnRecycleBin').html('<i class="fa-solid fa-rotate-right me-1"></i> Khôi phục');  
-            $('#lbXoa').html('KP');
-            me.RecoverMode = true;
-        } else {
-            $('#btnRecycleBin').html('<i class="fa-solid fa-trash-can me-1"></i> Thùng rác'); 
-            $('#lbXoa').html('Xóa');
-            me.RecoverMode = false;
-        }; 
-        var jsonData = {
-            TenNhanSu: $("#searchTenNhanSu").val() || '',
-            tbl_CompanyId: ((me.roleId === 1) || (me.roleId === 90)) ? $("#searchDropCongTy").val() || '' : '', 
-            tbl_CoSoId: ((me.roleId === 1) || (me.roleId === 90)) ? $("#searchDropCoSo").val() || '' : '', 
-            TinhTrang: $("#DropTinhTrang_search").val() || -1,
-            StatusId: $("#DropTrangThai").val() || -1,
-        };
-
-        // Tách cấu hình DataTables
-        var dtConfig = {
-            "paging": true,
-            "pageLength": 10,
-            "lengthChange": true,
-            "searching": false,
-            "ordering": false,
-            "info": true,
-            "autoWidth": false,
-            "processing": true,
-            "serverSide": true,
-            "destroy": true,
-            "ajax": {
-                "url": '/NhanSu/FilterNhanSu',
-                "type": 'POST',
-                "data": function (d) {
-                    $.extend(d, jsonData);
-                    d.pageIndex = d.start / d.length + 1;
-                    d.pageSize = d.length;
-                    return d;
-                },
-                "dataFilter": function (data) {
-                    var json = JSON.parse(data);
-                    json.recordsTotal = json.TotalRows;
-                    json.recordsFiltered = json.TotalRows;
-                    json.data = json.Data;
-                    return JSON.stringify(json);
-                }
-            },
-            "aoColumnDefs": [{
-                'bSortable': false,
-                'aTargets': [6, 7, 8]
-            },
-            {
-                className: "dt-body-center", "targets": [1, 2, 3, 4, 5, 6, 7, 8]
-            }
-            ],
-            "columns": [
-                { "data": "Id", "visible": false },   
-                { "data": "RowNum", "className": "text-center" },
-                { "data": "MaNhanSu", "className": "text-center" },
-                { "data": "TenNhanSu", "className": "text-center" },
-                { "data": "tbl_CoSoName" },
-                { "data": "tbl_NhanSuName", "className": "text-center" },
-                {
-                    "data": null,
-                    "className": "text-center",
-                    "render": function (data, type, row) {
-                        var badgeClass = '';
-                        var badgeText = '';
-                        switch (row.TinhTrang) {
-                            case 1:  
-                                badgeClass = 'badge rounded-pill border border-primary text-primary fs-7';  
-                                badgeText = 'Đang khởi tạo';
-                                break;
-                            case 2:  
-                                badgeClass = 'badge rounded-pill border border-success text-success fs-7';  
-                                badgeText = 'Đang hoạt động';
-                                break;
-                            case 3:  
-                                badgeClass = 'badge rounded-pill border border-danger text-danger fs-7';  
-                                badgeText = 'Dừng hoạt động';
-                                break;
-                            default:
-                                badgeClass = 'badge rounded-pill border border-warning text-warning fs-7'; 
-                                badgeText = 'Không xác định';
-                        }
-
-                        return `<h4><span title="Tình trạng của cơ sở" class="${badgeClass}">${badgeText}</span></h4>`;
-                    }
-                },
-                {
-                    "mData": "Id",
-                    "mRender": function (data) {
-                        var dropdown = '<a title="Sao chép" id="' + data + '" type="copy" class="action-icon text-success btnNhanBan" href="javascript:void(0);"><i class="fa-regular fa-copy"></i></a>';  
-                        return dropdown;
-                    }
-                }
-                ,
-                {
-                    "mData": "Id",
-                    "mRender": function (data) {
-                        var dropdown = '<a title="Chỉnh sửa" id="' + data + '" type="edit" class="action-icon text-success btnSua" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';  
-                        return dropdown;
-                    }
-                }
-                ,
-                {
-                    "mData": "Id",
-                    "mRender": function (data) {
-                        var str = '<div class="atp-nowrap">';
-                        if (!me.RecoverMode) {
-                            str += '<a title="Xóa dữ liệu" id="' + data + '" type="delete" class="action-icon text-success btnXoa" href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>';
-                        }
-                        else {
-                            str += '<a title="Khôi phục dữ liệu" id="' + data + '" type="recover" class="action-icon text-success btnKhoiPhuc" href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>';
-                        }
-                        return str;
-                    }
-                },
-                {
-                    "data": null,
-                    "render": function (data, type, row) {
-                        return '<input type="checkbox" class="form-check-input" id="category' + row.Id + '" name="category' + row.Id + '" data-trang-thai="' + row.TinhTrang + '">';
-                    },
-                    "className": "text-center"
-                }
-            ],
-            "drawCallback": function (settings) {
-                $("#loading-spinner").hide();
-                // Đảm bảo cột ID luôn ẩn sau khi vẽ lại bảng
-                var api = this.api();
-                api.column(0).visible(false);
-            },
-            "language": {
-                "search": "Tìm kiếm theo từ khóa:",
-                "lengthMenu": "Hiển thị _MENU_ dữ liệu",
-                "zeroRecords": "Không có dữ liệu nào được tìm thấy!",
-                "info": "Hiển thị _START_ đến _END_ trong _TOTAL_ dữ liệu",
-                "infoEmpty": "Hiển thị 0 đến 0 của 0 dữ liệu",
-                "infoFiltered": "(Dữ liệu tìm kiếm trong _MAX_ dữ liệu)",
-                "processing": "Đang tải dữ liệu...",
-                "emptyTable": "Không có dữ liệu nào được tìm thấy!",
-                "paginate": {
-                    "first": "Đầu",
-                    "last": "Cuối",
-                    "next": "Tiếp theo",
-                    "previous": "Quay lại"
-                }
-            },
-            "initComplete": function (settings, json) {
-                // Đảm bảo cột ID luôn ẩn sau khi khởi tạo
-                var api = this.api();
-                api.column(0).visible(false);
-            }
-        };
-
-        $("#loading-spinner").show();
-        var table = $('#tbldata').DataTable(dtConfig);
-         
-    },
-    save: function (action) {
-        var me = this; 
+        //let MaNhanVien = $("#DropPhongBan").find("option:selected").attr("name");
         let MaNhanVien = $("#txtMaNhanVien").val();
         let HoTen = $("#txtHoTen").val();
         let NgaySinh = $("#txtNgaySinh").val();
@@ -295,9 +222,85 @@ DetailNhanSu.prototype = {
         let tbl_PhongBanId = $("#DropPhongBan").val();
         let tbl_CoSoId = $("#DropCoSo").val();
         let tblCategory_NoiCap_TinhId = $("#DropNoiCapCCCD_Tinh").val();
-         
+        let tinhTrang_HSNS =  $('#bd_TrangThaiNS').data('value'); 
+        let tinhTrang;  // Declare in the outer scope
+        let definePhongBan = $("#DropPhongBan").val();
+        var definedrole = $("#DropChucVu").find("option:selected").attr("role");
+        var role;
+        let valName = $("#DropChucVu").find("option:selected").attr("name");
+        switch (valName) {
+            case 'PTGD':
+                role = 1;
+                break;
+            case 'GD':
+            case 'PGD':
+                role = 2;
+                break;
+            case 'TP':
+            case 'PP':
+                role = 3;
+                break;
+            case 'NS':
+            case 'NSPT':
+            case 'NSTV':
+                role = 4;
+                break;
+        }
+        if (!role) {
+            if (!tbl_CoSoId) { role = 1; }
+            else if (!tbl_PhongBanId) { role = 2; }
+            else {
+                if (definedrole == 3) {
+                    role = 3;
+                } else { role = 4; }
+            }
+        }
+
+        if (me.Id) {
+            if (me.type == 'copy') {
+                if (me.roleId == 1 || me.roleId == 99 || me.roleId == 2) {
+                    tinhTrang = 2;
+                } else {
+                    tinhTrang = 1;
+                }
+                
+            }
+            else if (me.type == 'HSTD') {
+                tinhTrang = 0;
+            }
+            else {
+                tinhTrang = tinhTrang_HSNS || 1;
+            }
+        }
+        else {
+            if (me.roleId == 99 || me.roleId == 1 || me.roleId == 2) {
+                tinhTrang = 2;
+            } else {
+                tinhTrang = 1;
+            }
+        } 
+        var defind;
+        if (me.type) {
+            if (me.type == 'HSTD') {
+                defind = me.Id;
+            } else {
+                defind = '';
+            }
+        } else {
+            defind = me.Id;
+        }
+        var ma;
+        if (me.type) {
+            if (me.Id && (me.type == 'HSTD')) {
+                ma = MaNhanVien;
+            } else {
+                ma = '';
+            }
+        } else {
+            ma = MaNhanVien;
+        }
         let jsonData = {
-            'MaNhanVien': MaNhanVien,
+            'MaNhanVien': ma,
             'HoTen': HoTen,
             'GioiTinh': GioiTinh,
             'NgaySinh': NgaySinh,
@@ -320,17 +323,20 @@ DetailNhanSu.prototype = {
             'Note': Note, 
             'tbl_CompanyId': me.CongTyId, 
             'CreatedBy': Core.userName,
-            'TinhTrang':  1,
-            'StatusId': me.StatusId_Edit,
-            'Id': me.Id,
+            'TinhTrang': tinhTrang,
+            'StatusId': me.StatusId_Edit, 
+
+            'RoleId': role,
+            'C3': (definePhongBan === 'D0D7A8A7-9452-4470-81A6-ADDC2A9FB73C' || !definePhongBan) ? 'NHANSU' : '-1', // dùng tạm
+
+            'Id': defind, //me.type để xác định xem id tuyển dụng có khác id nhân sự không 
         };
-         
-         
-        if (action == 0) {
-            Core.startButtonLoading("btnSave");
-        } else {
-            Core.startButtonLoading("btnSaveAndNew");
+        if (me.TuyenDungId) {
+            jsonData['TinhTrangHoSoTD'] = $('#bd_TrangThaiTD').data('value') || 1;
+            jsonData['tbl_TuyenDungId'] = me.TuyenDungId;
         }
+          
+         Core.startButtonLoading("btnSave");
          
         $.ajax({
             type: 'POST',
@@ -341,15 +347,27 @@ DetailNhanSu.prototype = {
             success: function (response) {
                 if (response.Success) {
                     Core.showToast(response.Message, 'success');
-                    me.resetSearch();
-                    me.filterNhanSu();
-                    if (action == 1) {
-                        $("#myModalLabel").html("Thêm cơ sở");
-                        me.resetPopup();
-                    }
-                    else {
-                        $('#staticBackdrop').modal('hide');
-                    }
+                    if ((!me.TuyenDungId && !me.Id) || (me.Id && (me.type == 'copy'))) {
+                        Core.showModal_Confirm(
+                            'Thông báo',
+                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + Email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự được cấp trên xét duyệt!</span></em>'
+                        );
+                        $("#btnYes").click(function (e) {
+                            $('#modalconfirm').modal('hide');
+                            me.add_account();
+                        });
+                    } else if (me.type != 'HSTD' && me.roleId != 4) {
+                        Core.showModal_Confirm(
+                            'Thông báo',
+                            'Thành công! Đang chuyển hướng về trang danh sách...'
+                        );
+                        $('.modal-footer').hide();
+                        setTimeout(function () {
+
+                            window.open('/NhanSu/ListNhanSuView', '_self');
+
+                        }, 2500);
+                    } 
                 } else {
                     Core.showToast(response.Message, 'danger');
                 }
@@ -358,12 +376,8 @@ DetailNhanSu.prototype = {
                 console.log(error);
                 Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
             },
-            complete: function () { 
-                if (action == 0) {
-                    Core.stopButtonLoading("btnSave");
-                } else {
-                    Core.stopButtonLoading("btnSaveAndNew");
-                }
+            complete: function () {  
+                Core.stopButtonLoading("btnSave"); 
             }
         });
     },
@@ -383,6 +397,9 @@ DetailNhanSu.prototype = {
                     var obj = response.Data;
                     console.log(obj)
                     if (obj != null) {
+                        me.queQuanHuyenId = obj.tblCategory_Que_HuyenId;
+                        me.hienTaiHuyenId = obj.tblCategory_HienTai_HuyenId;
+
                         $("#txtMaNhanVien").val(obj.MaNhanVien);
                         $("#txtHoTen").val(obj.HoTen);
                         $("#txtNgaySinh").val(obj.NgaySinh);
@@ -401,10 +418,55 @@ DetailNhanSu.prototype = {
                         $("#DropQueQuan_Huyen").val(obj.tblCategory_Que_HuyenId).trigger('change');
                         $("#DropHienTai_Tinh").val(obj.tblCategory_HienTai_TinhId).trigger('change');
                         $("#DropHienTai_Huyen").val(obj.tblCategory_HienTai_HuyenId).trigger('change');
-                        $("#DropChucVu").val(obj.tbl_Category_ChucVuId).trigger('change'); 
+                        $("#DropChucVu").val(obj.tbl_Category_ChucVuId).trigger('change');
                         $("#DropPhongBan").val(obj.tbl_PhongBanId).trigger("change");
                         $("#DropCoSo").val(obj.tbl_CoSoId).trigger('change');
-                        $("#DropNoiCapCCCD_Tinh").val(obj.tblCategory_NoiCap_TinhId).trigger('change');
+                        $("#DropNoiCapCCCD_Tinh").val(obj.tblCategory_NoiCap_TinhId).trigger('change'); 
+                        $('#bd_TrangThaiNS').data('value', obj.TinhTrang);
+
+
+                        if (me.type == 'copy') {
+                            $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-primary');
+                            $('#bd_TrangThaiNS').text('Khởi tạo (chờ xét duyệt)');
+                        } else { 
+                            switch (obj.TinhTrang) {
+                                case 0:
+                                    $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-info');
+                                    $('#bd_TrangThaiNS').text('Trong quá trình tuyển dụng');
+                                    me.type = 'HSTD';
+                                    me.TuyenDungId = obj.tbl_TuyenDungId;
+                                    break;
+                                case 1:
+                                    $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-primary');
+                                    $('#bd_TrangThaiNS').text('Khởi tạo (chờ xét duyệt)');
+                                    break;
+                                case 2:
+                                    $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-success');
+                                    $('#bd_TrangThaiNS').text('Hoạt động (đang làm việc)');
+                                    if ((me.roleId != 1) && (me.roleId != 99)) { 
+                                        const idsToDisable = [
+                                            "txtHoTen", "txtNgaySinh", "DropGioiTinh",
+                                            "txtEmail", "DropDanToc",
+                                            "DropQueQuan_Tinh", "DropQueQuan_Huyen", "txtDiaChiQue",
+                                            "txtSoCCCD", "DropNoiCapCCCD_Tinh", "txtGhiChu",
+                                            "DropChucVu", "DropPhongBan", "DropCoSo"
+                                        ];
+
+                                        idsToDisable.forEach(id => {
+                                            $("#" + id).prop("disabled", true);
+                                        });
+                                    }
+                                    break;
+                                case 3:
+                                    $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-danger');
+                                    $('#bd_TrangThaiNS').text('Từ chối duyệt (nghỉ việc)');
+                                    break;
+                                default:
+                                    $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-warning');
+                                    $('#bd_TrangThaiNS').text('Không xác định');
+                                    break;
+                            }
+                        } 
                     }
                     else {
                         Core.showToast('Không có dữ liệu trả về', 'danger');
@@ -418,9 +480,161 @@ DetailNhanSu.prototype = {
                 Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
             }, 
         });
+    },  
+    getData_ByTuyenDungId: function (id) {
+        var me = this;
+        let jsonData = {
+            'Id': id 
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/TuyenDung/GetTuyenDungById',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    var obj = response.Data;
+                    console.log(obj)
+                    if (obj != null) { 
+
+                        $("#DropChucVu").val(obj.tbl_Category_ChucVuId).trigger('change');
+                        $("#DropPhongBan").val(obj.tbl_PhongBanId).trigger("change");
+                        $("#DropCoSo").val(obj.tbl_CoSoId).trigger('change'); 
+                        $('#bd_TrangThaiNS').data('value', obj.TinhTrang);
+
+                        $("#DropChucVu").prop('disabled', true);
+                        $("#DropPhongBan").prop('disabled', true);
+                        $("#DropCoSo").prop('disabled', true);
+                        $("#txtMaNhanVien").val('');    
+;
+                        $("#z_TrangThaiNS").prop('hidden', true);
+                        $("#z_TrangThaiTD").prop('hidden', false);  
+
+                        switch (obj.TinhTrangHoSoTD || 1) {
+                            case 1:
+                                $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-primary');
+                                $('#bd_TrangThaiTD').text('Nộp hồ sơ (Ứng tuyển)');
+                                break;
+                            case 2:
+                                $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-Info');
+                                $('#bd_TrangThaiTD').text('Ứng tuyển đạt (Chờ phỏng vấn)');
+                                break;
+                            case 3:
+                                $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-Secondary');
+                                $('#bd_TrangThaiTD').text('Kết thúc phỏng vấn (Chờ thông báo)');
+                                break;
+                            case 4:
+                                $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-success');
+                                $('#bd_TrangThaiTD').text('Kết quả đạt (Chờ xét duyệt)');
+                                break;
+                            case 5:
+                                $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-Danger');
+                                $('#bd_TrangThaiTD').text('Kết quả loại (Kết thúc)');
+                                break;
+                            default:
+                                $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-warning');
+                                $('#bd_TrangThaiTD').text('Không xác định');
+                                break; 
+                        }
+                    }
+                    else {
+                        Core.showToast('Không có dữ liệu trả về', 'danger');
+                    }
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            }, 
+        });
+    },  
+    add_account: function () {
+        var me = this;
+        let HoTen = $("#txtHoTen").val();
+        let Email = $("#txtEmail").val();
+        let tbl_PhongBanId = $("#DropPhongBan").val();
+        let tbl_CoSoId = $("#DropCoSo").val();
+        let tbl_Category_ChucVuId = $("#DropChucVu").val();
+        let valName = $("#DropChucVu").find("option:selected").attr("name");
+        let definePhongBan = $("#DropPhongBan").val();
+        var definedrole = $("#DropChucVu").find("option:selected").attr("role");
+        var role; 
+        switch (valName) {
+            case 'PTGD':
+                role = 1;
+                break;
+            case 'GD':
+            case 'PGD':
+                role = 2;
+                break;
+            case 'TP':
+            case 'PP':
+                role = 3;
+                break;
+            case 'NS':
+            case 'NSPT':
+            case 'NSTV':
+                role = 4;
+                break;
+        }
+        if (!role) {
+            if (!tbl_CoSoId) { role = 1; }
+            else if (!tbl_PhongBanId) { role = 2; }
+            else {
+                if (definedrole == 3) {
+                    role = 3;
+                } else { role = 4; }
+            }
+        }
+        
+        var jsonData =
+        {
+            'Name': HoTen,
+            'RoleId': role,
+            'Password': 'Abcdef1234.',
+            'Gmail': Email,
+            'CompanyId': Core.companyId,
+            'CoSoId': tbl_CoSoId || '', 
+            'PhongBanId': tbl_PhongBanId || '', 
+            'C3': (definePhongBan === 'D0D7A8A7-9452-4470-81A6-ADDC2A9FB73C' || !definePhongBan) ? 'NHANSU' : '-1', // dùng tạm
+            'ChucVuId': tbl_Category_ChucVuId,
+            'StatusId': (me.roleId == 99 || me.roleId == 1 || me.roleId == 2) ? 1 : 2,
+            'CreatedDate': new Date().toISOString(),
+            'CreatedBy': Core.userName,
+            'Id': '',
+        }; 
+        $.ajax({
+            type: 'POST',
+            url: '/Register/Save_NhanVien',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    Core.showToast(response.Message, 'success'); 
+                    Core.showModal_Confirm(
+                        'Thông báo',
+                        'Thành công! Đang chuyển hướng về trang danh sách...'
+                    );
+                    $('.modal-footer').hide();
+                    setTimeout(function () {
+
+                        window.open('/NhanSu/ListNhanSuView', '_self');
+
+                    }, 2500);
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                } 
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            }, 
+        });
     },
-
-
     update_capnhat_trangThai: function (str_Id, statusId) {
         var me = this;
         var jsonData =
@@ -439,8 +653,6 @@ DetailNhanSu.prototype = {
             success: function (response) {
                 if (response.Success) {
                     Core.showToast(response.Message, 'success'); 
-                    $('#tbldata').dataTable().fnClearTable();
-                    me.filterNhanSu(); 
                 } else {
                     Core.showToast(response.Message, 'danger');
                 }
@@ -452,21 +664,80 @@ DetailNhanSu.prototype = {
             }, 
         });
     },
-    /*Utility*/
-    resetSearch: function () {
-        $("#searchTenNhanSu").val('');
-        $("#searchDropCongTy").val('').trigger('change');
-        $("#DropTinhTrang_search").val('').trigger('change');
-        $("#DropTrangThai").val('1').trigger('change');
-        this.filterNhanSu();
-    },
-    resetPopup: function () {
+    /*Utility*/ 
+    reset: function () {
         var me = this; 
-        $("#txTenPB").val(""); 
-        $("#txMaPB").val("");
-        $("#editDropCoSo").val("").trigger('change');
-        $("#txtGhiChu").val(""); 
+        if (!me.Id) { 
+            $("#txtMaNhanVien").val("");
+        }
+        $("#txtHoTen").val("");
+        $("#txtNgaySinh").val("");
+        $("#txtEmail").val("");
+        $("#txtSDT").val("");
+        $("#txtDiaChiQue").val("");
+        $("#txtDiaChiHienTai").val("");
+        $("#txtSoCCCD").val("");
+        $("#txtGhiChu").val("");
+
+        $("#DropGioiTinh").val("NA").trigger('change');
+        $("#DropHocVan").val("").trigger('change');
+        $("#DropDanToc").val("").trigger('change');
+        $("#DropTonGiao").val("").trigger('change');
+        $("#DropQueQuan_Tinh").val("").trigger('change');
+        $("#DropQueQuan_Huyen").val("").trigger('change');
+        $("#DropQueQuan_Huyen").prop('disabled', true);
+        $("#DropHienTai_Tinh").val("").trigger('change');
+        $("#DropHienTai_Huyen").val("").trigger('change');
+        $("#DropHienTai_Huyen").prop('disabled', true);
+        $("#DropChucVu").val("").trigger('change');
+        $("#DropPhongBan").val("").trigger('change');
+        $("#DropCoSo").val("").trigger('change');
+        $("#DropNoiCapCCCD_Tinh").val("").trigger('change'); 
         me.StatusId_Edit = 1;
-        me.Id = "";
+        me.Id = me.Id;
     },
+    disableByRoleId: function () {
+        var me = this;
+        if (me.Id && !me.type) {
+            $('#btnXoa_T').prop('hidden', false);
+        }
+        if ((me.roleId == 4) && (me.type != 'HSTD')) { 
+            $("#btnBack_T").hide();
+            $("#btnReset_T").hide();
+            $("#btnThemMoi_T").hide();
+            $("#btnXoa_T").hide();  
+            const idsToDisable = [
+                "txtHoTen", "txtNgaySinh", "DropGioiTinh", 
+                "txtEmail", "DropDanToc", 
+                "DropQueQuan_Tinh", "DropQueQuan_Huyen", "txtDiaChiQue",
+                "txtSoCCCD", "DropNoiCapCCCD_Tinh", "txtGhiChu",
+                "DropChucVu", "DropPhongBan", "DropCoSo"
+            ];
+             
+            idsToDisable.forEach(id => {
+                $("#" + id).prop("disabled", true);
+            });
+        } 
+        if ((me.Id) && (me.type == 'noHSTD')) {  
+            $("#btnReset_T").hide();
+            $("#btnThemMoi_T").hide();
+            $("#btnSave_T").hide();
+        } 
+        if (me.roleId == 3 && me.tkC3 != 'NHANSU') {
+            $("#z_button").hide();
+        }
+        let chekval = $("#DropCoSo").val();
+        if (!chekval || me.type == 'HSTD') {
+            $('#DropPhongBan').prop('disabled', true);
+        }
+        if (me.TuyenDungId) {
+            $("#btnThemMoi_T").prop('hidden', true);
+        } 
+        if (me.type == 'HSTD') { 
+            $('#DropChucVu').prop('disabled', true); 
+        }
+        if (me.type == 'HSTD') { 
+            $('#DropChucVu').prop('disabled', true); 
+        }
+    }, 
 }; 

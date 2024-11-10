@@ -12,9 +12,9 @@ using System.Web.Mvc;
 
 namespace QuanLyNhanSu_WebApp.Controllers
 {
+    [CustomAuthorize]
     public class CategoryController : Controller
-    {
-        [CustomAuthorize]
+    { 
         // GET: Category
         public ActionResult CategoryView()
         {

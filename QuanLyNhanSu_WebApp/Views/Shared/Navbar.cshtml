@@ -1,6 +1,8 @@
 ﻿@{
     var rolesInNavbar = ViewBag.RolesInNavbar as List<QuanLyNhanSu_WebApp.Models.RoleInNavbarModel>;
     var userRoleId = Session["RoleId"]?.ToString(); // Lấy RoleId của người dùng từ Session
+    var nhansuId = Session["NhanSuId"]?.ToString(); // Lấy  Id của người dùng từ Session
+    var C3session = Session["C3"]?.ToString(); // Lấy C3 của người dùng từ Session check quyền
 
     // Tạo danh sách phần tử của từng BranchInNav
     var danhMucItems = rolesInNavbar?.Where(r => r.BranchInNav == 1).OrderBy(r => r.PositionInNav).ToList();
@@ -58,7 +60,23 @@
                                 var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
                                 if (roleIds.Contains(userRoleId))
                                 {
-                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                    string pathId;
+                                    if (@item.PathInFolder == "/NhanSu/DetailNhanSuView" && nhansuId != null)
+                                    {
+                                        pathId = @item.PathInFolder + "?id=" + nhansuId;
+                                    }
+                                    else
+                                    {
+                                        pathId = @item.PathInFolder;
+                                    }
+                                    @*if (C3session != "NHANSU" && item.PositionInNav == 3 && userRoleId == "3")
+                                    {
+                                        <li></li>
+                                    } 
+                                    else
+                                    {*@
+                                        <li><a class="dropdown-item" href="@pathId">@item.FunctionName</a></li>
+                                    //}
                                 }
                             }
                         }

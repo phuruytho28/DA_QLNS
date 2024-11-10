@@ -8,11 +8,11 @@ using System.Collections.Generic;
 
 namespace QuanLyNhanSu_WebApp.Controllers
 {
+    [CustomAuthorize]
     public class CompanyController : Controller
     {
         List<CompanyModel> companyList = new List<CompanyModel>();
-        private readonly CompanyDAL comapnyDAL = new CompanyDAL();
-        [CustomAuthorize]
+        private readonly CompanyDAL comapnyDAL = new CompanyDAL(); 
         // GET: Company  
 
 

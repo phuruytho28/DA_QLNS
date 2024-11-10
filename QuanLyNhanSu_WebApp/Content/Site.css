@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5, h6, p, input, select, textarea, .btn, .toast, .modal-content
 input,
 select, 
 textarea {
-    max-width: 1000px;
+    max-width: 10000px;
 }
 
 .text-success {
@@ -179,7 +179,7 @@ textarea {
     outline: none;
     box-shadow: none;
     transition: border-bottom-color 0.3s ease; /* Hiệu ứng mượt mà khi chuyển màu */
-    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */ 
 }
 
     .form-custom:focus {

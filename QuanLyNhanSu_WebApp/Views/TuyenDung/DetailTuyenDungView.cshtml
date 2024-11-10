@@ -1,0 +1,172 @@
+﻿
+@{
+    ViewBag.Title = "Chi tiết tuyển dụng & bổ sung";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row mx-3">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="page-title" id="page-header">Tuyển dụng & bổ sung</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Tuyển dụng & bổ sung</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Thông tin chi tiết Tuyển dụng & bổ sung</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mx-1" style="border:none">
+    <div class="col-12">
+        <div class="card mx-2">
+            <div class="card-body">
+                <div class="row mt-3 mb-2">
+                    <div class="text-success d-flex align-items-center">
+                        <h5 class="text-success fw-bold me-1"><i class="bi bi-arrow-return-right me-1"></i>Thông tin chung</h5>
+                        <span id="bd_TrangThaiNS" class="badge font-14 my-auto bg-primary mt-1" style="opacity: 1;">Chờ xét duyệt</span>
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-2">
+                    <div class="col-sm-6 col-lg-2 mb-1">
+                        <p class="mb-1 text-success">Mã tuyển dụng (*):</p>
+                        <input type="text" id="txtMaTuyenDung" class="form-custom bg-light" disabled="disabled" placeholder="Mã tự sinh" value="" />
+                    </div>
+                    <div class="col-sm-6 col-lg-8 mb-1">
+                        <p class="mb-1">Tên tuyển dụng (<span class="text-success">*</span>):</p>
+                        <input type="text" id="txtTenTuyenDung" class="form-custom w-100" placeholder="Tên tuyển dụng" value="" />
+                    </div>
+                    <div class="col-sm-6 col-lg-2 mb-1">
+                        <p class="mb-1">Số lượng (<span class="text-success">*</span>):</p>
+                        <input type="number" id="txtSoLuong" class="form-custom" placeholder="Nhập số lượng" value="" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Mức lương từ: (<span class="text-success">*</span>): </p>
+                        <input type="number" id="txtMucLuongTu" class="form-custom" placeholder="Nhập số tiền" value="" />
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Mức lương đến (<span class="text-success">*</span>):</p>
+                        <input type="number" id="txtMucLuongDen" class="form-custom" placeholder="Nhập số tiền" value="" />
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Link tuyển dụng (<span class="text-success">*</span>): </p>
+                        <input type="text" id="txtLinkTuyenDung" class="form-custom" placeholder="Nhập đường dẫn" value="" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Ngày bắt đầu: (<span class="text-success">*</span>): </p>
+                        <input type="text" id="txtNgayBatDau" data-suggest="txtNgayBatDau" onfocus="this.select()" class="form-custom pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Hạn nộp hồ sơ (<span class="text-success">*</span>):</p>
+                        <input type="text" id="txtHanNopHoSo" data-suggest="txtHanNopHoSo" onfocus="this.select()" class="form-custom pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Ngày kết thúc (<span class="text-success">*</span>): </p>
+                        <input type="text" id="txtNgayKetThuc" data-suggest="txtNgayKetThuc" onfocus="this.select()" class="form-custom pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-6 col-lg-4 mb-1">
+                        <p class="mb-1">Chức vụ: (<span class="text-success">*</span>): </p>
+                        <select id="DropChucVu" class="form-control select2" data-placeholder="Chọn chức vụ">
+                            <option value="">-- Chọn chức vụ --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-1" id="zone_phongban">
+                        <p class="mb-1">Phòng ban: (<span class="text-success">*</span>):</p>
+                        <select id="DropPhongBan" class="form-control select2" data-placeholder="Chọn phòng ban">
+                            <option value="">-- Chọn phòng ban --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-1" id="z_CoSo">
+                        <p class="mb-1">Cơ sở: (<span class="text-success">*</span>): </p>
+                        <select id="DropCoSo" class="form-control select2" data-placeholder="Chọn cơ sở">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="row mb-2 mt-2">
+                    <div class="col-sm-6 col-lg-6 mb-1">
+                        <p class="mb-1">Mô tả (<span class="text-success">*</span>):</p>
+                        <textarea class="custom-textarea" id="txtMoTa" placeholder="Nhập mô tả"></textarea>
+                    </div>
+                    <div class="col-sm-6 col-lg-6 mb-1">
+                        <p class="mb-1">Yêu cầu (<span class="text-success">*</span>):</p>
+                        <textarea class="custom-textarea" id="txtYeuCau" placeholder="Nhập yêu cầu"></textarea>
+                    </div>
+                </div>
+
+                <div class="row mt-5" id="z_button">
+                    <div class="col-md-6 col-6">
+                        <button type="button" class="btn btn-secondary" id="btnBack_T"><i class="fa-solid fa-arrow-left me-2"></i>Quay lại</button>
+                        <button type="button" class="btn btn-secondary" id="btnReset_T"><i class="bi bi-arrow-clockwise me-2"></i>Reset</button>
+                    </div>
+                    <div class="col-md-6 col-6">
+                        <div class="text-sm-end">
+                            <button type="button" class="btn btn-success" id="btnThemMoi_T"><i class="bi bi-plus-circle me-2"></i>Thêm mới</button>
+                            <button type="button" class="btn btn-success" id="btnSave_T"><i class="bi bi-floppy me-2"></i>Lưu</button>
+                            <button type="button" class="btn btn-secondary" hidden="hidden" id="btnXoa_T"><i class="fa-solid fa-trash-can me-2"></i>Xóa</button>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+            <hr class="my-4" id="line_chiaDong" hidden="hidden">
+
+            <div class="row" id="zone_lstTuyenDung" hidden="hidden">
+                <div class="row ms-2 mb-2">
+                    <div class="text-success d-flex align-items-center">
+                        <h5 class="text-success fw-bold me-1"><i class="bi bi-arrow-return-right me-1"></i>Danh sách ứng viên ứng tuyển</h5>
+                        <button type="button" class="btn btn-success ms-2 mb-1" id="btnThemMoi_NS"><i class="bi bi-person-add me-2"></i>Thêm mới ứng viên</button>
+                    </div>
+                </div>
+                <div class="mt-2 px-5">
+                    <div class="panel">
+                        <div class="panel-body table-responsive-sm table-centered table-hover tbl-pagination">
+                            <table id="tbldata" class="table table-bordered table-striped border-bottom-0 mt-2">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" hidden="hidden">Id</th>
+                                        <th style="width: 30px" class="text-center">Stt</th>
+                                        <th class="text-center">Mã ứng viên</th>
+                                        <th class="text-center">Tên ứng viên</th>
+                                        <th class="text-center">Giới tính</th>
+                                        <th class="text-center">Ngày sinh</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">Số điện thoai</th>
+                                        <th class="text-center">Trạng thái ứng viên</th>
+                                        <th style="width: 30px" id="col_Sua">Sửa</th>
+                                        <th style="width: 30px" id="col_Xoa">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/JS/NhanSu/DetailTuyenDung.js"></script>
+    <script>
+        $(document).ready(function () {
+            var DetailTuyenDungInstance = new DetailTuyenDung();
+            DetailTuyenDungInstance.init();
+        });
+    </script>
+}

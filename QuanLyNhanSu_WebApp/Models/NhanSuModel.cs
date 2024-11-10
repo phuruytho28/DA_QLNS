@@ -29,6 +29,7 @@ namespace QuanLyNhanSu_WebApp.Models
         public string tbl_Category_DanTocId { get; set; }
         public string tbl_Category_HocVanId { get; set; }
         public string tbl_Category_TonGiaoId { get; set; }
+        public string tbl_TuyenDungId { get; set; }
         public long SoCCCD { get; set; }
         public string tblCategory_NoiCap_TinhId { get; set; }
         public string Email { get; set; }
@@ -39,6 +40,10 @@ namespace QuanLyNhanSu_WebApp.Models
         public string TenPB { get; set; } 
         public string TenCS { get; set; } 
         public string TenTinh { get; set; } 
-        public string ChucVuName { get; set; } 
+        public string ChucVuName { get; set; }
+        public int RoleId { get; set; }
+
+        public string AnhNhanVienUrl { get; set; }
+        public int TinhTrangHoSoTD { get; set; }
     }
 }
