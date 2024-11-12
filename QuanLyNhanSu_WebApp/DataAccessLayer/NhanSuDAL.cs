@@ -83,6 +83,7 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
                 new SqlParameter("@tbl_TuyenDungId", NhanSu.tbl_TuyenDungId ?? ""),
                 new SqlParameter("@RoleId", NhanSu.RoleId),
                 new SqlParameter("@C3", NhanSu.C3),
+                new SqlParameter("@LinkHoSoUngVien", NhanSu.LinkHoSoUngVien),
 
                 new SqlParameter("@Id", SqlDbType.VarChar, 36) { Direction = ParameterDirection.Output }
             };
@@ -137,6 +138,7 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
                 new SqlParameter("@tbl_TuyenDungId", NhanSu.tbl_TuyenDungId ?? ""),
                 new SqlParameter("@RoleId", NhanSu.RoleId),
                 new SqlParameter("@C3", NhanSu.C3),
+                new SqlParameter("@LinkHoSoUngVien", NhanSu.LinkHoSoUngVien),
             };
 
             try
@@ -209,6 +211,107 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
             try
             {
                 DataAccessHelper.ExecuteNonQuery("tbl_NhanSu_XetDuyet_NhanSu", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating status: {ex.Message}");
+            }
+        }
+        public static void NhanSu_DeleteById(string id)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_NhanSu_DeleteById", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error deleting NhanSu: {ex.Message}");
+            }
+        }
+
+
+        public List<NhanSu_LichSuDuyetModel> LichSuXetDuyet_Search(NhanSu_LichSuDuyetModel LichSuDuyet, out int totalRows)
+        {
+            List<NhanSu_LichSuDuyetModel> LichSuList = new List<NhanSu_LichSuDuyetModel>();
+            totalRows = 0;
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@tbl_NhanSuId", LichSuDuyet.tbl_NhanSuId ?? ""),  
+                new SqlParameter("@PageIndex", LichSuDuyet.pageIndex),
+                new SqlParameter("@PageSize", LichSuDuyet.pageSize),
+                new SqlParameter("@TotalRow", SqlDbType.Int) { Direction = ParameterDirection.Output }
+            };
+
+            using (SqlDataReader reader = DataAccessHelper.ExecuteReader("tbl_LichSuXetDuyet_Search", parameters))
+            {
+                while (reader.Read())
+                {
+                    NhanSu_LichSuDuyetModel newLichSu = new NhanSu_LichSuDuyetModel();
+                    EntityBase.SetObjectValue(reader, ref newLichSu);
+                    LichSuList.Add(newLichSu);
+                }
+            }
+
+            totalRows = int.Parse(parameters[parameters.Length - 1].Value.ToString());
+            return LichSuList;
+        }
+        public List<NhanSu_LichSuThayDoiModel> LichSuThayDoi_Search(NhanSu_LichSuThayDoiModel LichSuThayDoi, out int totalRows)
+        {
+            List<NhanSu_LichSuThayDoiModel> LichSuList = new List<NhanSu_LichSuThayDoiModel>();
+            totalRows = 0;
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@tbl_NhanSuId", LichSuThayDoi.tbl_NhanSuId ?? ""),  
+                new SqlParameter("@PageIndex", LichSuThayDoi.pageIndex),
+                new SqlParameter("@PageSize", LichSuThayDoi.pageSize),
+                new SqlParameter("@TotalRow", SqlDbType.Int) { Direction = ParameterDirection.Output }
+            };
+
+            using (SqlDataReader reader = DataAccessHelper.ExecuteReader("tbl_LichSuThayDoi_Search", parameters))
+            {
+                while (reader.Read())
+                {
+                    NhanSu_LichSuThayDoiModel newLichSu = new NhanSu_LichSuThayDoiModel();
+                    EntityBase.SetObjectValue(reader, ref newLichSu);
+                    LichSuList.Add(newLichSu);
+                }
+            }
+
+            totalRows = int.Parse(parameters[parameters.Length - 1].Value.ToString());
+            return LichSuList;
+        }
+
+
+
+           
+        public static void LichSu_ThayDoi_Insert(string tbl_NhanSuId, string HoTenNguoiThayDoi, string tbl_Category_ChucVuId,
+                                                string tbl_Category_ChucVuNguoiThayDoiId, string tbl_PhongBanId, string tbl_CoSoId,
+                                                string Note, string ModifyDate, string C3, int RoleId, int checkTD)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@tbl_NhanSuId", tbl_NhanSuId ?? ""),
+                new SqlParameter("@HoTenNguoiThayDoi", HoTenNguoiThayDoi ?? ""),
+                new SqlParameter("@tbl_Category_ChucVuNguoiThayDoiId", tbl_Category_ChucVuNguoiThayDoiId ?? ""), 
+                new SqlParameter("@tbl_Category_ChucVuId", tbl_Category_ChucVuId ?? ""),
+                new SqlParameter("@tbl_PhongBanId", tbl_PhongBanId ?? ""),
+                new SqlParameter("@tbl_CoSoId", tbl_CoSoId ?? ""),
+                new SqlParameter("@Note", Note ?? ""),
+                new SqlParameter("@ModifyDate", ModifyDate ?? ""),
+                new SqlParameter("@C3", C3 ?? ""),
+                new SqlParameter("@RoleId", RoleId),
+                new SqlParameter("@checkTD", checkTD),
+            };
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_LichSu_ThayDoi_Insert", parameters);
             }
             catch (SqlException ex)
             {

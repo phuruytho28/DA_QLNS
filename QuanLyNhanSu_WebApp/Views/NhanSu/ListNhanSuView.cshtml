@@ -97,6 +97,7 @@
                     </div>
                     <div class="col-sm-7 col-6">
                         <div class="text-sm-end">
+                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnDieuChuyen"><i class="fa-regular fa-circle-up me-1"></i>Điều chuyển/Thăng chức</button>
                             <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnBoSung_NhanSu"><i class="bi bi-person-add me-1"></i>Bổ sung nhân sự</button>
                             <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnXetDuyet_HSNS"><i class="bi bi-check-circle me-1"></i>Xét duyệt hồ sơ</button>
                             <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
@@ -187,8 +188,7 @@
     </div>
 </div>
 <!-- end modal-->
-
-<!-- Modal bổ sung NS -->
+<!-- Modal yêu cầu bổ sung NS -->
 <div class="modal fade" id="staticBackdrop_BoSungNS" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -199,28 +199,67 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
-                        <label id="lbGhiChu" for="txtGhiChu" class="form-label">Lý do</label>
-                        <input type="text" id="txtGhiChu" class="form-control" placeholder="Nhập lý do" />
+                        <label id="lbGYeuCau" for="txtYeuCau" class="form-label">Tên yêu cầu (*)</label>
+                        <input type="text" id="txtYeuCau" class="form-control" placeholder="Nhập tên yêu cầu" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <label id="lbTinhTrang" for="DropTinhTrang_Duyet" class="form-label">Tình trạng xét duyệt (*)</label>
-                        <select id="DropTinhTrang_Duyet" class="form-control select2" data-no-search>
-                            <option value="">--- Chọn tình trạng --- </option>
-                            <option value="2">Hoạt động (đang làm việc) </option>
-                            <option value="3">Từ chối duyệt (nghỉ việc) </option>
+                        <label id="lbSoLuongYC" for="txtSoLuongYC" class="form-label">Số lượng yêu cầu (*)</label>
+                        <input type="number" id="txtSoLuongYC" class="form-control" placeholder="Nhập số lượng yêu cầu" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbNgayHoanTatYC" for="txtNgayHoanTatYC" class="form-label">Ngày hoàn tất yêu cầu (*)</label>
+                        <input type="text" id="txtNgayHoanTatYC" data-suggest="txtNgayHoanTatYC" onfocus="this.select()" class="form-control pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-12">
+                        <label id="lbMoTaYC" for="txtMoTaYC" class="form-label">Mô tả cho vị trí yêu cầu (*)</label>
+                        <textarea class="custom-textarea" id="txtMoTaYC" placeholder="Nhập mô tả"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbYeuCauYC" for="txtYeuCauYC" class="form-label">Yêu cầu đối với vị trí cần bổ sung (*)</label>
+                        <textarea class="custom-textarea" id="txtYeuCauYC" placeholder="Nhập yêu cầu"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbChucVuYC" for="DropChucVuYC" class="form-label">Chức vụ (*)</label>
+                        <select id="DropChucVuYC" class="form-control select2" data-placeholder="Chọn chức vụ">
+                            <option value="">-- Chọn chức vụ --</option>
                         </select>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbPhongBanYC" for="DropPhongBanYC" class="form-label">Phòng ban (*)</label>
+                        <select id="DropPhongBanYC" disabled="disabled" class="form-control select2" data-placeholder="Chọn phòng ban">
+                            <option value="">-- Chọn phòng ban --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbCoSoYC" for="DropCoSoYC" class="form-label">Cơ sở (*)</label>
+                        <select id="DropCoSoYC" disabled="disabled" class="form-control select2" data-placeholder="Chọn cơ sở">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="row my-3">
                     <div class="col-12 text-primary" style="font-size: large">
                         <i class="bi bi-info-circle-fill"></i>
                         <label class="col-form-label" id="LuuY">Lưu ý</label>
                     </div>
                     <div class="col-12">
-                        <p><i>- Nếu xét duyệt với tình trạng Từ chối duyệt (nghỉ việc) thì thông tin lý do sẽ được lưu vào phần ghi chú của nhân sự!</i></p>
-                        <p><i>- Tình trạng sử dụng tài khoản của nhân sự cũng sẽ thay đổi theo tình trạng của hồ sơ xét duyệt!</i></p>
+                        <p><i>- Sau khi bạn ấn nút tạo yêu cầu, thông tin về yêu cầu bổ sung nhân sự của bạn sẽ được chuyển sang mục Tuyển dụng & Bổ sung!</i></p>
+                        <p><i>- Bạn có thể theo dõi quá trình của yêu cầu và khi có nhân sự/ứng viên mới sẽ xuất hiện trong danh sách nhân sự do bạn quản lý</i></p>
                     </div>
                 </div>
             </div>
@@ -228,8 +267,79 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark me-2"></i>Đóng
                 </button>
-                <button type="button" class="btn btn-success" id="btnSave">
-                    <i class="bi bi-floppy me-2"></i>Duyệt
+                <button type="button" class="btn btn-success" id="btnYeuCau">
+                    <i class="bi bi-floppy me-2"></i>Tạo yêu cầu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end modal-->
+
+<!-- Modal điều chuyển, thăng chức NS -->
+<div class="modal fade" id="staticBackdrop_DieuChuyen" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel_BSNS">Điều chuyển/Thăng chức nhân sự</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-0">
+                    <div class="col-12">
+                        <label id="lbGhiChuChuyen" for="txtGhiChuChuyen" class="form-label">Ghi chú (*)</label>
+                        <textarea class="custom-textarea" id="txtGhiChuChuyen" placeholder="Nhập ghi chú"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbNhanSuChuyen" for="DropNhanSuChuyen" class="form-label">Nhân sự thay đổi (*)</label>
+                        <select id="DropNhanSuChuyen" class="form-control select2" data-placeholder="Chọn nhân sự">
+                            <option value="">-- Chọn nhân sự --</option>
+                        </select>
+                    </div>
+                </div> 
+                <div class="row" id="row_chucvu">
+                    <div class="col-12">
+                        <label id="lbChucVuChuyen" for="DropChucVuChuyen" class="form-label">Chức vụ mới (*)</label>
+                        <select id="DropChucVuChuyen" class="form-control select2" data-placeholder="Chọn chức vụ">
+                            <option value="">-- Chọn chức vụ --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" id="row_phongban">
+                        <label id="lbPhongBanChuyen" for="DropPhongBanChuyen" class="form-label">Phòng ban chuyển đến (*)</label>
+                        <select id="DropPhongBanChuyen" class="form-control select2" data-placeholder="Chọn phòng ban">
+                            <option value="">-- Chọn phòng ban --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" id="row_coso">
+                        <label id="lbCoSoChuyen" for="DropCoSoChuyen" class="form-label">Cơ sở chuyển đến(*)</label>
+                        <select id="DropCoSoChuyen" class="form-control select2" data-placeholder="Chọn cơ sở">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <div class="col-12 text-primary" style="font-size: large">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <label class="col-form-label" id="LuuY">Lưu ý</label>
+                    </div>
+                    <div class="col-12">
+                        <p><i>- Sau khi bạn ấn nút thay đổi, thông tin về nhân sự sẽ được thay đổi và lưu lại lịch sử trong chi tiết nhân sự!</i></p> 
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-2"></i>Đóng
+                </button>
+                <button type="button" class="btn btn-success" id="btnThayDoi">
+                    <i class="bi bi-floppy me-2"></i>Thay đổi
                 </button>
             </div>
         </div>

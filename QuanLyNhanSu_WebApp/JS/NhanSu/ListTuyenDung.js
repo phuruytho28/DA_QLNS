@@ -29,8 +29,11 @@ ListTuyenDung.prototype = {
         me.tkcosoId = Core.tkcosoId;
         me.tkphongbanId = Core.tkphongbanId;
         me.tkC3 = Core.tkC3;
-        if (me.roleId == 99 || me.roleId == 1) { 
-            $('#zone_CoSo').prop('hidden', false);
+        if (me.roleId == 99) { 
+            $('#zone_CoSo').prop('hidden', false); 
+            $('#zone_company').prop('hidden', false);  
+        } else if (me.roleId == 1) { 
+            $('#zone_CoSo').prop('hidden', false); 
             $('#zone_ChucVu').appendTo('#first_row');
         } else if (me.roleId == 2) {
             $('#zone_ChucVu').appendTo('#first_row');
@@ -134,6 +137,9 @@ ListTuyenDung.prototype = {
                         $('#modalconfirm').modal('hide');
                         me.update_capnhat_trangThai(id, me.StatusCode.Deleted);
                     });
+                    break;
+                case 'noAction':
+                    Core.showToast('Bạn không thể sử dụng tính năng này!', 'warning');
                     break;
                 case 'copy':
                     me.Id = id;
@@ -320,22 +326,35 @@ ListTuyenDung.prototype = {
                 ,
                 {
                     "mData": "Id",
-                    "mRender": function (data) {
-                        var str = '<div class="atp-nowrap">';
-                        if (!me.RecoverMode) {
-                            str += '<a title="Xóa dữ liệu" id="' + data + '" type="delete" class="action-icon text-success btnXoa" href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>';
+                    "mRender": function (data, type, row) {
+                        if (((me.roleId == 3) && (row.TinhTrang != 1)) || ((me.roleId == 2) && (row.TinhTrang != 1) && ((row.tbl_Category_ChucVuId == '21EDBCF4-2E47-4BE7-9547-2B1165366A22') || (row.tbl_Category_ChucVuId == '6E605817-1A12-46C9-A7E6-58F49AC9C3CF')))) {
+                            if (!me.RecoverMode) {
+                                return '<a title="Xóa dữ liệu" id="' + data + '" tinhtrang="' + row.TinhTrang + '" class="action-icon text-muted " type="noAction" href="javascript:void(0);" ><i class="fa-solid fa-trash"></i></a>';
+                            }
+                            else {
+                                return '<a title="Khôi phục dữ liệu" id="' + data + '"  tinhtrang="' + row.TinhTrang + '" class="action-icon text-muted" type="noAction" href="javascript:void(0);  ><i class="fa-solid fa-rotate-right"></i></a>';
+                            }
+                        } else {
+                            if (!me.RecoverMode) {
+                                return '<a title="Xóa dữ liệu" id="' + data + '" type="delete" tinhtrang="' + row.TinhTrang + '" class="action-icon text-success btnXoa" href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>';
+                            }
+                            else {
+                                return '<a title="Khôi phục dữ liệu" id="' + data + '" type="recover" tinhtrang="' + row.TinhTrang + '" class="action-icon text-success btnKhoiPhuc" href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>';
+                            }
                         }
-                        else {
-                            str += '<a title="Khôi phục dữ liệu" id="' + data + '" type="recover" class="action-icon text-success btnKhoiPhuc" href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>';
-                        }
-                        return str;
                     },
-                    "visible": !(me.roleId == 3 && me.tkC3 != 'NHANSU') 
+                    "visible": !(me.roleId == 3 && me.tkC3 != 'NHANSU')
                 },
                 {
                     "data": null,
                     "render": function (data, type, row) {
-                        return '<input type="checkbox" class="form-check-input" id="category' + row.Id + '" name="category' + row.Id + '" data-trang-thai="' + row.TinhTrang + '">';
+                        // Kiểm tra điều kiện để vô hiệu hóa checkbox
+                        //var disabledAttr = (((me.roleId == 3) && (row.TinhTrang == 2))) ? 'disabled' : '';
+                        if (((me.roleId == 3) && (row.TinhTrang != 1)) || ((me.roleId == 2) && ((row.tbl_Category_ChucVuId == '21EDBCF4-2E47-4BE7-9547-2B1165366A22') || (row.tbl_Category_ChucVuId == '6E605817-1A12-46C9-A7E6-58F49AC9C3CF')))) {
+                            return '<a title="Nhân sự đã duyệt, không thể tác động" id="' + data + '"  type="noAction" tinhtrang="' + row.TinhTrang + '" class="action-icon text-secondary" href="javascript:void(0);"><i class="bi bi-ban"></i></a>';
+                        } else {
+                            return '<input type="checkbox" class="form-check-input" tinhtrang="' + row.TinhTrang + '" id="category' + row.Id + '" name="category' + row.Id + '" data-trang-thai="' + row.TinhTrang + '">';
+                        }
                     },
                     "className": "text-center",
                     "visible": !(me.roleId == 3 && me.tkC3 != 'NHANSU')
@@ -550,4 +569,5 @@ ListTuyenDung.prototype = {
         $("#chkSelectAll").prop('checked', false);
         this.filterTuyenDung();
     }, 
+
 }; 

@@ -115,11 +115,11 @@
                         <div class="text-sm-end">
                             <button type="button" class="btn btn-success" id="btnThemMoi_T"><i class="bi bi-plus-circle me-2"></i>Thêm mới</button>
                             <button type="button" class="btn btn-success" id="btnSave_T"><i class="bi bi-floppy me-2"></i>Lưu</button>
-                            <button type="button" class="btn btn-secondary" hidden="hidden" id="btnXoa_T"><i class="fa-solid fa-trash-can me-2"></i>Xóa</button>
+                            @*<button type="button" class="btn btn-secondary" hidden="hidden" id="btnXoa_T"><i class="fa-solid fa-trash-can me-2"></i>Xóa</button>*@
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
 
             <hr class="my-4" id="line_chiaDong" hidden="hidden">
 
@@ -143,8 +143,9 @@
                                         <th class="text-center">Giới tính</th>
                                         <th class="text-center">Ngày sinh</th>
                                         <th class="text-center">Email</th>
-                                        <th class="text-center">Số điện thoai</th>
+                                        <th class="text-center">Số điện thoại</th>
                                         <th class="text-center">Trạng thái ứng viên</th>
+                                        <th style="width: 30px" id="col_Duyet">Duyệt</th>
                                         <th style="width: 30px" id="col_Sua">Sửa</th>
                                         <th style="width: 30px" id="col_Xoa">Xóa</th>
                                     </tr>
@@ -160,6 +161,57 @@
         </div>
     </div>
 </div>
+<!-- Modal duyệt -->
+<div class="modal fade" id="staticBackdrop_duyetHSTD" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Xét duyệt hồ sơ ứng viên</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbGhiChu" for="txtGhiChu_Duyet" class="form-label">Ghi chú</label>
+                        <textarea class="custom-textarea" id="txtGhiChu_Duyet" placeholder="Nhập ghi chú"></textarea>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-12">
+                        <label id="lbTinhTrang" for="DropTinhTrang_DuyetHSTD" class="form-label">Tình trạng xét duyệt ứng viên (*)</label>
+                        <select id="DropTinhTrang_DuyetHSTD" class="form-control select2" data-no-search>
+                            <option value="">--- Chọn tình trạng --- </option>
+                            <option value="1">Nộp hồ sơ (Ứng tuyển) </option>
+                            <option value="2">Ứng tuyển đạt (Chờ phỏng vấn) </option>
+                            <option value="3">Kết thúc phỏng vấn (Chờ thông báo) </option>
+                            <option value="4">Kết quả đạt (Chờ xét duyệt) </option>
+                            <option value="5">Kết quả không đạt (Loại) </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-12 text-primary" style="font-size: large">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <label class="col-form-label" id="LuuY">Lưu ý</label>
+                    </div>
+                    <div class="col-12">
+                        <p><i>- Nếu xét duyệt với tình trạng Kết quả không đạt (Loại) thì thông tin ghi chú sẽ được lưu vào phần ghi chú của hồ sơ ứng viên!</i></p>
+                        <p><i>- Khi hồ sơ ứng viên được duyệt Kết quả đạt (Chờ xét duyệt) thì trạng thái hồ sơ ở danh sách nhân sự sẽ chuyển từ Trong quá trình tuyển dụng >> Chờ xét duyệt!</i></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-2"></i>Đóng
+                </button>
+                <button type="button" class="btn btn-success" id="btnDuyet">
+                    <i class="bi bi-floppy me-2"></i>Duyệt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end modal-->
 
 @section Scripts {
     <script src="~/JS/NhanSu/DetailTuyenDung.js"></script>

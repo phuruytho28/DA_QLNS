@@ -8,7 +8,8 @@ DetailTuyenDung.prototype = {
     tkphongbanId: '',
     userName: '',
     RecoverMode: false,
-    jsValid: '#txtTenTuyenDung, #txtMoTa, #txtYeuCau, #DropCoSo, #DropPhongBan, #DropChucVu, #txtSoLuong, #txtMucLuongTu, #txtMucLuongDen, #txtLinkTuyenDung, #txtNgayBatDau, #txtHanNopHoSo, #txtNgayKetThuc',
+    jsValid_Duyet: '#DropTinhTrang_DuyetHSTD',
+    jsValid: '#txtTenTuyenDung, #txtMoTa, #txtYeuCau, #DropCoSo, #DropChucVu, #txtSoLuong, #txtMucLuongTu, #txtMucLuongDen, #txtLinkTuyenDung, #txtNgayBatDau, #txtHanNopHoSo, #txtNgayKetThuc',
     session: '', 
     type: '',
     TuyenDungId: '',
@@ -17,6 +18,8 @@ DetailTuyenDung.prototype = {
     getDataCoSoId: '',
     getDataPhongBanId: '', 
     getDataChucVuId: '', 
+    currentRowData: null, 
+    flagTinhTrang: false,
 
     StatusCode: Object.freeze({
         Actived: 1, 
@@ -94,7 +97,12 @@ DetailTuyenDung.prototype = {
         $('#DropCoSo').on('change', function () {
             var selectedValue = $(this).val();
             if (selectedValue) {
-                $('#DropPhongBan').prop('disabled', false);
+                if (me.flagTinhTrang) {
+                    $('#DropPhongBan').prop('disabled', true);
+                } else {
+                    $('#DropPhongBan').prop('disabled', false);
+                } 
+                 
             } else {
                 $('#DropPhongBan').prop('disabled', true);
             }
@@ -120,20 +128,52 @@ DetailTuyenDung.prototype = {
 
             console.log(selectedValue, selectedName, role);
         });
+        $("#btnDuyet").click(function (e) {
+            if ($("#DropTinhTrang_DuyetHSTD").val() == 4) {
+                me.jsValid_Duyet += ', #txtGhiChu_Duyet';
+            }
+            if (me.currentRowData) {
+                var valid = Core.validateRequiredFields(me.jsValid_Duyet);
+                if (valid == true) {
+                    me.update_trangthaiHSTD_xetduyet(me.currentRowData.id, me.currentRowData.tinhtrangHSTD, me.currentRowData.hoten, me.currentRowData.email);
+                }
+                else {
+                    Core.showToast('Vui lòng không bỏ trống ô nhập liệu!', 'warning');
+                }
+            } else {
+                Core.showToast('Không tìm thấy thông tin dòng được chọn!', 'error');
+            }
+        }); 
 
         $(document).delegate('.action-icon', 'click', function () { 
             var id = this.id;
             var type = this.type;
+            var tinhtrangHSTD = $(this).attr('tinhtrangHSTD'); 
+            var hoten = $(this).attr('hoten'); 
+            var email = $(this).attr('email'); 
             if (id == '' || id == undefined || id == null) return;
             switch (type) {
                 case 'edit': 
                     window.open('/NhanSu/DetailNhanSuView?id=' + id + '&type=HSTD', '_self');
                     break;
+                case 'noAction':
+                    Core.showToast('Bạn không thể sử dụng tính năng này!', 'warning');
+                    break;
+                case 'Duyet': 
+                    me.currentRowData = {
+                        id: id,
+                        tinhtrangHSTD: tinhtrangHSTD,
+                        hoten: hoten,
+                        email: email 
+                    };
+                    $("#staticBackdrop_duyetHSTD").modal('show');
+
+                    break;
                 case 'delete':
-                    Core.showModal_Confirm('Thông báo', 'Bạn có chắc chắn muốn xóa vào thùng rác?');
+                    Core.showModal_Confirm('Thông báo', 'Bạn có chắc chắn muốn xóa hồ sơ ứng viên?');
                     $("#btnYes").click(function (e) {
                         $('#modalconfirm').modal('hide');
-                        me.update_capnhat_trangThai(id, me.StatusCode.Deleted);
+                        me.delete_UngVien(id);
                     });
                     break; 
             }
@@ -145,6 +185,12 @@ DetailTuyenDung.prototype = {
     /*CRUD*/
     filter_lst_UngVien: function () {
         var me = this; 
+        var hidecol = true; 
+        if (me.roleId == 3 && me.tkC3 != 'NHANSU') {
+            hidecol = false;
+        } else if (me.roleId == 4) {
+            hidecol = false;
+        }
         var jsonData = {
             Keyword: '',
             tbl_CompanyId: me.CongTyId, 
@@ -152,14 +198,14 @@ DetailTuyenDung.prototype = {
             tbl_PhongBanId: me.getDataPhongBanId,
             tbl_Category_ChucVuId: me.getDataChucVuId, 
             tbl_TuyenDungId: me.Id, 
-            TinhTrang:  0,
+            TinhTrang:  -1,
             StatusId: 1,
         };
 
         // Tách cấu hình DataTables
         var dtConfig = {
             "paging": true,
-            "pageLength": 10,
+            "pageLength": 25,
             "lengthChange": false,
             "searching": false,
             "ordering": false,
@@ -190,7 +236,7 @@ DetailTuyenDung.prototype = {
                 'aTargets': [6, 7, 8]
             },
             {
-                className: "dt-body-center", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                className: "dt-body-center", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11]
             }
             ],
             "columns": [
@@ -228,15 +274,15 @@ DetailTuyenDung.prototype = {
                                 badgeText = 'Nộp hồ sơ (Ứng tuyển)';
                                 break;
                             case 2:  
-                                badgeClass = 'badge rounded-pill border border-Info text-Info fs-7';  
+                                badgeClass = 'badge rounded-pill border border-info text-info fs-7';  
                                 badgeText = 'Ứng tuyển đạt (Chờ phỏng vấn)';
                                 break;
                             case 3:  
-                                badgeClass = 'badge rounded-pill border border-Secondary text-Secondary fs-7';  
+                                badgeClass = 'badge rounded-pill border border-secondary text-secondary fs-7';  
                                 badgeText = 'Kết thúc phỏng vấn (Chờ thông báo)';
                                 break;
                             case 4:  
-                                badgeClass = 'badge rounded-pill border border-success text-danger fs-7';  
+                                badgeClass = 'badge rounded-pill border border-success text-success fs-7';  
                                 badgeText = 'Kết quả đạt (Chờ xét duyệt)';
                                 break;
                             case 5:  
@@ -254,24 +300,39 @@ DetailTuyenDung.prototype = {
                 ,
                 {
                     "mData": "Id",
-                    "mRender": function (data) {
-                        var dropdown = '<a title="Chỉnh sửa" id="' + data + '" type="edit" class="action-icon text-success btnSua" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';  
-                        return dropdown;
-                    }
+                    "mRender": function (data, type, row) {
+                        if (row.TinhTrangHoSoTD == 4) {
+                            return '<a title="Đã duyệt, không thể tác động" id="' + data + '"  type="noAction"  tinhtrangHSTD="' + row.TinhTrangHoSoTD + '"  class="action-icon text-secondary" href="javascript:void(0);"><i class="bi bi-ban"></i></a>';
+                        } else {
+                            return '<a title="Duyệt ứng viên" id="' + row.Id + '" type="Duyet" tinhtrangHSTD="' + row.TinhTrangHoSoTD + '" email="' + row.Email + '" hoten="' + row.HoTen + '" class="action-icon text-success btnDuyet" href="javascript:void(0);"><i class="bi bi-check-circle"></i></a>';
+                        }
+                    },
+                    "visible": hidecol
                 }
                 ,
                 {
                     "mData": "Id",
-                    "mRender": function (data) {
-                        var str = '<div class="atp-nowrap">';
-                        if (!me.RecoverMode) {
-                            str += '<a title="Xóa dữ liệu" id="' + data + '" type="delete" class="action-icon text-success btnXoa" href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>';
+                    "mRender": function (data, type, row) {
+                        if ((row.TinhTrangHoSoTD != 1) || (me.roleId == 3 && me.tkC3 != 'NHANSU')) {
+                            return '<a title="Xem" id="' + row.Id + '" type="edit" tinhtrangHSTD="' + row.TinhTrangHoSoTD + '"  class="action-icon text-success btnSua" href="javascript:void(0);"><i class="bi bi-eye"></i></a>';
+                        } else {
+                            return '<a title="Chỉnh sửa" id="' + row.Id + '" type="edit" tinhtrangHSTD="' + row.TinhTrangHoSoTD + '"  class="action-icon text-success btnSua" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';
+                        } 
+                    },
+                    /*"visible": !(me.roleId == 3 && me.tkC3 != 'NHANSU')*/
+                }
+                ,
+                {
+                    "data": null,
+                    "render": function (data, type, row) { 
+                        if (row.TinhTrangHoSoTD != 1) {
+                            return '<a title="Đã duyệt, không thể tác động" id="' + data + '"  type="noAction" tinhtrangHSTD="' + row.TinhTrangHoSoTD + '" class="action-icon text-secondary" href="javascript:void(0);"><i class="bi bi-ban"></i></a>';
+                        } else {
+                            return '<a title="Xóa dữ liệu" id="' + row.Id + '" type="delete" class="action-icon text-success btnXoa" tinhtrangHSTD="' + row.TinhTrangHoSoTD + '"  href="javascript:void(0);"><i class="bi bi-trash3"></i></a>';
                         }
-                        else {
-                            str += '<a title="Khôi phục dữ liệu" id="' + data + '" type="recover" class="action-icon text-success btnKhoiPhuc" href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>';
-                        }
-                        return str;
-                    }
+                    }, 
+                    "visible": hidecol
+                    
                 } 
             ],
             "drawCallback": function (settings) {
@@ -424,18 +485,38 @@ DetailTuyenDung.prototype = {
                         me.getDataPhongBanId = obj.tbl_PhongBanId;
                         me.getDataChucVuId = obj.tbl_Category_ChucVuId;
 
-                        if (obj.TinhTrang == 2) {
+                        me.flagTinhTrang = obj.TinhTrang != 1; 
+
+                        if (obj.TinhTrang == 2 && me.type != 'copy') {
                             $("#line_chiaDong").prop('hidden', false);
                             $("#zone_lstTuyenDung").prop('hidden', false); 
                             me.filter_lst_UngVien(); 
                             $(".form-control, .custom-textarea, .form-custom").prop("disabled", true);
+                            $('#btnSave_T').prop('hidden', true);
+                            $('#btnReset_T').prop('hidden', true);
+                            $('#DropPhongBan').prop('disabled', true);
+                            $('#txtGhiChu_Duyet').prop('disabled', false);
+                            $('#DropTinhTrang_DuyetHSTD').prop('disabled', false);
                         }
-                        if (obj.TinhTrang == 3) {
+                        if (obj.TinhTrang == 3 && me.type != 'copy') {
                             $("#btnSave_T").hide();
                             $("#btnReset_T").hide();
                             $("#btnThemMoi_T").hide();
+                            $("#btnThemMoi_NS").hide();
                             $("#btnXoa_T").hide();
                             $(".form-control, .custom-textarea, .form-custom").prop("disabled", true);
+                            $("#line_chiaDong").prop('hidden', false);
+                            $("#zone_lstTuyenDung").prop('hidden', false); 
+                            me.filter_lst_UngVien(); 
+                        }
+                        if (obj.TinhTrang == 4 && me.type != 'copy') {
+                            $("#btnSave_T").hide();
+                            $("#btnReset_T").hide();
+                            $("#btnThemMoi_NS").hide();
+                            $("#line_chiaDong").prop('hidden', false);
+                            $("#zone_lstTuyenDung").prop('hidden', false);
+                            me.filter_lst_UngVien(); 
+
                         }
                         
 
@@ -493,18 +574,16 @@ DetailTuyenDung.prototype = {
             }, 
         });
     },   
-    update_capnhat_trangThai: function (str_Id, statusId) {
+    delete_UngVien: function (id) {
         var me = this;
         var jsonData =
         {
-            'C1': str_Id,
-            'StatusId': statusId,
-            'ModifyBy': Core.userName,
+            'id': id 
         };
         Core.startButtonLoading("btnRecycleBin");
         $.ajax({
             type: 'POST',
-            url: '/TuyenDung/UpdateStatusId',
+            url: '/NhanSu/DeleteNhanSu',
             data: JSON.stringify(jsonData),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -512,7 +591,7 @@ DetailTuyenDung.prototype = {
                 if (response.Success) {
                     Core.showToast(response.Message, 'success'); 
                     $('#tbldata').dataTable().fnClearTable();
-                    me.filterTuyenDung(); 
+                    me.filter_lst_UngVien(); 
                 } else {
                     Core.showToast(response.Message, 'danger');
                 }
@@ -522,6 +601,124 @@ DetailTuyenDung.prototype = {
                 console.log(error);
                 Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
             }, 
+        });
+    },
+
+    update_trangthaiHSTD_xetduyet: function (id, trangthaiHSTD, hoten, email) {
+        var me = this; 
+        var jsonData =
+        {
+            'tbl_NhanSuId': id,
+            'HoTenNguoiDuyet': Core.userName,
+            'tbl_Category_ChucVuId': Core.tkchucvuId,
+            'TinhTrangHSTD_TruocDuyet': trangthaiHSTD,
+            'TinhTrangHSTD_SauDuyet': $("#DropTinhTrang_DuyetHSTD").val(),
+            'Note': $("#txtGhiChu_Duyet").val() 
+        };
+        Core.startButtonLoading("btnSave");
+        $.ajax({
+            type: 'POST',
+            url: '/TuyenDung/TuyenDung_UpdateTinhTrangHSTD',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    Core.showToast(response.Message, 'success');
+                    $("#staticBackdrop_duyetHSTD").modal('hide'); 
+                    me.filter_lst_UngVien();
+                    if ($("#DropTinhTrang_DuyetHSTD").val() == 4) {
+                        Core.showModal_Confirm(
+                            'Thông báo',
+                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự được cấp trên xét duyệt!</span></em>'
+                        );
+                        $("#btnYes").click(function (e) {
+                            $('#modalconfirm').modal('hide');
+                            me.add_account(hoten, email);
+                        });
+                    }
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                }
+                Core.stopButtonLoading('btnSave');
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            },
+        });
+    },
+
+    add_account: function (hoten, email) {
+        var me = this;  
+        let tbl_PhongBanId = $("#DropPhongBan").val();
+        let tbl_CoSoId = $("#DropCoSo").val();
+        let tbl_Category_ChucVuId = $("#DropChucVu").val();
+        let valName = $("#DropChucVu").find("option:selected").attr("name");
+        let definePhongBan = $("#DropPhongBan").val();
+        var definedrole = $("#DropChucVu").find("option:selected").attr("role");
+        var role;
+        switch (valName) {
+            case 'PTGD':
+                role = 1;
+                break;
+            case 'GD':
+            case 'PGD':
+                role = 2;
+                break;
+            case 'TP':
+            case 'PP':
+                role = 3;
+                break;
+            case 'NS':
+            case 'NSPT':
+            case 'NSTV':
+                role = 4;
+                break;
+        }
+        if (!role) {
+            if (!tbl_CoSoId) { role = 1; }
+            else if (!tbl_PhongBanId) { role = 2; }
+            else {
+                if (definedrole == 3) {
+                    role = 3;
+                } else { role = 4; }
+            }
+        }
+
+        var jsonData =
+        {
+            'Name': hoten, 
+            'RoleId': role,
+            'Password': 'Abcdef1234.',
+            'Gmail': email,
+            'CompanyId': Core.companyId,
+            'CoSoId': tbl_CoSoId ? tbl_CoSoId || '' : Core.tkcosoId || '',
+            'PhongBanId': tbl_PhongBanId || '',
+            'C3': (definePhongBan === 'D0D7A8A7-9452-4470-81A6-ADDC2A9FB73C' || !definePhongBan) ? 'NHANSU' : '-1', // dùng tạm
+            'ChucVuId': tbl_Category_ChucVuId,
+            'StatusId': 2,
+            'CreatedDate': new Date().toISOString(),
+            'CreatedBy': Core.userName,
+            'Id': '',
+        }; 
+        $.ajax({
+            type: 'POST',
+            url: '/Register/Save_NhanVien',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    Core.showToast(response.Message, 'success'); 
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            },
         });
     },
     /*Utility*/ 
@@ -560,17 +757,20 @@ DetailTuyenDung.prototype = {
     },
     disableByRoleId: function () {
         var me = this;
-        if (me.Id && !me.type) {
-            $('#btnXoa_T').prop('hidden', false);
-        }
+        //if (me.Id && !me.type) { 
+        //}
         if ((me.roleId == 4) && (me.type != 'HSTD')) { 
-            $("#btnBack_T").hide();
+            $("#btnSave_T").hide();
             $("#btnReset_T").hide();
             $("#btnThemMoi_T").hide();
             $("#btnXoa_T").hide();
         }
         if ((me.roleId == 3 && me.tkC3 != 'NHANSU') || me.roleId == 4 && me.tkC3 != 'NHANSU') {
             $("#z_button").hide();
+            $("#col_Duyet").hide(); 
+            $("#col_Xoa").hide();
+            $("#btnThemMoi_NS").hide();
+
         }
     }, 
 }; 

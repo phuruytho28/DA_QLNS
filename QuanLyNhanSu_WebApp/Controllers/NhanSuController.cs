@@ -3,6 +3,7 @@ using QuanLyNhanSu_WebApp.Controllers.CommonController;
 using QuanLyNhanSu_WebApp.DataAccessLayer;
 using QuanLyNhanSu_WebApp.Filter;
 using QuanLyNhanSu_WebApp.Models;
+using QuanLyTuyenDung_WebApp.DataAccessLayer;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -208,6 +209,155 @@ namespace QuanLyNhanSu_WebApp.Controllers
 
                 response.Success = true;
                 response.Message = "Tình trạng nhân sự đã " + trangthai;
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Success = false;
+                response.Message = $"Lỗi SQL: {sqlEx.Message}";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Đã xảy ra lỗi khi cập nhật trạng thái: {ex.Message}";
+            }
+
+            return Json(response);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteNhanSu(string id)
+        {
+            var response = new JsonResponse();
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    response.Success = false;
+                    response.Message = "Id không được để trống.";
+                    return Json(response);
+                }
+
+                NhanSuDAL.NhanSu_DeleteById(id);
+
+                response.Success = true;
+                response.Message = "Xóa nhân sự thành công!";
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Success = false;
+                response.Message = $"Lỗi SQL: {sqlEx.Message}";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Đã xảy ra lỗi khi xóa nhân sự: {ex.Message}";
+            }
+
+            return Json(response);
+        }
+
+
+        [HttpPost]
+        public JsonResult LichSuXetDuyet_Search(NhanSu_LichSuDuyetModel LichSu)
+        {
+            int totalRows = 0;
+            List<NhanSu_LichSuDuyetModel> LichSuList = new List<NhanSu_LichSuDuyetModel>();
+
+            try
+            {
+                LichSuList = NhanSuDAL.LichSuXetDuyet_Search(LichSu, out totalRows);
+
+                return Json(new
+                {
+                    Success = true,
+                    Data = LichSuList,
+                    TotalRows = totalRows
+                });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new
+                {
+                    Success = false,
+                    Message = "Đã xảy ra lỗi khi tìm kiếm dữ liệu.",
+                    ErrorDetails = ex.Message
+                });
+            }
+        }
+        
+        [HttpPost]
+        public JsonResult LichSuThayDoi_Search(NhanSu_LichSuThayDoiModel LichSu)
+        {
+            int totalRows = 0;
+            List<NhanSu_LichSuThayDoiModel> LichSuList = new List<NhanSu_LichSuThayDoiModel>();
+
+            try
+            {
+                LichSuList = NhanSuDAL.LichSuThayDoi_Search(LichSu, out totalRows);
+
+                return Json(new
+                {
+                    Success = true,
+                    Data = LichSuList,
+                    TotalRows = totalRows
+                });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new
+                {
+                    Success = false,
+                    Message = "Đã xảy ra lỗi khi tìm kiếm dữ liệu.",
+                    ErrorDetails = ex.Message
+                });
+            }
+        }
+
+
+        public JsonResult LichSu_ThayDoi_Insert(string tbl_NhanSuId, string HoTenNguoiThayDoi, string tbl_Category_ChucVuId,
+                                                string tbl_Category_ChucVuNguoiThayDoiId, string tbl_PhongBanId, string tbl_CoSoId,
+                                                string Note, string ModifyDate, string C3, int RoleId, int checkTD)
+        {
+            var response = new JsonResponse();
+            try
+            {
+                if (string.IsNullOrEmpty(tbl_NhanSuId))
+                {
+                    response.Success = false;
+                    response.Message = "Id nhân sự không hợp lệ.";
+                    return Json(response);
+                }
+
+                if (string.IsNullOrEmpty(tbl_Category_ChucVuId) || string.IsNullOrEmpty(tbl_PhongBanId) || string.IsNullOrEmpty(tbl_CoSoId))
+                {
+                    response.Success = false;
+                    response.Message = "Id thay đổi không hợp lệ.";
+                    return Json(response);
+                }
+
+                ModifyDate = DateTime.Now.ToString();
+
+                NhanSuDAL.LichSu_ThayDoi_Insert(tbl_NhanSuId, HoTenNguoiThayDoi, tbl_Category_ChucVuId,
+                                                    tbl_Category_ChucVuNguoiThayDoiId, tbl_PhongBanId, tbl_CoSoId,
+                                                    Note, ModifyDate, C3, RoleId, checkTD);
+                //var trangthai = "";
+                //switch (checkTD)
+                //{
+                //    case 1:
+                //        trangthai = "được thăng chức";
+                //        break;
+                //    case 2:
+                //        trangthai = "được điều chuyển phòng ban";
+                //        break;
+                //    case 3:
+                //        trangthai = "được điều chuyển cơ sở";
+                //        break; 
+                //}
+
+                response.Success = true;
+                response.Message = "Nhân sự đã được cập nhật " ;
             }
             catch (SqlException sqlEx)
             {

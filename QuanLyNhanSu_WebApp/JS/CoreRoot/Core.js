@@ -356,7 +356,7 @@ CoreJs.prototype = {
                     var mystring = JSON.stringify(data.Data);
                     var json = $.parseJSON(mystring);
                     var mlen = json.length;
-                    var tbCombo = $('[id$=' + zone_id + ']');
+                    var tbCombo = $(`#${zone_id}`);
                     tbCombo.html('');
                     if (mlen > 0) {
                         var i;
@@ -369,11 +369,13 @@ CoreJs.prototype = {
                         }
                         getList += "<option value=''>" + strTitle + "</option>";
                         for (i = 0; i < mlen; i++) {
-                            getList += "<option name='" + json[i].Name + "' role='" + json[i].RoleId + "' value='" + json[i].Id + "'>" + json[i].MoTa + "</option>";
+                            if (me.roleId == 1 || me.roleId == 99 || json[i].RoleId != 1) {
+                                getList += "<option name='" + json[i].Name + "' role='" + json[i].RoleId + "' COSO='" + json[i].tbl_CoSoId + "' PHONGBAN='" + json[i].tbl_PhongBanId + "' CHUCVU='" + json[i].tbl_Category_ChucVuId + "' value='" + json[i].Id + "'>" + json[i].MoTa + "</option>";
+                            }
                         }
                         tbCombo.html(getList);
                     }
-                    tbCombo.val(defaultValue).trigger("change");
+                    //tbCombo.val(defaultValue).trigger("change");
                 }
             },
             error: function (error) {
@@ -432,11 +434,12 @@ CoreJs.prototype = {
         var me = this;
         var jsonData = {
             Keyword: '',
-            tbl_CoSoId: me.roleId === 99 ? '' : me.cosoId,
-            tbl_PhongBanId: me.roleId === 99 ? '' : me.phongbanId,
-            tbl_CompanyId: me.roleId === 99 ? '' : me.companyId, 
+            tbl_CoSoId: me.roleId === 99 ? '' : cosoId,
+            tbl_PhongBanId: me.roleId === 99 ? '' : phongbanId,
+            tbl_CompanyId: me.roleId === 99 ? '' : me.companyId,
             StatusId: 1,
             TinhTrang: 2,
+            RoleId: me.roleId,
             PageIndex: 1,
             PageSize: 10000000
         };
@@ -452,17 +455,17 @@ CoreJs.prototype = {
                     var tbCombo = $('[id$=' + zone_id + ']');
                     tbCombo.html('');
                     if (mlen > 0) {
-                        var i;
                         var getList = "";
-                        if (strTitle == "" || strTitle == null || strTitle == undefined) {
+                        if (!strTitle) {
                             strTitle = "-- Chọn dữ liệu --";
-                        }
-                        else {
+                        } else {
                             strTitle = "--- " + strTitle + " ---";
                         }
                         getList += "<option value=''>" + strTitle + "</option>";
-                        for (i = 0; i < mlen; i++) {
-                            getList += "<option name='" + json[i].MaNhanVien + "' value='" + json[i].Id + "'>" + json[i].HoTen + "</option>";
+                        for (var i = 0; i < mlen; i++) {
+                            if (json[i].RoleId > me.roleId) { // Lọc chỉ các phần tử có RoleId lớn hơn me.roleId
+                                getList += "<option name='" + json[i].MaNhanVien + "' role='" + json[i].RoleId + "' value='" + json[i].Id + "'>" + json[i].HoTen + "</option>";
+                            }
                         }
                         tbCombo.html(getList);
                     }
@@ -473,7 +476,7 @@ CoreJs.prototype = {
                 console.error('AJAX request failed:', error);
             }
         });
-    }, 
+    },// đang chỉ lọc những nhân sự cấp dưới dựa vào me.roleid
     loadDrop_DiaChi: function (zone_id, LoaiDC, defaultValue) {
         var me = this; 
         var jsonData = {

@@ -53,12 +53,12 @@ DetailNhanSu.prototype = {
             setTimeout(function () {
                 me.getDataById(me.Id);
             }, 1050);  
-        }
+        };
         if (me.TuyenDungId) { 
             setTimeout(function () {
                 me.getData_ByTuyenDungId(me.TuyenDungId);
             }, 1050);  
-        }  
+        };
         me.disableByRoleId(); 
 
     },
@@ -78,6 +78,9 @@ DetailNhanSu.prototype = {
         var me = this;
         $("#btnSave_T").click(function (e) {
             e.preventDefault();
+            if (me.TuyenDungId) {
+                me.jsValid += ', #txtTruyCapLink';
+            }
             var valid = Core.validateRequiredFields(me.jsValid);
             if (valid == true) {
                 me.save();
@@ -88,8 +91,13 @@ DetailNhanSu.prototype = {
         });
         $("#btnBack_T").click(function (e) {
             if (me.TuyenDungId) {
-                window.open('/TuyenDung/DetailTuyenDungView?id=' + me.TuyenDungId, '_self');
-            } else {
+                if (Core.exportValueUrl('type') == 'noHSTD') {
+                    window.open('/NhanSu/ListNhanSuView', '_self');
+                } else {
+                    window.open('/TuyenDung/DetailTuyenDungView?id=' + me.TuyenDungId, '_self');
+                } 
+            }
+            else {
                 window.open('/NhanSu/ListNhanSuView', '_self');
             }
         });
@@ -98,6 +106,14 @@ DetailNhanSu.prototype = {
         });
         $("#btnThemMoi_T").click(function (e) {
             window.open('/NhanSu/DetailNhanSuView', '_self');
+        }); 
+        $("#btnTruyCapLink").click(function (e) {
+            var link = $('#txtTruyCapLink').val();
+            if (link) {
+                window.open(link, '_blank');
+            } else {
+                Core.showToast('Hiện chưa có đường dẫn được nhập!', 'warning');
+            }
         }); 
         $('#imageUpload').on('change', function (event) {
             me.previewImage(event);
@@ -255,11 +271,15 @@ DetailNhanSu.prototype = {
                 } else { role = 4; }
             }
         }
-
+        console.log(me.TuyenDungId, me.Id)
         if (me.Id) {
             if (me.type == 'copy') {
                 if (me.roleId == 1 || me.roleId == 99 || me.roleId == 2) {
-                    tinhTrang = 2;
+                    if ((me.roleId == 2) && ((valName == 'GD') || (valName == 'PGD'))) {
+                        tinhTrang = 1;
+                    } else { 
+                        tinhTrang = 2;
+                    }
                 } else {
                     tinhTrang = 1;
                 }
@@ -272,9 +292,16 @@ DetailNhanSu.prototype = {
                 tinhTrang = tinhTrang_HSNS || 1;
             }
         }
+        else if (me.TuyenDungId && me.type == 'HSTD') {
+            tinhTrang = 0;
+        }
         else {
             if (me.roleId == 99 || me.roleId == 1 || me.roleId == 2) {
-                tinhTrang = 2;
+                if ((me.roleId == 2) && ((valName == 'GD') || (valName == 'PGD'))) {
+                    tinhTrang = 1;
+                } else {
+                    tinhTrang = 2;
+                }
             } else {
                 tinhTrang = 1;
             }
@@ -320,8 +347,8 @@ DetailNhanSu.prototype = {
             'tblCategory_NoiCap_TinhId': tblCategory_NoiCap_TinhId,
             'Email': Email,
             'SDT': SDT,
-            'Note': Note, 
-            'tbl_CompanyId': me.CongTyId, 
+            'Note': Note,
+            'tbl_CompanyId': me.roleId == 99 ? $('#z_Congty').val() : me.CongTyId, 
             'CreatedBy': Core.userName,
             'TinhTrang': tinhTrang,
             'StatusId': me.StatusId_Edit, 
@@ -332,8 +359,9 @@ DetailNhanSu.prototype = {
             'Id': defind, //me.type để xác định xem id tuyển dụng có khác id nhân sự không 
         };
         if (me.TuyenDungId) {
-            jsonData['TinhTrangHoSoTD'] = $('#bd_TrangThaiTD').data('value') || 1;
+            jsonData['TinhTrangHoSoTD'] = $('#bd_TrangThaiTD').data('value') || 1;  
             jsonData['tbl_TuyenDungId'] = me.TuyenDungId;
+            jsonData['LinkHoSoUngVien'] = $('#txtTruyCapLink').val() || ''; 
         }
           
          Core.startButtonLoading("btnSave");
@@ -367,7 +395,18 @@ DetailNhanSu.prototype = {
                             window.open('/NhanSu/ListNhanSuView', '_self');
 
                         }, 2500);
-                    } 
+                    } else if (me.type == "HSTD") {
+                        Core.showModal_Confirm(
+                            'Thông báo',
+                            'Thành công! Đang chuyển hướng về trang danh sách...'
+                        );
+                        $('.modal-footer').hide();
+                        setTimeout(function () {
+
+                            window.open('/TuyenDung/DetailTuyenDungView?id=' + me.TuyenDungId, '_self');
+
+                        }, 2500);
+                    }
                 } else {
                     Core.showToast(response.Message, 'danger');
                 }
@@ -409,6 +448,7 @@ DetailNhanSu.prototype = {
                         $("#txtDiaChiHienTai").val(obj.DiaChi_HienTai);
                         $("#txtSoCCCD").val(obj.SoCCCD);
                         $("#txtGhiChu").val(obj.Note);
+                        $("#txtTruyCapLink").val(obj.LinkHoSoUngVien);
 
                         $("#DropGioiTinh").val(obj.GioiTinh).trigger('change');
                         $("#DropHocVan").val(obj.tbl_Category_HocVanId).trigger('change');
@@ -424,11 +464,14 @@ DetailNhanSu.prototype = {
                         $("#DropNoiCapCCCD_Tinh").val(obj.tblCategory_NoiCap_TinhId).trigger('change'); 
                         $('#bd_TrangThaiNS').data('value', obj.TinhTrang);
 
-
+                        
+                        
                         if (me.type == 'copy') {
                             $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-primary');
                             $('#bd_TrangThaiNS').text('Khởi tạo (chờ xét duyệt)');
                         } else { 
+                            me.filter_lst_DuyetUngVien();
+                            me.filter_lst_ThayDoiNS();
                             switch (obj.TinhTrang) {
                                 case 0:
                                     $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-info');
@@ -466,6 +509,40 @@ DetailNhanSu.prototype = {
                                     $('#bd_TrangThaiNS').text('Không xác định');
                                     break;
                             }
+                            if (me.type == 'HSTD') { 
+                                switch (obj.TinhTrangHoSoTD || 1) {
+                                    case 1:
+                                        $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-primary');
+                                        $('#bd_TrangThaiTD').text('Nộp hồ sơ (Ứng tuyển)');
+                                        break;
+                                    case 2:
+                                        $("#btnSave_T").hide();
+                                        $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-info');
+                                        $('#bd_TrangThaiTD').text('Ứng tuyển đạt (Chờ phỏng vấn)');
+                                        break;
+                                    case 3:
+                                        $("#btnSave_T").hide();
+                                        $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-secondary');
+                                        $('#bd_TrangThaiTD').text('Kết thúc phỏng vấn (Chờ thông báo)');
+                                        $("#btnSave_T").hide();
+                                        break;
+                                    case 4:
+                                        $("#btnSave_T").hide();
+                                        $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-success');
+                                        $('#bd_TrangThaiTD').text('Kết quả đạt (Chờ xét duyệt)');
+                                        $("#btnSave_T").hide();
+                                        break;
+                                    case 5:
+                                        $("#btnSave_T").hide();
+                                        $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-danger');
+                                        $('#bd_TrangThaiTD').text('Kết quả không đạt (Loại)');
+                                        break;
+                                    default:
+                                        $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-warning');
+                                        $('#bd_TrangThaiTD').text('Không xác định');
+                                        break; 
+                                }
+                            } 
                         } 
                     }
                     else {
@@ -523,14 +600,16 @@ DetailNhanSu.prototype = {
                             case 3:
                                 $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-Secondary');
                                 $('#bd_TrangThaiTD').text('Kết thúc phỏng vấn (Chờ thông báo)');
+                                $("#btnSave_T").hide(); 
                                 break;
                             case 4:
                                 $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-success');
                                 $('#bd_TrangThaiTD').text('Kết quả đạt (Chờ xét duyệt)');
+                                $("#btnSave_T").hide();
                                 break;
                             case 5:
                                 $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-Danger');
-                                $('#bd_TrangThaiTD').text('Kết quả loại (Kết thúc)');
+                                $('#bd_TrangThaiTD').text('Kết quả không đạt (Loại)');
                                 break;
                             default:
                                 $('#bd_TrangThaiTD').removeClass('bg-primary').addClass('bg-warning');
@@ -723,8 +802,13 @@ DetailNhanSu.prototype = {
             $("#btnThemMoi_T").hide();
             $("#btnSave_T").hide();
         } 
-        if (me.roleId == 3 && me.tkC3 != 'NHANSU') {
-            $("#z_button").hide();
+        if (me.roleId == 3 && me.tkC3 != 'NHANSU') { 
+            $("#btnReset_T").hide();
+            $("#btnThemMoi_T").hide();
+            $("#btnXoa_T").hide();  
+            if (me.type == 'HSTD') {
+                $("#btnSave_T").hide();   
+            }
         }
         let chekval = $("#DropCoSo").val();
         if (!chekval || me.type == 'HSTD') {
@@ -732,12 +816,291 @@ DetailNhanSu.prototype = {
         }
         if (me.TuyenDungId) {
             $("#btnThemMoi_T").prop('hidden', true);
+            $("#line_chiaDong").prop('hidden', true);
+            $("#zone_lstTuyenDung").prop('hidden', true);
+
         } 
-        if (me.type == 'HSTD') { 
-            $('#DropChucVu').prop('disabled', true); 
+        if (me.type == 'HSTD' || me.type == 'noHSTD') {
+            $('#lbTieuDe').html('THÔNG TIN ỨNG VIÊN');
+            $('#DropChucVu').prop('disabled', true);
+            $("#btnReset_T").hide();
+            $("#btnThemMoi_T").hide();
+            $('#z_TrangThaiTD').prop('hidden', false);
+        } else {
+            $("#table1").prop('hidden', true);
+            $("#table1-tab").prop('hidden', true);
+            $('#table2').addClass('show active');
         }
-        if (me.type == 'HSTD') { 
-            $('#DropChucVu').prop('disabled', true); 
+        console.log(me.type)
+        if ((me.type != 'HSTD') && (me.type != 'noHSTD')) {
+            $('#z_linkCV').prop('hidden', true);
+        } else {
+            $('#table2').prop('hidden', true); 
+            $('#table2-tab').prop('hidden', true); 
+        }
+        if (me.roleId == 99) {
+            Core.loadDrop_Company('DropCongTy', 'Chọn công ty', '');
+            $('#z_Congty').prop('hidden', false); 
         }
     }, 
+
+
+
+    /*CRUD*/
+    filter_lst_DuyetUngVien: function () {
+        var me = this;
+        var jsonData = { 
+            tbl_NhanSuId: me.Id, 
+        };
+
+        // Tách cấu hình DataTables
+        var dtConfig = {
+            "paging": true,
+            "pageLength": 25,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "processing": true,
+            "serverSide": true,
+            "destroy": true,
+            "ajax": {
+                "url": '/NhanSu/LichSuXetDuyet_Search',
+                "type": 'POST',
+                "data": function (d) {
+                    $.extend(d, jsonData);
+                    d.pageIndex = d.start / d.length + 1;
+                    d.pageSize = d.length;
+                    return d;
+                },
+                "dataFilter": function (data) {
+                    var json = JSON.parse(data);
+                    json.recordsTotal = json.TotalRows;
+                    json.recordsFiltered = json.TotalRows;
+                    json.data = json.Data;
+                    if ((me.type != 'HSTD') && (me.type != 'noHSTD')) {
+                        if ((json.TotalRows < 1) && !me.type) {
+                            $("#table1").prop('hidden', true);
+                            $("#table1-tab").prop('hidden', true);
+                            $('#table2').addClass('show active');
+                        }
+                    }
+                    return JSON.stringify(json);
+                }
+            },
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [6, 7]
+            },
+            {
+                className: "dt-body-center", "targets": [1, 2, 3, 4, 5, 6, 7]
+            }
+            ], 
+            //"order": [[1, "asc"]]
+            "columns": [
+                { "data": "Id", "visible": false },
+                { "data": "RowNum", "className": "text-center" },
+                { "data": "HoTenNguoiDuyet", "className": "text-center" },
+                { "data": "tbl_Category_ChucVuName", "className": "text-center" },  
+                { "data": "ModifyDate", "className": "text-center" }, 
+                { "data": "Note", "className": "text-center" },
+                {
+                    "data": null,
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+                        var badgeClass = '';
+                        var badgeText = '';
+                        switch (row.TinhTrangHSTD_TruocDuyet) {
+                            case 1:
+                                badgeClass = 'badge rounded-pill border border-primary text-primary fs-7';
+                                badgeText = 'Nộp hồ sơ (Ứng tuyển)';
+                                break;
+                            case 2:
+                                badgeClass = 'badge rounded-pill border border-info text-info fs-7';
+                                badgeText = 'Ứng tuyển đạt (Chờ phỏng vấn)';
+                                break;
+                            case 3:
+                                badgeClass = 'badge rounded-pill border border-secondary text-secondary fs-7';
+                                badgeText = 'Kết thúc phỏng vấn (Chờ thông báo)';
+                                break;
+                            case 4:
+                                badgeClass = 'badge rounded-pill border border-success text-success fs-7';
+                                badgeText = 'Kết quả đạt (Chờ xét duyệt)';
+                                break;
+                            case 5:
+                                badgeClass = 'badge rounded-pill border border-danger text-danger fs-7';
+                                badgeText = 'Kết quả loại (Kết thúc)';
+                                break;
+                            default:
+                                badgeClass = 'badge rounded-pill border border-warning text-warning fs-7';
+                                badgeText = 'Không xác định';
+                        }
+
+                        return `<h4><span title="Tình trạng của hồ sơ ứng tuyển" class="${badgeClass}">${badgeText}</span></h4>`;
+                    }
+                } , 
+                {
+                    "data": null,
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+                        var badgeClass = '';
+                        var badgeText = '';
+                        switch (row.TinhTrangHSTD_SauDuyet) {
+                            case 1:
+                                badgeClass = 'badge rounded-pill border border-primary text-primary fs-7';
+                                badgeText = 'Nộp hồ sơ (Ứng tuyển)';
+                                break;
+                            case 2:
+                                badgeClass = 'badge rounded-pill border border-info text-info fs-7';
+                                badgeText = 'Ứng tuyển đạt (Chờ phỏng vấn)';
+                                break;
+                            case 3:
+                                badgeClass = 'badge rounded-pill border border-secondary text-secondary fs-7';
+                                badgeText = 'Kết thúc phỏng vấn (Chờ thông báo)';
+                                break;
+                            case 4:
+                                badgeClass = 'badge rounded-pill border border-success text-success fs-7';
+                                badgeText = 'Kết quả đạt (Chờ xét duyệt)';
+                                break;
+                            case 5:
+                                badgeClass = 'badge rounded-pill border border-danger text-danger fs-7';
+                                badgeText = 'Kết quả loại (Kết thúc)';
+                                break;
+                            default:
+                                badgeClass = 'badge rounded-pill border border-warning text-warning fs-7';
+                                badgeText = 'Không xác định';
+                        }
+
+                        return `<h4><span title="Tình trạng của hồ sơ ứng tuyển" class="${badgeClass}">${badgeText}</span></h4>`;
+                    }
+                } ,
+            ],
+            "drawCallback": function (settings) {
+                $("#loading-spinner").hide();
+                // Đảm bảo cột ID luôn ẩn sau khi vẽ lại bảng
+                var api = this.api();
+                api.column(0).visible(false);
+            },
+            "language": {
+                "search": "Tìm kiếm theo từ khóa:",
+                "lengthMenu": "Hiển thị _MENU_ dữ liệu",
+                "zeroRecords": "Không có dữ liệu nào được tìm thấy!",
+                "info": "Hiển thị _START_ đến _END_ trong _TOTAL_ dữ liệu",
+                "infoEmpty": "Hiển thị 0 đến 0 của 0 dữ liệu",
+                "infoFiltered": "(Dữ liệu tìm kiếm trong _MAX_ dữ liệu)",
+                "processing": "Đang tải dữ liệu...",
+                "emptyTable": "Không có dữ liệu nào được tìm thấy!",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Tiếp theo",
+                    "previous": "Quay lại"
+                }
+            },
+            "initComplete": function (settings, json) {
+                // Đảm bảo cột ID luôn ẩn sau khi khởi tạo
+                var api = this.api();
+                api.column(0).visible(false);
+            }
+        };
+
+        $("#loading-spinner").show();
+        var table = $('#tbldata_duyet').DataTable(dtConfig);
+
+    },
+
+    filter_lst_ThayDoiNS: function () {
+        var me = this;
+        var jsonData = {
+            tbl_NhanSuId: me.Id,
+        };
+
+        // Tách cấu hình DataTables
+        var dtConfig = {
+            "paging": true,
+            "pageLength": 25,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "processing": true,
+            "serverSide": true,
+            "destroy": true,
+            "ajax": {
+                "url": '/NhanSu/LichSuThayDoi_Search',
+                "type": 'POST',
+                "data": function (d) {
+                    $.extend(d, jsonData);
+                    d.pageIndex = d.start / d.length + 1;
+                    d.pageSize = d.length;
+                    return d;
+                },
+                "dataFilter": function (data) {
+                    var json = JSON.parse(data);
+                    json.recordsTotal = json.TotalRows;
+                    json.recordsFiltered = json.TotalRows;
+                    json.data = json.Data;
+                    //if ((json.TotalRows < 1) && !me.type) {
+                    //    $("#table1").prop('hidden', true);
+                    //    $("#table1-tab").prop('hidden', true);
+                    //    $('#table2').addClass('show active');
+                    //}
+                    return JSON.stringify(json);
+                }
+            },
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [6, 7]
+            },
+            {
+                className: "dt-body-center", "targets": [1, 2, 3, 4, 5, 6, 7]
+            }
+            ],
+            //"order": [[1, "asc"]]
+            "columns": [
+                { "data": "Id", "visible": false },
+                { "data": "RowNum", "className": "text-center" },
+                { "data": "HoTenNguoiThayDoi", "className": "text-center" },
+                { "data": "tbl_Category_ChucVuNguoiThayDoiName", "className": "text-center" },
+                { "data": "ModifyDate", "className": "text-center" },
+                { "data": "Note", "className": "text-center" }, 
+                { "data": "tbl_Category_ChucVuName", "className": "text-center" }, 
+                { "data": "tbl_PhongBanName", "className": "text-center" }, 
+                { "data": "tbl_CoSoName", "className": "text-center" }, 
+            ],
+            "drawCallback": function (settings) {
+                $("#loading-spinner").hide();
+                // Đảm bảo cột ID luôn ẩn sau khi vẽ lại bảng
+                var api = this.api();
+                api.column(0).visible(false);
+            },
+            "language": {
+                "search": "Tìm kiếm theo từ khóa:",
+                "lengthMenu": "Hiển thị _MENU_ dữ liệu",
+                "zeroRecords": "Không có dữ liệu nào được tìm thấy!",
+                "info": "Hiển thị _START_ đến _END_ trong _TOTAL_ dữ liệu",
+                "infoEmpty": "Hiển thị 0 đến 0 của 0 dữ liệu",
+                "infoFiltered": "(Dữ liệu tìm kiếm trong _MAX_ dữ liệu)",
+                "processing": "Đang tải dữ liệu...",
+                "emptyTable": "Không có dữ liệu nào được tìm thấy!",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Tiếp theo",
+                    "previous": "Quay lại"
+                }
+            },
+            "initComplete": function (settings, json) {
+                // Đảm bảo cột ID luôn ẩn sau khi khởi tạo
+                var api = this.api();
+                api.column(0).visible(false);
+            }
+        };
+
+        $("#loading-spinner").show();
+        var table = $('#tbldata_thaydoi').DataTable(dtConfig);
+
+    },
 }; 

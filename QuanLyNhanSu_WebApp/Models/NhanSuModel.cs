@@ -43,7 +43,35 @@ namespace QuanLyNhanSu_WebApp.Models
         public string ChucVuName { get; set; }
         public int RoleId { get; set; }
 
-        public string AnhNhanVienUrl { get; set; }
+        public string LinkHoSoUngVien { get; set; }
         public int TinhTrangHoSoTD { get; set; }
+    }
+      
+    public class NhanSu_LichSuDuyetModel : CommonModel.CommonModel
+    {
+        public string Id { get; set; }
+        public string tbl_NhanSuId { get; set; }
+        public string HoTenNguoiDuyet { get; set; }
+        public string tbl_Category_ChucVuId { get; set; }
+        public string tbl_Category_ChucVuName { get; set; }
+        public int TinhTrangHSTD_TruocDuyet { get; set; }
+        public int TinhTrangHSTD_SauDuyet { get; set; }
+    }
+    public class NhanSu_LichSuThayDoiModel : CommonModel.CommonModel
+    { 
+        public string Id { get; set; }
+        public string tbl_NhanSuId { get; set; }
+        public string tbl_NhanSuName { get; set; }
+        public string HoTenNguoiThayDoi { get; set; }
+        public string tbl_Category_ChucVuNguoiThayDoiId { get; set; }
+        public string tbl_Category_ChucVuNguoiThayDoiName { get; set; }
+        public string tbl_Category_ChucVuId { get; set; }
+        public string tbl_Category_ChucVuName { get; set; }
+        public string tbl_PhongBanId { get; set; }
+        public string tbl_PhongBanName { get; set; }
+        public string tbl_CoSoId { get; set; }
+        public string tbl_CoSoName { get; set; } 
+        public int RoleId { get; set; } 
+        public int checkTD { get; set; } 
     }
 }

@@ -227,5 +227,62 @@ namespace QuanLyNhanSu_WebApp.Controllers
             return Json(response);
         }
 
+        [HttpPost]
+        public JsonResult TuyenDung_UpdateTinhTrangHSTD(string tbl_NhanSuId, string HoTenNguoiDuyet, string tbl_Category_ChucVuId, int TinhTrangHSTD_TruocDuyet,
+                                                        int TinhTrangHSTD_SauDuyet, string Note, string ModifyDate)
+        {
+            var response = new JsonResponse();
+            try
+            {
+                if (string.IsNullOrEmpty(tbl_NhanSuId))
+                {
+                    response.Success = false;
+                    response.Message = "Id nhân sự không hợp lệ.";
+                    return Json(response);
+                }
+
+                if (TinhTrangHSTD_SauDuyet <= 0)
+                {
+                    response.Success = false;
+                    response.Message = "Tình trạng không hợp lệ.";
+                    return Json(response);
+                }
+
+                ModifyDate = DateTime.Now.ToString(); 
+
+                TuyenDungDAL.TuyenDung_UpdateTinhTrangHSTD(tbl_NhanSuId, HoTenNguoiDuyet, tbl_Category_ChucVuId, TinhTrangHSTD_TruocDuyet, TinhTrangHSTD_SauDuyet, Note, ModifyDate);
+                var trangthai = ""; 
+                switch (TinhTrangHSTD_SauDuyet) {
+                    case 2:
+                        trangthai = "ứng tuyển đạt (Chờ phỏng vấn)";
+                            break;
+                    case 3:
+                        trangthai = "kết thúc phỏng vấn (Chờ thông báo)";
+                            break; 
+                    case 4:
+                        trangthai = "kết quả đạt (Chờ xét duyệt)";
+                            break; 
+                    case 5:
+                        trangthai = "kết quả không đạt (Loại)";
+                            break; 
+                }
+
+                response.Success = true;
+                response.Message = "Hồ sơ ứng viên đã được chuyển sang trạng thái " + trangthai;
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Success = false;
+                response.Message = $"Lỗi SQL: {sqlEx.Message}";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Đã xảy ra lỗi khi cập nhật trạng thái: {ex.Message}";
+            }
+
+            return Json(response);
+        }
+
     }
 }

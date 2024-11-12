@@ -10,7 +10,9 @@ ListNhanSu.prototype = {
     tkC3: '',
     nhansuId: '',
     RecoverMode: false,
-    jsValid: '#DropTinhTrang_Duyet',
+    jsValid: '#DropTinhTrang_Duyet', 
+    jsValidThayDoi: '#txtGhiChuChuyen, #DropNhanSuChuyen, #DropChucVuChuyen, #DropCoSoChuyen', 
+    jsValidYC: '#txtYeuCau, #txtSoLuongYC, #txtNgayHoanTatYC, #txtMoTaYC, #txtYeuCauYC, #DropChucVuYC, #DropPhongBanYC, #DropCoSoYC',
     session: {},
 
     StatusCode: Object.freeze({
@@ -31,12 +33,19 @@ ListNhanSu.prototype = {
         me.tkphongbanId = Core.tkphongbanId;
         me.nhansuId = Core.tknhansuId;
         me.tkC3 = Core.tkC3;
-        if (me.roleId == 99 || me.roleId == 1) { 
+        if (me.roleId == 99) {
+            $('#zone_CoSo').prop('hidden', false);
+            $('#zone_company').prop('hidden', false);
+            $("#btnBoSung_NhanSu").hide(); 
+        } else if (me.roleId == 1) {
             $('#zone_CoSo').prop('hidden', false);
             $('#zone_ChucVu').appendTo('#first_row');
+            $("#btnBoSung_NhanSu").hide(); 
         } else if (me.roleId == 2) {
             $('#zone_ChucVu').appendTo('#first_row');
+            $("#btnBoSung_NhanSu").hide();
             $('#zone_QueQuan').appendTo('#first_row');
+            $("#DropCoSoChuyen").prop('disabled', true); 
         } else if (me.roleId == 3) {
             $('#zone_PhongBan').prop('hidden', true);
             $('#zone_ChucVu').appendTo('#first_row');
@@ -45,6 +54,7 @@ ListNhanSu.prototype = {
         } 
 
         if (me.roleId == 3 && me.tkC3 != 'NHANSU') {
+            $("#btnDieuChuyen").hide();
             $("#btnThemMoi").hide();
             $("#btnXetDuyet_HSNS").hide();
             $("#btnRecycleBin").hide();
@@ -53,6 +63,7 @@ ListNhanSu.prototype = {
             $("#chkSelectAll").hide();
             $("#col_Sua").html("Xem");
         } else if (me.roleId == 3 && me.tkC3 == 'NHANSU') {
+            $("#btnDieuChuyen").hide();
             $("#btnXetDuyet_HSNS").hide();
             $('#zone_PhongBan').prop('hidden', false);
             $('#zone_TinhTrang').appendTo('#row_hidden');
@@ -60,9 +71,19 @@ ListNhanSu.prototype = {
         Core.loadDrop_Company('searchDropCongTy', 'Chọn công ty', '');
         Core.loadDrop_CoSo('searchDropCoSo', 'Chọn công ty', '');
         Core.loadDrop_CoSo('editDropCoSo', 'Chọn công ty', '');
+        Core.loadDrop_CoSo('DropCoSoYC', 'Chọn công ty', '');
+        Core.loadDrop_CoSo('DropCoSoChuyen', 'Chọn công ty', '');
         Core.loadDrop_PhongBan('searchDropPhongBan', 'Chọn phòng ban', '');
+        Core.loadDrop_PhongBan('DropPhongBanChuyen', 'Chọn phòng ban', '');
+        Core.loadDrop_PhongBan('DropPhongBanYC', 'Chọn phòng ban', '');
+        var coSo;
+        (me.roleId == 1) ? (coSo = '') : (coSo = me.tkcosoId);
+        console.log(me.roleId, coSo)
+        Core.loadDrop_NhanSu('DropNhanSuChuyen', 'Chọn nhân sự', '', coSo, '');
         if ((me.roleId != 1) || (me.roleId != 99)) {
             me.loadDrop_Category_ChucVu('searchDropChucVu', 'Chọn chức vụ', '', 'DMCV', 9);
+            me.loadDrop_Category_ChucVu('DropChucVuYC', 'Chọn chức vụ', '', 'DMCV', 9);
+            me.loadDrop_Category_ChucVu('DropChucVuChuyen', 'Chọn chức vụ', '', 'DMCV', 9);
         } else {
             Core.loadDrop_Category('searchDropChucVu', 'Chọn chức vụ', '', 'DMCV', 9);
         }
@@ -77,6 +98,9 @@ ListNhanSu.prototype = {
         });
         $("#btnHuyTimKiem").on("click", function () {
             me.resetSearch();
+        }); 
+        $("#btnDieuChuyen").on("click", function () {
+            $("#staticBackdrop_DieuChuyen").modal('show');
         }); 
         $("#btnThemMoi").on("click", function () {
             window.open('/NhanSu/DetailNhanSuView', '_blank');
@@ -96,7 +120,13 @@ ListNhanSu.prototype = {
         });
         $("#btnBoSung_NhanSu").click(function (e) {
             e.preventDefault();
-            $("#staticBackdrop_BoSungNS").modal('show');
+            if (me.roleId == 3 && me.tkC3 != 'NHANSU') { 
+                $("#DropCoSoYC").val(me.tkcosoId).trigger('change'); 
+                $("#DropPhongBanYC").val(me.tkphongbanId).trigger('change');  
+                $("#staticBackdrop_BoSungNS").modal('show');
+            } else if (me.roleId == 3 && me.tkC3 == 'NHANSU') {
+                window.open('/TuyenDung/DetailTuyenDungView', '_self');
+            }
         }); 
         $("#btnXetDuyet_HSNS").click(function (e) {
             e.preventDefault();
@@ -122,6 +152,28 @@ ListNhanSu.prototype = {
             var valid = Core.validateRequiredFields(me.jsValid);
             if (valid == true) {
                 me.update_trangthai_xetduyet(items);
+            }
+            else {
+                Core.showToast('Vui lòng không bỏ trống các trường có dấu (*)!', 'warning');
+            }
+            
+        });
+        $("#btnYeuCau").click(function (e) {
+            e.preventDefault(); 
+            var valid = Core.validateRequiredFields(me.jsValidYC);
+            if (valid == true) {
+                me.ThemMoi_YCTuyenDung();
+            }
+            else {
+                Core.showToast('Vui lòng không bỏ trống các trường có dấu (*)!', 'warning');
+            }
+            
+        });
+        $("#btnThayDoi").click(function (e) {
+            e.preventDefault(); 
+            var valid = Core.validateRequiredFields(me.jsValidThayDoi);
+            if (valid == true) {
+                me.DieuChuyen_ThayDoiNS();
             }
             else {
                 Core.showToast('Vui lòng không bỏ trống các trường có dấu (*)!', 'warning');
@@ -164,6 +216,9 @@ ListNhanSu.prototype = {
                     me.Id = id;
                     window.open('/NhanSu/DetailNhanSuView?id=' + id + '&type=copy', '_blank');
                     break;
+                case 'noAction': 
+                    Core.showToast('Bạn không thể sử dụng tính năng này!', 'warning');
+                    break;
                 case 'recover':
                     me.update_capnhat_trangThai(id, me.StatusCode.Actived);
                     break;
@@ -205,9 +260,29 @@ ListNhanSu.prototype = {
                 $(this).attr('checked', checked_status);
                 $(this).prop('checked', checked_status);
             });
-        });  
+        });   
 
-         
+        $('#DropChucVuChuyen').on('change', function () {
+            var selectedValue = $(this).val();
+            var selectedName = $(this).find("option:selected").attr("name");
+
+            if (selectedName === 'PTGD') {
+                $('#row_phongban, #row_coso').prop('hidden', true);
+                $("#DropPhongBanChuyen").val('').trigger('change');
+                $("#DropCoSoChuyen").val('').trigger('change');
+
+            } else if (selectedName === 'GD' || selectedName === 'PGD') {
+                $('#row_phongban').prop('hidden', true);
+                $('#row_coso').prop('hidden', false);
+                $("#DropPhongBanChuyen").val('').trigger('change');
+            } else {
+                $("#DropCoSoChuyen").val(me.tkcosoId).trigger('change');
+                $('#row_phongban, #row_coso').prop('hidden', false);
+            }
+            role = $("#DropChucVuChuyen").find("option:selected").attr("name");
+
+            console.log(selectedValue, selectedName, role);
+        });
     },
     init_action: function () {
         var me = this;
@@ -251,7 +326,7 @@ ListNhanSu.prototype = {
         // Tách cấu hình DataTables
         var dtConfig = {
             "paging": true,
-            "pageLength": 10,
+            "pageLength": 25,
             "lengthChange": true,
             "searching": false,
             "ordering": false,
@@ -336,12 +411,12 @@ ListNhanSu.prototype = {
                 {
                     "mData": null,
                     "mRender": function (data, type, row) {
-                        if (((!row.tbl_PhongBanId) && (row.Id != me.nhansuId) && (me.roleId == 2)) || ((me.roleId == 3) && (!row.tbl_PhongBanId))) {
-                            return '<a title="Chỉnh sửa" class="action-icon text-muted btnSua" tinhtrang="' + row.TinhTrang + '" href="javascript:void(0);" style="pointer-events: none; opacity: 0.5;"><i class="fa-regular fa-pen-to-square"></i></a>';
+                        if (((me.roleId == 3) && (row.TinhTrang == 2) && (me.tkC3 == 'NHANSU')) || ((me.roleId == 2) && (row.TinhTrang == 2) && ((row.tbl_Category_ChucVuId == '21EDBCF4-2E47-4BE7-9547-2B1165366A22') || (row.tbl_Category_ChucVuId == '6E605817-1A12-46C9-A7E6-58F49AC9C3CF')))){ //((!row.tbl_PhongBanId) && (row.Id != me.nhansuId) && (me.roleId == 2)) || ((me.roleId == 3) && (!row.tbl_PhongBanId))
+                            return '<a title="Chỉnh sửa" id="' + row.Id + '" type="noAction" class="action-icon text-muted" tinhtrang="' + row.TinhTrang + '" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';
                         } else {
                             if (me.roleId == 3 && me.tkC3 != 'NHANSU') {
                                 return '<a title="Xem" id="' + row.Id + '" type="edit" tinhtrang="' + row.TinhTrang + '" class="action-icon text-success btnSua" href="javascript:void(0);"><i class="bi bi-eye"></i></a>';
-                            } else {
+                            } else { 
                                 return '<a title="Chỉnh sửa" id="' + row.Id + '" type="edit" tinhtrang="' + row.TinhTrang + '" class="action-icon text-success btnSua" href="javascript:void(0);"><i class="fa-regular fa-pen-to-square"></i></a>';
                             }
                         }
@@ -351,12 +426,12 @@ ListNhanSu.prototype = {
                 {
                     "mData": "Id",
                     "mRender": function (data, type, row) {
-                        if (((!row.tbl_PhongBanId) && (row.Id != me.nhansuId) && (me.roleId == 2)) || ((me.roleId == 3) && (!row.tbl_PhongBanId))) { 
+                        if (((me.roleId == 3) && (row.TinhTrang != 1)) || ((me.roleId == 2) && (row.TinhTrang == 0)) || ((me.roleId == 2) && (row.TinhTrang != 1) && ((row.tbl_Category_ChucVuId == '21EDBCF4-2E47-4BE7-9547-2B1165366A22') || (row.tbl_Category_ChucVuId == '6E605817-1A12-46C9-A7E6-58F49AC9C3CF')))) {
                             if (!me.RecoverMode) {
-                                return '<a title="Xóa dữ liệu" id="' + data + '" type="delete" tinhtrang="' + row.TinhTrang + '" class="action-icon text-muted btnXoa" href="javascript:void(0);"  style="pointer-events: none; opacity: 0.5;"><i class="fa-solid fa-trash"></i></a>';
+                                return '<a title="Xóa dữ liệu" id="' + data + '" tinhtrang="' + row.TinhTrang + '" class="action-icon text-muted " type="noAction" href="javascript:void(0);" ><i class="fa-solid fa-trash"></i></a>';
                             }
                             else {
-                                return '<a title="Khôi phục dữ liệu" id="' + data + '" type="recover" tinhtrang="' + row.TinhTrang + '" class="action-icon text-muted btnKhoiPhuc" href="javascript:void(0);  style="pointer-events: none; opacity: 0.5;""><i class="fa-solid fa-rotate-right"></i></a>';
+                                return '<a title="Khôi phục dữ liệu" id="' + data + '"  tinhtrang="' + row.TinhTrang + '" class="action-icon text-muted" type="noAction" href="javascript:void(0);  ><i class="fa-solid fa-rotate-right"></i></a>';
                             } 
                         } else {
                             if (!me.RecoverMode) {
@@ -372,10 +447,12 @@ ListNhanSu.prototype = {
                 {
                     "data": null,
                     "render": function (data, type, row) {
-                        // Kiểm tra điều kiện để vô hiệu hóa checkbox
-                        var disabledAttr = (((!row.tbl_PhongBanId) && (row.Id != me.nhansuId) && (me.roleId == 2)) || ((me.roleId == 3) && (!row.tbl_PhongBanId))) ? 'disabled' : '';
-                        return '<input type="checkbox" class="form-check-input" tinhtrang="' + row.TinhTrang + '" id="category' + row.Id + '" name="category' + row.Id + '" data-trang-thai="' + row.TinhTrang + '" ' + disabledAttr + '>';
-                    },
+                        if (((me.roleId == 3) && (row.TinhTrang != 1)) || (row.TinhTrang == 0) || ((me.roleId == 2) && ((row.tbl_Category_ChucVuId == '21EDBCF4-2E47-4BE7-9547-2B1165366A22') || (row.tbl_Category_ChucVuId == '6E605817-1A12-46C9-A7E6-58F49AC9C3CF')))) {
+                            return '<a title="Nhân sự đã duyệt, không thể tác động" id="' + data + '"  type="noAction" tinhtrang="' + row.TinhTrang + '" class="action-icon text-secondary" href="javascript:void(0);"><i class="bi bi-ban"></i></a>';
+                        } else { 
+                            return '<input type="checkbox" class="form-check-input" tinhtrang="' + row.TinhTrang + '" id="category' + row.Id + '" name="category' + row.Id + '" data-trang-thai="' + row.TinhTrang + '">';
+                        } 
+                    }, 
                     "className": "text-center",
                     "visible": !(me.roleId == 3 && me.tkC3 != 'NHANSU')
                 }
@@ -589,8 +666,7 @@ ListNhanSu.prototype = {
         $("#chkSelectAll").prop('checked', false);
         this.filterNhanSu();
     }, 
-
-
+     
     loadDrop_Category_ChucVu: function (zone_id, strTitle, defaultValue, loaiDM, dmCha) {
         var me = this;
         var jsonData = {
@@ -655,6 +731,149 @@ ListNhanSu.prototype = {
             }
         });
     },
-
      
+    ThemMoi_YCTuyenDung: function () {
+        var me = this;    
+
+        let MaTuyenDung = '';
+        let TenTuyenDung = $('#txtYeuCau').val();
+        let MoTa = $('#txtMoTaYC').val();
+        let YeuCau = $('#txtYeuCauYC').val();
+        let tbl_CoSoId = $('#DropCoSoYC').val();
+        let tbl_PhongBanId = $('#DropPhongBanYC').val();
+        let tbl_Category_ChucVuId = $('#DropChucVuYC').val();
+        let SoLuong = $('#txtSoLuongYC').val(); 
+        let NgayKetThuc = $('#txtNgayHoanTatYC').val(); 
+         
+         
+        let jsonData = {
+            'MaTuyenDung': MaTuyenDung,
+            'TenTuyenDung': TenTuyenDung,
+            'MoTa': MoTa,
+            'YeuCau': YeuCau,
+            'tbl_CoSoId': tbl_CoSoId,
+            'tbl_PhongBanId': tbl_PhongBanId,
+            'tbl_Category_ChucVuId': tbl_Category_ChucVuId,
+            'SoLuong': SoLuong, 
+            'NgayKetThuc': NgayKetThuc,
+            'tbl_CompanyId': me.CongTyId,
+            'CreatedBy': Core.userName,
+            'TinhTrang': 1,
+            'StatusId': 1,
+            'Id': '' 
+        };
+
+
+        Core.startButtonLoading("btnYeuCau");
+
+        $.ajax({
+            type: 'POST',
+            url: '/TuyenDung/Save',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    Core.showToast(response.Message, 'success');
+                    Core.showModal_Confirm(
+                        'Thông báo',
+                        'Thành công! Đang chuyển hướng về trang danh sách...'
+                    );
+                    $('.modal-footer').hide();
+                    setTimeout(function () {
+
+                        window.open('/TuyenDung/ListTuyenDungView', '_self');
+
+                    }, 3000);
+
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            },
+            complete: function () {
+                Core.stopButtonLoading("btnYeuCau");
+            }
+        });
+    },
+
+
+
+    DieuChuyen_ThayDoiNS: function (str_Id, statusId) {
+                
+
+        var me = this;
+        var Note = $('#txtGhiChuChuyen').val();
+        var tbl_NhanSuId = $('#DropNhanSuChuyen').val(); 
+        var chucuVal = $('#DropChucVuChuyen').val(); 
+        var phongbanVal = $('#DropPhongBanChuyen').val(); 
+        var cosoVal = $('#DropCoSoChuyen').val(); 
+
+        var role;
+        let valName = $("#DropChucVuChuyen").find("option:selected").attr("name");
+        switch (valName) {
+            case 'PTGD':
+                role = 1;
+                break;
+            case 'GD':
+            case 'PGD':
+                role = 2;
+                break;
+            case 'TP':
+            case 'PP':
+                role = 3;
+                break;
+            case 'NS':
+            case 'NSPT':
+            case 'NSTV':
+                role = 4;
+                break;
+        }
+        if (!role) {
+            if (!tbl_CoSoId) { role = 1; }
+            else if (!tbl_PhongBanId) { role = 2; }
+            else {
+                if (definedrole == 3) {
+                    role = 3;
+                } else { role = 4; }
+            }
+        } 
+        var jsonData =
+        {
+            'tbl_NhanSuId': tbl_NhanSuId,
+            'HoTenNguoiThayDoi': Core.userName, 
+            'tbl_Category_ChucVuId': chucuVal,
+            'tbl_PhongBanId': phongbanVal,
+            'tbl_CoSoId': cosoVal,
+            'tbl_Category_ChucVuNguoiThayDoiId': Core.tkchucvuId,
+            'Note': Note, 
+            'C3': (phongbanVal === 'D0D7A8A7-9452-4470-81A6-ADDC2A9FB73C' || !phongbanVal) ? 'NHANSU' : '-1',
+            'RoleId': role,
+            'checkTD': 1,
+        };
+        Core.startButtonLoading("btnThayDoi");
+        $.ajax({
+            type: 'POST',
+            url: '/NhanSu/LichSu_ThayDoi_Insert',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    Core.showToast(response.Message, 'success'); 
+                    $("#staticBackdrop_DieuChuyen").modal('hide');
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                }
+                Core.stopButtonLoading('btnThayDoi');
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            },
+        });
+    },
 }; 

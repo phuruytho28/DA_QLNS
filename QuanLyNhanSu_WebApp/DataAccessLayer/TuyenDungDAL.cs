@@ -209,7 +209,29 @@ namespace QuanLyTuyenDung_WebApp.DataAccessLayer
             {
                 throw new Exception($"Error updating status: {ex.Message}");
             }
-        } 
+        }
+        public static void TuyenDung_UpdateTinhTrangHSTD(string tbl_NhanSuId,string HoTenNguoiDuyet, string tbl_Category_ChucVuId,int TinhTrangHSTD_TruocDuyet,
+                                                        int TinhTrangHSTD_SauDuyet,  string Note, string ModifyDate)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@tbl_NhanSuId", tbl_NhanSuId ?? ""),
+                new SqlParameter("@HoTenNguoiDuyet", HoTenNguoiDuyet ?? ""),
+                new SqlParameter("@tbl_Category_ChucVuId", tbl_Category_ChucVuId ?? ""),
+                new SqlParameter("@TinhTrangHSTD_TruocDuyet", TinhTrangHSTD_TruocDuyet),
+                new SqlParameter("@TinhTrangHSTD_SauDuyet", TinhTrangHSTD_SauDuyet),
+                new SqlParameter("@Note", Note ?? ""),
+                new SqlParameter("@ModifyDate",ModifyDate ?? ""), 
+            }; 
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_XetDuyetTinhTrangHSTD", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating status: {ex.Message}");
+            }
+        }
 
     }
 }
