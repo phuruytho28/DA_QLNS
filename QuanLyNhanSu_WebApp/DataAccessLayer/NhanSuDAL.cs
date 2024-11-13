@@ -94,9 +94,14 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
                 newId = parameters[parameters.Length - 1].Value.ToString();
             }
             catch (SqlException ex)
-            {
+            { 
+                if (ex.Number == 50001 && ex.Message.Contains("Email"))
+                {
+                    throw new Exception("Email đã tồn tại. Vui lòng chọn Email khác.");
+                }
                 throw new Exception($"Error inserting NhanSu: {ex.Message}");
             }
+
 
             return newId;
         }

@@ -10,33 +10,33 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace QuanLyCongViec_WebApp.Controllers
+namespace QuanLyKhenThuongKyLuat_WebApp.Controllers
 {
     [CustomAuthorize]
-    public class CongViecController : Controller
+    public class KhenThuongKyLuatController : Controller
     {
         [CustomAuthorize]
-        public ActionResult ListCongViecView()
+        public ActionResult ListKhenThuongKyLuatView()
         {
             return View();
         } 
 
-        private readonly CongViecDAL CongViecDAL = new CongViecDAL();
+        private readonly KhenThuongKyLuatDAL KhenThuongKyLuatDAL = new KhenThuongKyLuatDAL();
 
         [HttpPost]
-        public JsonResult FilterCongViec(CongViecModel CongViec)
+        public JsonResult FilterKhenThuongKyLuat(KhenThuongKyLuatModel KhenThuongKyLuat)
         {
             int totalRows = 0;
-            List<CongViecModel> CongViecList = new List<CongViecModel>();
+            List<KhenThuongKyLuatModel> KhenThuongKyLuatList = new List<KhenThuongKyLuatModel>();
 
             try
             {
-                CongViecList = CongViecDAL.CongViec_Search(CongViec, out totalRows);
+                KhenThuongKyLuatList = KhenThuongKyLuatDAL.KhenThuongKyLuat_Search(KhenThuongKyLuat, out totalRows);
 
                 return Json(new
                 {
                     Success = true,
-                    Data = CongViecList,
+                    Data = KhenThuongKyLuatList,
                     TotalRows = totalRows
                 });
             }
@@ -53,7 +53,7 @@ namespace QuanLyCongViec_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult save(CongViecModel obj)
+        public JsonResult save(KhenThuongKyLuatModel obj)
         {
             var response = new JsonResponse();
             try
@@ -62,7 +62,7 @@ namespace QuanLyCongViec_WebApp.Controllers
                 if (string.IsNullOrEmpty(obj.Id))
                 {
                     obj.CreatedDate = DateTime.Now.ToString();
-                    var result = CongViecDAL.CongViec_Insert(obj, ref newId);
+                    var result = KhenThuongKyLuatDAL.KhenThuongKyLuat_Insert(obj, ref newId);
                     if (!string.IsNullOrEmpty(newId))
                     {
                         response.Success = true;
@@ -78,7 +78,7 @@ namespace QuanLyCongViec_WebApp.Controllers
                 else
                 {
                     obj.ModifyDate = DateTime.Now.ToString();
-                    CongViecDAL.CongViec_Update(obj);
+                    KhenThuongKyLuatDAL.KhenThuongKyLuat_Update(obj);
                     response.Success = true;
                     response.Message = "Cập nhật thành công!";
                 }
@@ -93,21 +93,21 @@ namespace QuanLyCongViec_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetCongViecById(string id)
+        public JsonResult GetKhenThuongKyLuatById(string id)
         {
             var response = new JsonResponse();
             try
             {
-                var CongViec = CongViecDAL.CongViec_GetById(id);
-                if (CongViec != null)
+                var KhenThuongKyLuat = KhenThuongKyLuatDAL.KhenThuongKyLuat_GetById(id);
+                if (KhenThuongKyLuat != null)
                 {
                     response.Success = true;
-                    response.Data = CongViec;
+                    response.Data = KhenThuongKyLuat;
                 }
                 else
                 {
                     response.Success = false;
-                    response.Message = "Không tìm thấy nhân sự với Id này.";
+                    response.Message = "Không tìm thấy quyết định với Id này.";
                 }
             }
             catch (Exception ex)
@@ -120,32 +120,32 @@ namespace QuanLyCongViec_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateStatusId(CongViecModel CongViec)
+        public JsonResult UpdateStatusId(KhenThuongKyLuatModel KhenThuongKyLuat)
         {
             var response = new JsonResponse();
             try
             {
-                if (string.IsNullOrEmpty(CongViec.C1))
+                if (string.IsNullOrEmpty(KhenThuongKyLuat.C1))
                 {
                     response.Success = false;
                     response.Message = "Danh sách Id không được để trống.";
                     return Json(response);
                 }
 
-                if (CongViec.StatusId < 0 ||CongViec.TinhTrang < 0 ||CongViec.MucDo < 0)
+                if (KhenThuongKyLuat.StatusId < 0 ||KhenThuongKyLuat.TinhTrang < 0 ||KhenThuongKyLuat.HinhThuc < 0)
                 {
                     response.Success = false;
                     response.Message = "Tình trạng không hợp lệ.";
                     return Json(response);
                 }
 
-                CongViec.ModifyDate = DateTime.Now.ToString();
+                KhenThuongKyLuat.ModifyDate = DateTime.Now.ToString();
 
-                CongViecDAL.CongViec_UpdateStatusId(CongViec);
+                KhenThuongKyLuatDAL.KhenThuongKyLuat_UpdateStatusId(KhenThuongKyLuat);
                 var trangthai = "";
-                if (CongViec.StatusId > 0)
+                if (KhenThuongKyLuat.StatusId > 0)
                 { 
-                    switch (CongViec.StatusId)
+                    switch (KhenThuongKyLuat.StatusId)
                     {
                         case 1:
                             trangthai = "khôi phục trạng thái hoạt động";
@@ -155,42 +155,36 @@ namespace QuanLyCongViec_WebApp.Controllers
                             break;
                     }
                 }
-                if (CongViec.TinhTrang > 0)
+                if (KhenThuongKyLuat.TinhTrang > 0)
                 { 
-                    switch (CongViec.TinhTrang)
+                    switch (KhenThuongKyLuat.TinhTrang)
                     {
                         case 1:
-                            trangthai = "được lên kế hoạch";
+                            trangthai = "được đề xuất";
                             break;
                         case 2:
-                            trangthai = "trong quá trình thực hiện ";
+                            trangthai = "được duyệt ";
                             break;
                         case 3:
-                            trangthai = "bị hoãn lại ";
-                            break;
-                        case 4:
-                            trangthai = "hoàn thành ";
-                            break;
+                            trangthai = "bị từ chối duyệt ";
+                            break; 
                     }
                 }
-                if (CongViec.MucDo > 0)
+                if (KhenThuongKyLuat.HinhThuc > 0)
                 { 
-                    switch (CongViec.MucDo)
+                    switch (KhenThuongKyLuat.HinhThuc)
                     {
                         case 1:
-                            trangthai = "chuyển sang mức độ ưu tiên thấp";
+                            trangthai = "chuyển sang hình thức khen thưởng";
                             break;
                         case 2:
-                            trangthai = "chuyển sang mức độ ưu tiên bình thường";
-                            break;
-                        case 3:
-                            trangthai = "chuyển sang mức độ ưu tiên cao";
-                            break;
+                            trangthai = "chuyển sang hình thức kỷ luật";
+                            break; 
                     }
                 }
 
                 response.Success = true;
-                response.Message = "Công việc đã " + trangthai;
+                response.Message = "Quyết định đã " + trangthai;
             }
             catch (SqlException sqlEx)
             {

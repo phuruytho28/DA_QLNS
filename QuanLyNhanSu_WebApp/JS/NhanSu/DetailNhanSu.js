@@ -9,6 +9,7 @@ DetailNhanSu.prototype = {
     userName: '',
     RecoverMode: false,
     jsValid: '#txtHoTen, #txtNgaySinh, #txtEmail, #txtSDT, #txtDiaChiQue,  #txtDiaChiHienTai, #txtSoCCCD,  #DropGioiTinh, #DropHocVan, #DropDanToc, #DropTonGiao, #DropQueQuan_Tinh, #DropQueQuan_Huyen, #DropHienTai_Tinh, #DropHienTai_Huyen, #DropChucVu,  #DropNoiCapCCCD_Tinh', /*, #DropCoSo,#DropPhongBan,*/
+    dinhdangTien: '#txtMucLuongKyHD, #txtMucTienBH',
     session: '',
     queQuanHuyenId: '',
     hienTaiHuyenId: '',
@@ -48,6 +49,7 @@ DetailNhanSu.prototype = {
         Core.loadDrop_DiaChi('DropQueQuan_Tinh', 'Tinh', '');
         //Core.loadDrop_DiaChi('DropQueQuan_Huyen', '', '');
         Core.loadDrop_DiaChi('DropNoiCapCCCD_Tinh', 'Tinh', '');
+        Core.DinhDangTien(me.dinhdangTien);
          
         if (me.Id) { 
             setTimeout(function () {
@@ -107,6 +109,12 @@ DetailNhanSu.prototype = {
         $("#btnThemMoi_T").click(function (e) {
             window.open('/NhanSu/DetailNhanSuView', '_self');
         }); 
+        $("#btnSaveHD").click(function (e) { 
+            me.saveHDLD();
+        });
+        $("#btnHDLD").click(function (e) {
+            $("#staticBackdrop").modal('show');
+        });
         $("#btnTruyCapLink").click(function (e) {
             var link = $('#txtTruyCapLink').val();
             if (link) {
@@ -378,7 +386,7 @@ DetailNhanSu.prototype = {
                     if ((!me.TuyenDungId && !me.Id) || (me.Id && (me.type == 'copy'))) {
                         Core.showModal_Confirm(
                             'Thông báo',
-                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + Email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự được cấp trên xét duyệt!</span></em>'
+                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + Email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự của bạn ở tình trạng hoạt động!</span></em>'
                         );
                         $("#btnYes").click(function (e) {
                             $('#modalconfirm').modal('hide');
@@ -778,7 +786,7 @@ DetailNhanSu.prototype = {
     disableByRoleId: function () {
         var me = this;
         if (me.Id && !me.type) {
-            $('#btnXoa_T').prop('hidden', false);
+            $('#btnReset_T').prop('hidden', true);
         }
         if ((me.roleId == 4) && (me.type != 'HSTD')) { 
             $("#btnBack_T").hide();
@@ -830,13 +838,16 @@ DetailNhanSu.prototype = {
             $("#table1").prop('hidden', true);
             $("#table1-tab").prop('hidden', true);
             $('#table2').addClass('show active');
-        }
-        console.log(me.type)
+        } 
         if ((me.type != 'HSTD') && (me.type != 'noHSTD')) {
             $('#z_linkCV').prop('hidden', true);
         } else {
             $('#table2').prop('hidden', true); 
             $('#table2-tab').prop('hidden', true); 
+        }
+        if ((!me.Id && !me.type) || me.type == 'copy') { 
+            $('#zone_lstTuyenDung').prop('hidden', true); 
+            $('#line_chiaDong').prop('hidden', true); 
         }
         if (me.roleId == 99) {
             Core.loadDrop_Company('DropCongTy', 'Chọn công ty', '');
@@ -1103,4 +1114,70 @@ DetailNhanSu.prototype = {
         var table = $('#tbldata_thaydoi').DataTable(dtConfig);
 
     },
+
+
+    /*HDLD_lstBangLuong*/
+    saveHDLD: function () {
+        var me = this;  
+        let MaHD = $('#txtMaHopDong').val();
+        let LoaiHD = $('#DropLoaiHD').val();
+        let NgayTaoHD = $('#txtNgayTaoHD').val();
+        let NgayKyHD = $('#txtNgayKyHD').val();
+        let MucLuongKyHD = $('#txtMucLuongKyHD').val().replace(/\./g, '');
+        let SoCongHangThang = $('#txtSoCongHangThang').val();
+        let MucTienBH = $('#txtMucTienBH').val().replace(/\./g, '');
+        let MoTaChiTiet = $('#txtMoTa').val()
+
+        let tbl_Category_ChucVuId = $("#DropChucVu").val();
+        let tbl_PhongBanId = $("#DropPhongBan").val();
+        let tbl_CoSoId = $("#DropCoSo").val(); 
+        let tinhTrang_HSNS = $('#bd_TrangThaiNS').data('value'); 
+
+        let jsonData = {
+            'MaHD': MaHD,
+            'LoaiHD': LoaiHD,
+            'NgayTaoHD': NgayTaoHD,
+            'NgayKyHD': NgayKyHD, 
+            'MucLuongKyHD': MucLuongKyHD,
+            'MucTienBH': MucTienBH,  
+            'SoCongHangThang': SoCongHangThang,
+            'tbl_NhanSuId': Core.exportValueUrl('id'),
+            'tbl_CoSoId': tbl_CoSoId,
+            'tbl_PhongBanId': tbl_PhongBanId,
+            'tbl_Category_ChucVuId': tbl_Category_ChucVuId || "",  
+            'tbl_CompanyId': me.roleId == 99 ? $('#z_Congty').val() : me.CongTyId,
+            'CreatedBy': Core.userName,
+            'TinhTrang': tinhTrang_HSNS,
+            'StatusId': 1,
+            'MoTaChiTiet': MoTaChiTiet,
+            'RoleId': me.roleId, // đây là id người tạo và người sửa để xác định quyền chỉnh sửa, không phỉa role của nhân. bên trên là role của nhân sự 
+
+            'Id': "", //me.type để xác định xem id tuyển dụng có khác id nhân sự không 
+        }; 
+
+        Core.startButtonLoading("btnSaveHD");
+
+        $.ajax({
+            type: 'POST',
+            url: '/HDLD_lstBangLuong/Save',
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response.Success) {
+                    Core.showToast(response.Message, 'success'); 
+                } else {
+                    Core.showToast(response.Message, 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                Core.showToast('Đã xảy ra lỗi khi lưu dữ liệu: ' + error, 'danger');
+            },
+            complete: function () {
+                Core.stopButtonLoading("btnSaveHD");
+            }
+        });
+    },
+
 }; 

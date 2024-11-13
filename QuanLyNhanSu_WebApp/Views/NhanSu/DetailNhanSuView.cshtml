@@ -244,6 +244,7 @@
                     <div class="col-md-6 col-6">
                         <div class="text-sm-end">
                             <button type="button" class="btn btn-success" id="btnThemMoi_T"><i class="bi bi-plus-circle me-2"></i>Thêm mới</button>
+                            <button type="button" class="btn btn-success" id="btnHDLD"><i class="fa-solid fa-file-signature me-2"></i>Hợp đồng lao động</button>
                             <button type="button" class="btn btn-success" id="btnSave_T"><i class="bi bi-floppy me-2"></i>Lưu</button>
                             @*<button type="button" class="btn btn-secondary" hidden="hidden" id="btnXoa_T"><i class="fa-solid fa-trash-can me-2"></i>Xóa</button>*@
                         </div>
@@ -337,6 +338,86 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center">
+                <h4 class="modal-title flex-grow-1 text-center text-success" id="myModalLabel"><i class="fa-solid fa-file-signature me-2"></i>HỢP ĐỒNG LAO ĐỘNG</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Row 1 -->
+                <div class="row mb-2" id="row_1">
+                    <div class="col-6">
+                        <label id="lbMaHopDong" for="txtMaHopDong" class="form-label">Mã hợp đồng (*)</label>
+                        <input type="text" id="txtMaHopDong" class="form-control" placeholder="Nhập mã hợp đồng" required="" />
+                    </div>
+                    <div class="col-6">
+                        <label id="lbDropLoaiHD" for="tDropLoaiHD" class="form-label">Loại hợp đồng (*)</label>
+                        <select id="DropLoaiHD" class="form-control select2" data-no-search>
+                            <option value="">Chọn giá trị</option>
+                            <option value="1">Hợp đồng lao động không xác định thời hạn</option>
+                            <option value="2">Hợp đồng lao động xác định thời hạn</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Row 4 -->
+                <div class="row mb-2">
+                    <div class="col-6">
+                        <label id="lbNgayTaoHD" for="txtNgayTaoHD" class="form-label">Ngày tạo hợp đồng (*)</label>
+                        <input type="text" id="txtNgayTaoHD" data-suggest="txtNgayTaoHD" onfocus="this.select()" class="form-control pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    </div>
+                    <div class="col-6">
+                        <label id="lbNgayKyHD" for="txtNgayKyHD" class="form-label">Ngày ký hợp đồng (*)</label>
+                        <input type="text" id="txtNgayKyHD" data-suggest="txtNgayKyHD" onfocus="this.select()" class="form-control pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    </div>
+                </div>
+                <!-- Row 4 -->
+                <div class="row mb-2" id="row_4">
+                    <div class="col-4">
+                        <label id="lbMucLuongKyHD" for="txtMucLuongKyHD" class="form-label">Lương ký hợp đồng (*)</label> 
+                        <div class="input-group">
+                            <input type="text" id="txtMucLuongKyHD" class="form-control" placeholder="Nhập mức lương ký hợp đồng" required="" />
+                            <div class="input-group-text">VNĐ</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label id="lbSoCongHangThang" for="txtSoCongHangThang" class="form-label">Số ngày làm/tháng (*)</label> 
+                        <div class="input-group">
+                            <input type="number" min="1" max="31" id="txtSoCongHangThang" class="form-control" placeholder="Nhập số ngày làm/tháng " required="" />
+                            <div class="input-group-text">Ngày</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label id="lbMucTienBH" for="txtMucTienBH" class="form-label">Mức đóng bảo hiểm (*)</label> 
+                        <div class="input-group">
+                            <input type="text" id="txtMucTienBH" class="form-control" placeholder="Nhập mức tiền đóng bảo hiểm" required="" />
+                            <div class="input-group-text">VNĐ</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Row 5 -->
+                <div class="row mb-2">
+                    <div class="col-12">
+                        <label id="lbMoTa" for="txtMoTa" class="form-label">Mô tả chi tiết (*)</label>
+                        <textarea class="custom-textarea" rows="1" id="txtMoTa" placeholder="Nhập mô tả"></textarea>
+                    </div> 
+                </div> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-2"></i>Đóng
+                </button>
+                <button type="button" class="btn btn-success" id="btnSaveHD">
+                    <i class="bi bi-floppy me-2"></i>Lưu
+                </button> 
+            </div>
         </div>
     </div>
 </div>

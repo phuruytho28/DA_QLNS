@@ -96,7 +96,15 @@
                                 var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
                                 if (roleIds.Contains(userRoleId))
                                 {
+                                    string pathCV = "/CongViec/ListCongViecView?id=" + nhansuId;
+                                    if (userRoleId == "4")
+                                    {
+                                        <li><a class="dropdown-item" href="@pathCV">@item.FunctionName</a></li>
+                                    }
+                                    else
+                                    {
                                     <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                    }
                                 }
                             }
                         }
@@ -116,8 +124,16 @@
                                 var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
                                 if (roleIds.Contains(userRoleId))
                                 {
+                                    string pathKTKLId = "/KhenThuongKyLuat/ListKhenThuongKyLuatView?id=" + nhansuId;
+                                    if ((item.PositionInNav == 1) && (userRoleId == "4"))
+                                    {
+                                        <li><a class="dropdown-item" href="@pathKTKLId">@item.FunctionName</a></li>
+                                    }
+                                    else
+                                    {
                                     <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
-                                }
+                                    }
+                                } 
                             }
                         }
                     </ul>

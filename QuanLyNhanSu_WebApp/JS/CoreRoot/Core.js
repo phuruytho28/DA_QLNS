@@ -241,6 +241,21 @@ CoreJs.prototype = {
         }
     },
 
+    DinhDangTien: function (jsValid) { 
+        $(jsValid).each(function () {
+            $(this).on('keyup', function () {
+                let value = $(this).val().replace(/\D/g, ''); 
+                $(this).val(new Intl.NumberFormat('vi-VN', {
+                    style: 'decimal',
+                    maximumFractionDigits: 0
+                }).format(value));  
+            });
+
+            $(this).on('blur', function () {
+                let rawValue = $(this).val().replace(/\D/g, '');  
+            });
+        });
+    },
 
     exportValueUrl: function (paramName) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -383,7 +398,70 @@ CoreJs.prototype = {
             }
         });
     }, 
+    loadDrop_Category_ChucVu: function (zone_id, strTitle, defaultValue, loaiDM, dmCha) {
+        var me = this;
+        var jsonData = {
+            Keyword: '',
+            PhanLoaiDM: loaiDM,
+            tbl_CompanyId: me.roleId == 99 ? '' : me.companyId,
+            tbl_CoSoId: me.roleId == 99 ? '' : me.tkcosoId,
+            tbl_PhongBanId: me.roleId == 99 ? '' : me.tkphongbanId,
+            StatusId: 1,
+            TinhTrang: dmCha,
+            PageIndex: 1,
+            PageSize: 10000000
+        };
+        $.ajax({
+            url: '/Category/FilterPrivate_Category',
+            type: 'POST',
+            data: jsonData,
+            success: function (data) {
+                if (data.Success) {
+                    var mystring = JSON.stringify(data.Data);
+                    var json = $.parseJSON(mystring);
+                    var tbCombo = $('[id$=' + zone_id + ']');
+                    tbCombo.html('');
 
+                    // Lọc danh sách dựa trên điều kiện RoleId
+                    var filteredList;
+                    if (me.roleId == 99) {
+                        // Nếu me.roleId = 99, trả về tất cả các phần tử
+                        filteredList = json;
+                    } else {
+                        // Nếu me.roleId khác 99, lọc theo điều kiện RoleId
+                        filteredList = json.filter(function (item) {
+                            return item.RoleId >= me.roleId &&
+                                (me.roleId == 1 || item.RoleId != 1);
+                        });
+                    }
+
+                    if (filteredList.length > 0) {
+                        var getList = "";
+
+                        // Tạo tiêu đề mặc định nếu có
+                        if (!strTitle) {
+                            strTitle = "-- Chọn dữ liệu --";
+                        } else {
+                            strTitle = "--- " + strTitle + " ---";
+                        }
+                        getList += "<option value=''>" + strTitle + "</option>";
+
+                        // Tạo các tùy chọn dựa trên danh sách đã lọc
+                        filteredList.forEach(function (item) {
+                            getList += "<option name='" + item.Name + "' role='" + item.RoleId + "' value='" + item.Id + "'>" + item.MoTa + "</option>";
+                        });
+
+                        tbCombo.html(getList);
+                    }
+
+                    tbCombo.val(defaultValue).trigger("change");
+                }
+            },
+            error: function (error) {
+                console.error('AJAX request failed:', error);
+            }
+        });
+    },
 
     loadDrop_PhongBan: function (zone_id, strTitle, defaultValue) {
         var me = this;

@@ -630,7 +630,7 @@ DetailTuyenDung.prototype = {
                     if ($("#DropTinhTrang_DuyetHSTD").val() == 4) {
                         Core.showModal_Confirm(
                             'Thông báo',
-                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự được cấp trên xét duyệt!</span></em>'
+                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân có trạng thái là hoạt động!</span></em>'
                         );
                         $("#btnYes").click(function (e) {
                             $('#modalconfirm').modal('hide');

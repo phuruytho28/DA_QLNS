@@ -10,33 +10,33 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace QuanLyCongViec_WebApp.Controllers
+namespace QuanLyHDLD_lstBangLuong_WebApp.Controllers
 {
     [CustomAuthorize]
-    public class CongViecController : Controller
+    public class HDLD_lstBangLuongController : Controller
     {
         [CustomAuthorize]
-        public ActionResult ListCongViecView()
+        public ActionResult ListHDLD_lstBangLuongView()
         {
             return View();
         } 
 
-        private readonly CongViecDAL CongViecDAL = new CongViecDAL();
+        private readonly HDLD_lstBangLuongDAL HDLD_lstBangLuongDAL = new HDLD_lstBangLuongDAL();
 
         [HttpPost]
-        public JsonResult FilterCongViec(CongViecModel CongViec)
+        public JsonResult FilterHDLD_lstBangLuong(HDLD_lstBangLuongModel HDLD_lstBangLuong)
         {
             int totalRows = 0;
-            List<CongViecModel> CongViecList = new List<CongViecModel>();
+            List<HDLD_lstBangLuongModel> HDLD_lstBangLuongList = new List<HDLD_lstBangLuongModel>();
 
             try
             {
-                CongViecList = CongViecDAL.CongViec_Search(CongViec, out totalRows);
+                HDLD_lstBangLuongList = HDLD_lstBangLuongDAL.HDLD_lstBangLuong_Search(HDLD_lstBangLuong, out totalRows);
 
                 return Json(new
                 {
                     Success = true,
-                    Data = CongViecList,
+                    Data = HDLD_lstBangLuongList,
                     TotalRows = totalRows
                 });
             }
@@ -53,35 +53,45 @@ namespace QuanLyCongViec_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult save(CongViecModel obj)
+        public JsonResult save(HDLD_lstBangLuongModel obj)
         {
             var response = new JsonResponse();
             try
             {
-                string newId = null;
-                if (string.IsNullOrEmpty(obj.Id))
+                if (string.IsNullOrEmpty(obj.tbl_NhanSuId))
                 {
-                    obj.CreatedDate = DateTime.Now.ToString();
-                    var result = CongViecDAL.CongViec_Insert(obj, ref newId);
-                    if (!string.IsNullOrEmpty(newId))
-                    {
-                        response.Success = true;
-                        response.Message = "Thêm mới thành công!";
-                        response.NewId = newId;
-                    }
-                    else
-                    {
-                        response.Success = false;
-                        response.Message = "Insert failed.";
-                    }
+                    response.Success = false;
+                    response.Message = "Id nhân sự không hợp lệ!.";
                 }
                 else
                 {
-                    obj.ModifyDate = DateTime.Now.ToString();
-                    CongViecDAL.CongViec_Update(obj);
-                    response.Success = true;
-                    response.Message = "Cập nhật thành công!";
-                }
+                    string newId = null;
+                    var HDLD_lstBangLuong = HDLD_lstBangLuongDAL.HDLD_lstBangLuong_GetByNhanSuId(obj.tbl_NhanSuId);
+
+                    if (HDLD_lstBangLuong == null)
+                    {
+                        obj.CreatedDate = DateTime.Now.ToString();
+                        var result = HDLD_lstBangLuongDAL.HDLD_lstBangLuong_Insert(obj, ref newId);
+                        if (!string.IsNullOrEmpty(newId))
+                        {
+                            response.Success = true;
+                            response.Message = "Thêm mới thành công!";
+                            response.NewId = newId;
+                        }
+                        else
+                        {
+                            response.Success = false;
+                            response.Message = "Insert failed.";
+                        }
+                    }
+                    else
+                    {
+                        obj.ModifyDate = DateTime.Now.ToString();
+                        HDLD_lstBangLuongDAL.HDLD_lstBangLuong_Update(obj);
+                        response.Success = true;
+                        response.Message = "Cập nhật thành công!";
+                    }
+                }  
             }
             catch (Exception ex)
             {
@@ -93,16 +103,16 @@ namespace QuanLyCongViec_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetCongViecById(string id)
+        public JsonResult GetHDLD_lstBangLuongById(string id)
         {
             var response = new JsonResponse();
             try
             {
-                var CongViec = CongViecDAL.CongViec_GetById(id);
-                if (CongViec != null)
+                var HDLD_lstBangLuong = HDLD_lstBangLuongDAL.HDLD_lstBangLuong_GetById(id);
+                if (HDLD_lstBangLuong != null)
                 {
                     response.Success = true;
-                    response.Data = CongViec;
+                    response.Data = HDLD_lstBangLuong;
                 }
                 else
                 {
@@ -120,32 +130,32 @@ namespace QuanLyCongViec_WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateStatusId(CongViecModel CongViec)
+        public JsonResult UpdateStatusId(HDLD_lstBangLuongModel HDLD_lstBangLuong)
         {
             var response = new JsonResponse();
             try
             {
-                if (string.IsNullOrEmpty(CongViec.C1))
+                if (string.IsNullOrEmpty(HDLD_lstBangLuong.C1))
                 {
                     response.Success = false;
                     response.Message = "Danh sách Id không được để trống.";
                     return Json(response);
                 }
 
-                if (CongViec.StatusId < 0 ||CongViec.TinhTrang < 0 ||CongViec.MucDo < 0)
+                if (HDLD_lstBangLuong.StatusId < 0 ||HDLD_lstBangLuong.TinhTrang < 0)
                 {
                     response.Success = false;
                     response.Message = "Tình trạng không hợp lệ.";
                     return Json(response);
                 }
 
-                CongViec.ModifyDate = DateTime.Now.ToString();
+                HDLD_lstBangLuong.ModifyDate = DateTime.Now.ToString();
 
-                CongViecDAL.CongViec_UpdateStatusId(CongViec);
+                HDLD_lstBangLuongDAL.HDLD_lstBangLuong_UpdateStatusId(HDLD_lstBangLuong);
                 var trangthai = "";
-                if (CongViec.StatusId > 0)
+                if (HDLD_lstBangLuong.StatusId > 0)
                 { 
-                    switch (CongViec.StatusId)
+                    switch (HDLD_lstBangLuong.StatusId)
                     {
                         case 1:
                             trangthai = "khôi phục trạng thái hoạt động";
@@ -155,9 +165,9 @@ namespace QuanLyCongViec_WebApp.Controllers
                             break;
                     }
                 }
-                if (CongViec.TinhTrang > 0)
+                if (HDLD_lstBangLuong.TinhTrang > 0)
                 { 
-                    switch (CongViec.TinhTrang)
+                    switch (HDLD_lstBangLuong.TinhTrang)
                     {
                         case 1:
                             trangthai = "được lên kế hoạch";
@@ -172,22 +182,7 @@ namespace QuanLyCongViec_WebApp.Controllers
                             trangthai = "hoàn thành ";
                             break;
                     }
-                }
-                if (CongViec.MucDo > 0)
-                { 
-                    switch (CongViec.MucDo)
-                    {
-                        case 1:
-                            trangthai = "chuyển sang mức độ ưu tiên thấp";
-                            break;
-                        case 2:
-                            trangthai = "chuyển sang mức độ ưu tiên bình thường";
-                            break;
-                        case 3:
-                            trangthai = "chuyển sang mức độ ưu tiên cao";
-                            break;
-                    }
-                }
+                } 
 
                 response.Success = true;
                 response.Message = "Công việc đã " + trangthai;

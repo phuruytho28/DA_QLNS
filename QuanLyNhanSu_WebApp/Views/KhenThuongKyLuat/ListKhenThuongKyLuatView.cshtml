@@ -1,18 +1,18 @@
 ﻿
 @{
-    ViewBag.Title = "Danh sách công việc";
+    ViewBag.Title = "Danh sách khen thưởng kỷ luật";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row mx-3">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="page-title" id="page-header">Công việc</h4>
+            <h4 class="page-title" id="page-header">Khen thưởng- kỷ luật</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Công việc</a></li>
-                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh sách Công việc</li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Lương thưởng</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh sách quyết định khen thưởng- kỷ luật</li>
                 </ol>
             </div>
         </div>
@@ -50,21 +50,22 @@
                     </div>
                 </div>
                 <div id="dieukientimkiem" style="display: none">
-                    <div class="row mb-0">
-                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_ChucVu">
-                            <p class="mb-1 fw-bold text-muted">Chức vụ</p>
-                            <select id="searchDropChucVu" class="form-control select2" data-placeholder="Chọn chức vụ">
-                                <option value="">-- Chọn chức vụ --</option>
-                            </select>
-                        </div>
+                    <div class="row mb-0"> 
                         <div class="col-sm-6 col-lg-3 mb-1" id="zone_TinhTrang">
-                            <p class="mb-1 fw-bold text-muted">Tình trạng công việc</p>
+                            <p class="mb-1 fw-bold text-muted">Tình trạng quyết định</p>
                             <select id="DropTinhTrang_search" class="form-control select2" data-no-search>
                                 <option value="">--- Chọn giá trị --- </option>
-                                <option value="1">Đang lên kế hoạch </option>
-                                <option value="2">Trong quá trình thực hiện </option>
-                                <option value="3">Đã hoãn lại </option>
-                                <option value="4">Hoàn thành </option>
+                                <option value="1">Được đề xuất </option> 
+                                <option value="2">Đã được duyệt  </option>
+                                <option value="3">Từ chối duyệt </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_HinhThuc">
+                            <p class="mb-1 fw-bold text-muted">Hình thức</p>
+                            <select id="DropHinhThuc" class="form-control select2" data-no-search>
+                                <option value="">--- Chọn giá trị --- </option> 
+                                <option value="1">Khen thưởng </option>
+                                <option value="2">Kỷ luật</option>
                             </select>
                         </div>
                         <div class="col-sm-6 col-lg-3 mb-1" id="zone_TrangThai">
@@ -88,13 +89,13 @@
                 <div class="row mb-2">
                     <div class="col-sm-5 col-6">
                         <button type="button" class="btn btn-success mb-2 me-sm-1" id="btnTimKiem"><i class="fa-solid fa-magnifying-glass me-1"></i>Tìm kiếm</button>
-                        <button type="button" class="btn btn-secondary mb-2" id="btnHuyTimKiem"><i class="fa-solid fa-rotate me-1"></i>Hủy tìm kiếm</button>
-                        <button type="button" class="btn btn-success mb-2" id="btnMyCV"><i class="bi bi-person-lines-fill"></i>Công việc của tôi</button>
+                        <button type="button" class="btn btn-secondary mb-2 me-1" id="btnHuyTimKiem"><i class="fa-solid fa-rotate me-1"></i>Hủy tìm kiếm</button>
+                        <button type="button" class="btn btn-success mb-2" id="btnMyCV"><i class="bi bi-person-lines-fill me-1"></i>Quyết định của tôi</button>
                     </div>
                     <div class="col-sm-7 col-6" id="zone_btnCRUD">
                         <div class="text-sm-end">
                             <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
-                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt me-1"></i>Thùng rác</button>
+                            <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="bi bi-trash me-1"></i>Thùng rác</button>
                         </div>
                     </div>
                 </div>
@@ -108,12 +109,12 @@
                                 <tr>
                                     <th class="text-center" hidden="hidden">Id</th>
                                     <th style="width: 30px" class="text-center">Stt</th>
-                                    <th class="text-center">Mã công việc</th>
-                                    <th class="text-center">Tên công việc</th>
-                                    <th class="text-center">Ngày bắt đầu</th>
-                                    <th class="text-center">Ngày kết thúc</th>
-                                    <th class="text-center">Người tạo</th>
-                                    <th class="text-center">Mức độ</th>
+                                    <th class="text-center">Mã quyết định</th>
+                                    <th class="text-center">Tên quyết định</th>
+                                    <th class="text-center">Người tạo/ duyệt</th>
+                                    <th class="text-center">Hình thức</th>
+                                    <th class="text-center">Số quyết định</th>
+                                    <th class="text-center">Ngày quyết định</th>
                                     <th class="text-center">Tình trạng</th>
                                     <th style="width: 30px">NB</th>
                                     <th style="width: 30px">Sửa</th>
@@ -138,30 +139,30 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Thêm mới công việc</h4>
+                <h4 class="modal-title" id="myModalLabel">Thêm mới quyết định</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body">
                 <!-- Row 1 -->
                 <div class="row mb-2" id="row_1">
-                    <div class="col-6" id="col_MaCongViec">
-                        <label id="lbMaCongViec" for="txtMaCongViec" class="form-label">Mã công việc (*)</label>
-                        <input type="text" id="txtMaCongViec" class="form-control" disabled="disabled" placeholder="Mã tự sinh" required="" />
+                    <div class="col-6" id="col_MaKTKL">
+                        <label id="lbMaKT_KL" for="txtMaKT_KL" class="form-label">Mã quyết định (*)</label>
+                        <input type="text" id="txtMaKT_KL" class="form-control" disabled="disabled" placeholder="Mã tự sinh" required="" />
                     </div>
-                    <div class="col-6" id="col_TenCongViec">
-                        <label id="lbTenCongViec" for="txtTenCongViec" class="form-label">Tên công việc (*)</label>
-                        <input type="text" id="txtTenCongViec" class="form-control" placeholder="Nhập tên sơ sở" required="" />
+                    <div class="col-6" id="col_TenKTKL">
+                        <label id="lbTenKTKL" for="txtTenKTKL" class="form-label">Tên quyết định (*)</label>
+                        <input type="text" id="txtTenKTKL" class="form-control" placeholder="Nhập tên  quyết định" required="" />
                     </div>
                 </div>
-                <!-- Row 4 -->
-                <div class="row mb-2">
-                    <div class="col-6">
-                        <label id="lbNgayBatDau" for="txtNgayBatDau" class="form-label">Ngày bắt đầu (*)</label>
-                        <input type="text" id="txtNgayBatDau" data-suggest="txtNgayBatDau" onfocus="this.select()" class="form-control pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                <!-- Row 1 -->
+                <div class="row mb-2" id="row_1">
+                    <div class="col-6" id="col_MaKTKL">
+                        <label id="lbSoQuyetDinh" for="txtSoQuyetDinh" class="form-label">Số quyết định (*)</label>
+                        <input type="text" id="txtSoQuyetDinh" class="form-control" placeholder="Nhập số quyết định" required="" />
                     </div>
-                    <div class="col-6">
-                        <label id="lbNgayKetThuc" for="txtNgayKetThuc" class="form-label">Ngày kết thúc (*)</label>
-                        <input type="text" id="txtNgayKetThuc" data-suggest="txtNgayKetThuc" onfocus="this.select()" class="form-control pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
+                    <div class="col-6" id="col_TenKTKL">
+                        <label id="lbNgayQuyetDinh" for="txtNgayQuyetDinh" class="form-label">Ngày quyết định (*)</label>
+                        <input type="text" id="txtNgayQuyetDinh" data-suggest="txtNgayBatDau" onfocus="this.select()" class="form-control pickerDate" placeholder="DD/MM/YYYY" data-single-date-picker="true" data-toggle="input-mask" data-mask-format="00/00/0000" value="" />
                     </div>
                 </div>
                 <!-- Row 4 -->
@@ -169,35 +170,25 @@
                     <div class="col-6" id="col_TinhTrang">
                         <label id="lbDropTinhTrang" for="editDropTinhTrang" class="form-label">Tình trạng</label>
                         <select id="editDropTinhTrang" class="form-control select2" data-no-search>
-                            <option value="1">Đang lên kế hoạch</option>
-                            <option value="2">Trong quá trình thực hiện</option>
-                            <option value="3">Đã hoãn lại</option>
-                            <option value="4">Hoàn thành</option>
+                            <option value="">--- Chọn giá trị --- </option> 
+                            <option value="1">Được đề xuất </option>
+                            <option value="2">Đã được duyệt  </option>
+                            <option value="3">Từ chối duyệt </option>
                         </select>
                     </div>
-                    <div class="col-6" id="col_MucDo">
-                        <label id="lbDropMucDo" for="editDropMucDo" class="form-label">Mức độ ưu tiên</label>
-                        <select id="editDropMucDo" class="form-control select2" data-no-search>
-                            <option value="1">Ưu tiên thấp</option>
-                            <option value="2">Ưu tiên bình thường</option>
-                            <option value="3">Ưu tiên cao</option>
+                    <div class="col-6" id="col_HInhThuc">
+                        <label id="lbDropHinhThuc" for="editDropHinhThuc" class="form-label">Hình thức (*)</label>
+                        <select id="editDropHinhThuc" class="form-control select2" data-no-search>
+                            <option value="1">Khen thưởng </option>
+                            <option value="2">Kỷ luật</option>
                         </select>
                     </div>
                 </div>
                 <!-- Row 5 -->
                 <div class="row mb-2" id="row_5">
-                    <div class="col-6" id="col_MoTa">
+                    <div class="col-12" id="col_MoTa">
                         <label id="lbMoTa" for="txtMoTa" class="form-label">Mô tả chi tiết (*)</label>
                         <textarea class="custom-textarea" rows="1" id="txtMoTa" placeholder="Nhập mô tả"></textarea>
-                    </div>
-                    <div class="col-6" id="col_LinkThucHien">
-                        <label id="lbLinkThucHien" for="txtLinkThucHien" class="form-label">Nhập đường link đính kèm (*)</label>
-                        <div class="input-group w-auto">
-                            <input type="text" id="txtLinkThucHien" class="form-control" placeholder="Nhập đường link đính kèm" aria-label="Example input" aria-describedby="btnLinkThucHien" />
-                            <button class="btn btn-primary" type="button" id="btnLinkThucHien">
-                                <i class="fa-solid fa-arrow-right me-1"></i>Truy cập
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <!-- Row 2 -->
@@ -224,7 +215,7 @@
                         </select>
                     </div>
                     <div class="col-6" id="col_tbl_NhanSuId">
-                        <label id="lb_tbl_NhanSuId" for="Drop_tbl_NhanSuId" class="form-label">Người thực hiện (*)</label>
+                        <label id="lb_tbl_NhanSuId" for="Drop_tbl_NhanSuId" class="form-label">Quyết định với (*)</label>
                         <select id="Drop_tbl_NhanSuId" class="form-control select2" data-placeholder="Chọn nhân sự">
                             <option value="">-- Chọn nhân sự --</option>
                         </select>
@@ -249,11 +240,11 @@
 <!-- end modal-->
 
 @section Scripts {
-    <script src="~/JS/DanhSachCongViec/CongViec.js"></script>
+    <script src="~/JS/LuongThuong/KhenThuongKyLuat.js"></script>
     <script>
         $(document).ready(function () {
-            var CongViecInstance = new CongViec();
-            CongViecInstance.init();
+            var KhenThuongKyLuatInstance = new KhenThuongKyLuat();
+            KhenThuongKyLuatInstance.init();
         });
     </script>
 }
