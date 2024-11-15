@@ -215,5 +215,32 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
             }
         }
 
+        public static List<HDLD_lstBangLuongModel> GetNhanSuList()
+        {
+            List<HDLD_lstBangLuongModel> nhanSuList = new List<HDLD_lstBangLuongModel>();
+
+            try
+            {
+                using (SqlDataReader reader = DataAccessHelper.ExecuteReader("tbl_HDLD_lstBangLuong_GetByFullNhanSuId", null))
+                {
+                    while (reader.Read())
+                    {
+                        HDLD_lstBangLuongModel nhanSu = new HDLD_lstBangLuongModel
+                        {
+                            tbl_NhanSuName = reader["tbl_NhanSuName"].ToString(),
+                            tbl_NhanSuId = reader["tbl_NhanSuId"].ToString()
+                        };
+                        nhanSuList.Add(nhanSu);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error retrieving NhanSu list: {ex.Message}");
+            }
+
+            return nhanSuList;
+        }
+
     }
 }

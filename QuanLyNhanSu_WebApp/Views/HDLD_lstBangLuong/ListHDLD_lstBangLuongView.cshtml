@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "Danh sách lương";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mx-3">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="page-title" id="page-header">Danh sách lương thưởng</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-success" href="javascript: void(0);">Danh sách lương thưởng</a></li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Danh sách Lương</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mx-1" style="border:none">
+    <div class="col-12">
+        <div class="card ms-3">
+            <div class="card-body">
+                <!--input search-->
+                <div class="row mb-2" id="first_row">
+                    <div class="col-sm-6 col-lg-3 mb-1">
+                        <p class="mb-1 fw-bold text-muted">Từ khóa</p>
+                        <input type="search" class="form-control" id="searchTuKhoa" placeholder="Nhập từ khóa cần tìm" />
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" hidden="hidden" id="zone_company">
+                        <p class="mb-1 fw-bold text-muted">Công ty</p>
+                        <select id="searchDropCongTy" class="form-control select2" data-placeholder="Chọn công ty">
+                            <option value="">-- Chọn công ty --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" hidden="hidden" id="zone_CoSo">
+                        <p class="mb-1 fw-bold text-muted">Cơ sở</p>
+                        <select id="searchDropCoSo" class="form-control select2" data-placeholder="Chọn cơ sở">
+                            <option value="">-- Chọn cơ sở --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 mb-1" hidden="hidden" id="zone_PhongBan">
+                        <p class="mb-1 fw-bold text-muted">Phòng ban</p>
+                        <select id="searchDropPhongBan" class="form-control select2" data-placeholder="Chọn phòng ban">
+                            <option value="">-- Chọn phòng ban --</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="dieukientimkiem" style="display: none">
+                    <div class="row mb-0">
+                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_ChucVu">
+                            <p class="mb-1 fw-bold text-muted">Chức vụ</p>
+                            <select id="searchDropChucVu" class="form-control select2" data-placeholder="Chọn chức vụ">
+                                <option value="">-- Chọn chức vụ --</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_Thang">
+                            <p class="mb-1 fw-bold text-muted">Tháng</p>
+                            <select id="DropThang_search" class="form-control select2" data-no-search>
+                                <option value="">--- Chọn giá trị --- </option>
+                                <option value="1">Tháng 1</option>
+                                <option value="2">Tháng 2</option>
+                                <option value="3">Tháng 3</option>
+                                <option value="4">Tháng 4</option>
+                                <option value="5">Tháng 5</option>
+                                <option value="6">Tháng 6</option>
+                                <option value="7">Tháng 7</option>
+                                <option value="8">Tháng 8</option>
+                                <option value="9">Tháng 9</option>
+                                <option value="10">Tháng 10</option>
+                                <option value="11">Tháng 11</option>
+                                <option value="12">Tháng 12</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-lg-3 mb-1" id="zone_Nam">
+                            <p class="mb-1 fw-bold text-muted">Năm</p>
+                            <select id="DropNam_search" class="form-control select2" data-no-search> 
+                                <option  value="2024">Năm 2024</option>
+                                <option value="2023">Năm 2023</option>
+                                <option value="2022">Năm 2022</option>
+                                <option value="2021">Năm 2021</option>
+                                <option value="2020">Năm 2020</option>
+                            </select> 
+                        </div> 
+                    </div>
+                </div>
+                @*nút mở rộng tk*@
+                <div class="col-lg-12" style="text-align: right">
+                    <button id="btnAnDieuKien" type="button" class="btn btn-link text-decoration-none text-success"
+                            style="padding-right: 0px; padding-top: 0px;">
+                        <i class="fa-solid fa-arrow-down-wide-short me-1"></i>Hiển thị thêm
+                    </button>
+                </div>
+
+                <!--action search-->
+                <div class="row mb-2">
+                    <div class="col-sm-5 col-6">
+                        <button type="button" class="btn btn-success mb-2 me-sm-1" id="btnTimKiem"><i class="fa-solid fa-magnifying-glass me-1"></i>Tìm kiếm</button>
+                        <button type="button" class="btn btn-secondary mb-2" id="btnHuyTimKiem"><i class="fa-solid fa-rotate me-1"></i>Hủy tìm kiếm</button>
+                    </div>
+                    <div class="col-sm-7 col-6" id="zone_btnCRUD">
+                        <div class="text-sm-end">
+                            <p class="align-content-center mt-2 text-secondary"><i class="bi bi-info-circle-fill text-success me-1"></i>Lưu ý: Danh sách chỉ hiện những nhân sự đã được duyệt hồ sơ(có hợp đồng lao động) và nhân sự đã chấm công.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-body table-responsive-sm table-centered table-hover tbl-pagination">
+                        <table id="tbldata" class="table table-bordered table-striped border-bottom-0 mt-2">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" hidden="hidden">Id</th>
+                                    <th style="width: 30px" class="text-center">Stt</th>
+                                    <th class="text-center">Tên nhân viên</th>
+                                    <th class="text-center">Phòng ban</th>
+                                    <th class="text-center">Chức vụ</th>
+                                    <th class="text-center">Mức lương</th>
+                                    <th class="text-center">Số công/tháng</th>
+                                    <th class="text-center">Số công thực tế</th>
+                                    <th class="text-center">Lương thực tế</th>
+                                    <th class="text-center" style="width: 80px">Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/JS/LuongThuong/DanhSachLuong.js"></script>
+    <script>
+        $(document).ready(function () {
+            var HDLD_lstBangLuongInstance = new HDLD_lstBangLuong();
+            HDLD_lstBangLuongInstance.init();
+        });
+    </script>
+}

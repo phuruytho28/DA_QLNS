@@ -74,7 +74,7 @@
             background-color: rgba(255, 255, 255, 0.9);
             font-size: 16px;
             font-weight: 500;
-            text-transform: uppercase;
+            text-transform: none;
             padding: 12px;
             border-bottom: none; /* Bỏ đường viền phía dưới */
         }

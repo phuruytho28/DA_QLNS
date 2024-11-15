@@ -241,18 +241,37 @@ CoreJs.prototype = {
         }
     },
 
-    DinhDangTien: function (jsValid) { 
-        $(jsValid).each(function () {
-            $(this).on('keyup', function () {
-                let value = $(this).val().replace(/\D/g, ''); 
-                $(this).val(new Intl.NumberFormat('vi-VN', {
-                    style: 'decimal',
-                    maximumFractionDigits: 0
-                }).format(value));  
+    DinhDangTien: function (jsValid) {
+        // Tách chuỗi các id và loại bỏ khoảng trắng
+        const ids = jsValid.split(',').map(id => id.trim());
+
+        // Hàm format số tiền
+        const formatNumber = (value) => {
+            if (!value) return '';
+            value = value.toString().replace(/\D/g, '');
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'decimal',
+                maximumFractionDigits: 0
+            }).format(value);
+        };
+
+        ids.forEach(id => {
+            // Format giá trị mặc định ngay khi khởi tạo
+            const defaultValue = $('#' + id).val();
+            if (defaultValue) {
+                $('#' + id).val(formatNumber(defaultValue));
+            }
+
+            // Xử lý khi keyup
+            $('#' + id).on('keyup', function () {
+                let value = $(this).val();
+                $(this).val(formatNumber(value));
             });
 
-            $(this).on('blur', function () {
-                let rawValue = $(this).val().replace(/\D/g, '');  
+            // Xử lý khi blur
+            $('#' + id).on('blur', function () {
+                let value = $(this).val();
+                $(this).val(formatNumber(value));
             });
         });
     },
@@ -650,6 +669,53 @@ CoreJs.prototype = {
                 if (typeof callback === 'function') {
                     callback(error);
                 }
+            }
+        });
+    },
+
+
+    loadDrop_NhanSu_Full: function (zone_id, strTitle, defaultValue) {
+        var me = this;
+        var jsonData = {
+            Keyword: '',
+            tbl_CoSoId: me.roleId === 99 ? '' : me.tkcosoId,
+            tbl_PhongBanId: me.roleId === 99 ? '' : me.tkphongbanId,
+            tbl_CompanyId: me.roleId === 99 ? '' : me.companyId,
+            StatusId: 1,
+            TinhTrang: 2,
+            RoleId: me.roleId,
+            PageIndex: 1,
+            PageSize: 10000000
+        };
+        $.ajax({
+            url: '/NhanSu/FilterNhanSu',
+            type: 'POST',
+            data: jsonData,
+            success: function (data) {
+                if (data.Success) {
+                    var mystring = JSON.stringify(data.Data);
+                    var json = $.parseJSON(mystring);
+                    var mlen = json.length;
+                    var tbCombo = $('[id$=' + zone_id + ']');
+                    tbCombo.html('');
+                    if (mlen > 0) {
+                        var getList = "";
+                        if (!strTitle) {
+                            strTitle = "-- Chọn dữ liệu --";
+                        } else {
+                            strTitle = "--- " + strTitle + " ---";
+                        }
+                        getList += "<option value=''>" + strTitle + "</option>";
+                        for (var i = 0; i < mlen; i++) { 
+                            getList += "<option name='" + json[i].MaNhanVien + "' role='" + json[i].RoleId + "' value='" + json[i].Id + "'>" + json[i].HoTen + "</option>";
+                        }
+                        tbCombo.html(getList);
+                    }
+                    tbCombo.val(defaultValue).trigger("change");
+                }
+            },
+            error: function (error) {
+                console.error('AJAX request failed:', error);
             }
         });
     },

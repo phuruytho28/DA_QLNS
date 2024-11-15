@@ -629,6 +629,7 @@ CongViec.prototype = {
                 $('#col_tbl_CompanyId').prop('hidden', false);
                 $('#col_tbl_CoSoId').prop('hidden', false);
                 $('#col_tbl_PhongBanId').prop('hidden', false);
+                $('#btnMyCV').hide();
 
                 me.jsValidYC += ', #Drop_tbl_CompanyId, #Drop_tbl_CoSoId, #Drop_tbl_PhongBanId'
                 break;
@@ -641,6 +642,7 @@ CongViec.prototype = {
                 $('#col_tbl_CoSoId').prop('hidden', false);
                 $('#col_tbl_PhongBanId').prop('hidden', false);
                 $('#col_tbl_PhongBanId').appendTo('#row_2');
+                $('#btnMyCV').hide();
 
                 me.jsValidYC += ', #Drop_tbl_CoSoId, #Drop_tbl_PhongBanId'
                 break;

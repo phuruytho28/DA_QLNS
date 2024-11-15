@@ -628,13 +628,14 @@ DetailTuyenDung.prototype = {
                     $("#staticBackdrop_duyetHSTD").modal('hide'); 
                     me.filter_lst_UngVien();
                     if ($("#DropTinhTrang_DuyetHSTD").val() == 4) {
+                        me.add_account(hoten, email);
                         Core.showModal_Confirm(
                             'Thông báo',
-                            'Bạn có muốn tạo tài khoản cho nhân sự này hay không? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân có trạng thái là hoạt động!</span></em>'
+                            'Hệ thống đã tự động tạo tài khoản cho nhân sự này? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi chuyển về trang danh sách.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân có trạng thái là hoạt động!</span></em>'
                         );
                         $("#btnYes").click(function (e) {
                             $('#modalconfirm').modal('hide');
-                            me.add_account(hoten, email);
+                            //me.add_account(hoten, email);
                         });
                     }
                 } else {

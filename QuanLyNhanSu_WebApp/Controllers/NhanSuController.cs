@@ -181,7 +181,7 @@ namespace QuanLyNhanSu_WebApp.Controllers
             try
             {
                 if (string.IsNullOrEmpty(NhanSu.C1))
-                {
+                { 
                     response.Success = false;
                     response.Message = "Danh sách Id không được để trống.";
                     return Json(response);
@@ -190,11 +190,40 @@ namespace QuanLyNhanSu_WebApp.Controllers
                 if (NhanSu.TinhTrang <= 0)
                 {
                     response.Success = false;
-                    response.Message = "Tinh trạng không hợp lệ.";
+                    response.Message = "Tình trạng không hợp lệ.";
                     return Json(response);
                 }
 
-                NhanSu.ModifyDate = DateTime.Now.ToString(); 
+                // Tách chuỗi C1 thành mảng các ID
+                string[] ids = NhanSu.C1.Split(',');
+
+                // Kiểm tra từng ID
+                foreach (string id in ids)
+                {
+                    string trimmedId = id.Trim();
+                    if (string.IsNullOrEmpty(trimmedId))
+                    {
+                        response.Success = false;
+                        response.Message = "Danh sách chứa Id trống hoặc không hợp lệ.";
+                        return Json(response);
+                    }
+
+                    var HDLD_lstBangLuong = HDLD_lstBangLuongDAL.HDLD_lstBangLuong_GetByNhanSuId(trimmedId);
+                    if (HDLD_lstBangLuong == null)
+                    {
+                        response.Success = false;
+                        response.Message = $"Vui lòng kiểm tra lại, đảm bảo rằng hồ sơ của tất cả nhân sự đã tạo hợp đồng lao động!";
+                        //{ trimmedId}
+                        return Json(response);
+                    }
+                }
+
+
+
+
+
+                NhanSu.ModifyDate = DateTime.Now.ToString();
+                
 
                 NhanSuDAL.UpdateTinhTrangNS(NhanSu);
                 var trangthai = ""; 

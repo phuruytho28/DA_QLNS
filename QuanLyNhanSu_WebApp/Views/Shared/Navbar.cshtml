@@ -125,22 +125,36 @@
                                 if (roleIds.Contains(userRoleId))
                                 {
                                     string pathKTKLId = "/KhenThuongKyLuat/ListKhenThuongKyLuatView?id=" + nhansuId;
+                                    string pathCCVL = "/ChamCong/DetailChamCongView?id=" + nhansuId;
+
                                     if ((item.PositionInNav == 1) && (userRoleId == "4"))
                                     {
                                         <li><a class="dropdown-item" href="@pathKTKLId">@item.FunctionName</a></li>
                                     }
+                                    else if ((item.PositionInNav == 2) && (userRoleId == "4") && (C3session != "NHANSU"))
+                                    {
+                                        <li></li>
+                                    }
+                                    else if ((item.PositionInNav == 2) && (userRoleId == "3") && (C3session != "NHANSU"))
+                                    {
+                                        <li></li>
+                                    }
+                                    else if ((item.PositionInNav == 3) && ((userRoleId == "4") || (userRoleId == "3")))
+                                    {
+                                        <li><a class="dropdown-item" href="@pathCCVL">@item.FunctionName</a></li>
+                                    }
                                     else
                                     {
-                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                        <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
                                     }
-                                } 
+                                }
                             }
-                        }
+                         }
                     </ul>
                 </li>
 
                 <!-- Dropdown cho Hoạt động -->
-                <li class="nav-item dropdown">
+                @*<li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="nav_HoatDong" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Hoạt động <i class="fas fa-chevron-down"></i>
                     </a>
@@ -157,7 +171,7 @@
                             }
                         }
                     </ul>
-                </li>
+                </li>*@
 
                 <!-- Dropdown cho Hỗ trợ -->
                 <li class="nav-item dropdown">

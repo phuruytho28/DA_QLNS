@@ -75,7 +75,7 @@ namespace QuanLyHDLD_lstBangLuong_WebApp.Controllers
                         if (!string.IsNullOrEmpty(newId))
                         {
                             response.Success = true;
-                            response.Message = "Thêm mới thành công!";
+                            response.Message = "Tạo thành công hợp đồng lao động!";
                             response.NewId = newId;
                         }
                         else
@@ -92,6 +92,33 @@ namespace QuanLyHDLD_lstBangLuong_WebApp.Controllers
                         response.Message = "Cập nhật thành công!";
                     }
                 }  
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return Json(response);
+        }
+
+        [HttpPost]
+        public JsonResult GetHDLD_lstBangLuongByNhanSuId(string NhanSuId)
+        {
+            var response = new JsonResponse();
+            try
+            {
+                var HDLD_lstBangLuong = HDLD_lstBangLuongDAL.HDLD_lstBangLuong_GetByNhanSuId(NhanSuId);
+                if (HDLD_lstBangLuong != null)
+                {
+                    response.Success = true;
+                    response.Data = HDLD_lstBangLuong;
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Hợp đồng nhân sự chưa được khởi tạo!!!";
+                }
             }
             catch (Exception ex)
             {

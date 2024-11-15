@@ -32,6 +32,9 @@ namespace QuanLyNhanSu_WebApp.Models
          
         public int TinhTrang { get; set; }
         public int RoleId { get; set; }
+
         public string MoTaChiTiet { get; set; } 
+        public int TongNgayLamThucTe { get; set; } 
+        public long TongLuongThucTe { get; set; } 
     }
 }
