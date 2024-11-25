@@ -6,7 +6,7 @@
 @section Styles {
     <style>
         .form-label {
-            color: blueviolet;
+            color: blue;
         }
 
         .update-password-view {
@@ -35,7 +35,7 @@
     </style>
 }
 
-<div class="update-password-view mx-auto col-md-6">
+<div class="update-password-view mx-auto col-md-6" >
     <h2 class="text-center mb-4">Đổi Mật Khẩu</h2>
     <div class="container">
         <form>
@@ -65,6 +65,23 @@
             var newPassword = $("#newPassword").val();
             var confirmNewPassword = $("#confirmNewPassword").val();
 
+            if (confirmNewPassword.length < 7) {
+                Core.showToast("Mật khẩu phải có ít nhất 7 ký tự.", "warning");
+                return;
+            }
+             
+            if (!/[A-Z]/.test(confirmNewPassword)) {
+                Core.showToast("Mật khẩu phải có ít nhất 1 chữ cái viết hoa.", "warning");
+                return;
+            }
+
+             
+            if (!/[!#$%^&*(),.?":{}|<>]/.test(confirmNewPassword)) {
+                Core.showToast("Mật khẩu phải có ít nhất 1 ký tự đặc biệt.", "warning");
+                return;
+            }
+
+            
             if (newPassword !== confirmNewPassword) {
                 Core.showToast("Mật khẩu mới và xác nhận mật khẩu không khớp.", "warning");
                 return;

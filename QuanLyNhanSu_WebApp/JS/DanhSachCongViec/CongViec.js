@@ -41,6 +41,18 @@ CongViec.prototype = {
         } else {
             Core.loadDrop_Category('searchDropChucVu', 'Chọn chức vụ', '', 'DMCV', 9);
         } 
+
+
+
+        $(document).ready(function () {
+            const previousUrl = localStorage.getItem('previousUrl'); 
+            if (previousUrl) {
+                $('#staticBackdrop').modal('show');
+                $('#txtLinkThucHien').val(previousUrl);
+                localStorage.removeItem('previousUrl');
+            }
+        });
+
         this.filterCongViec();
     },
     init_event: function () {

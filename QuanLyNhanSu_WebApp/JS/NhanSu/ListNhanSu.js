@@ -86,6 +86,7 @@ ListNhanSu.prototype = {
             me.loadDrop_Category_ChucVu('DropChucVuChuyen', 'Chọn chức vụ', '', 'DMCV', 9);
         } else {
             Core.loadDrop_Category('searchDropChucVu', 'Chọn chức vụ', '', 'DMCV', 9);
+            Core.loadDrop_Category('DropChucVuChuyen', 'Chọn chức vụ', '', 'DMCV', 9);
         }
         Core.loadDrop_DiaChi('searchDropQueQuan', 'Tinh', '');
         this.filterNhanSu();

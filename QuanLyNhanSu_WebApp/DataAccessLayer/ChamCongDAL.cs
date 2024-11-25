@@ -370,6 +370,7 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer
             SqlParameter[] parameters = new SqlParameter[]
             {
                 new SqlParameter("@Keyword", ChamCong.Keyword ?? ""),
+                new SqlParameter("@tbl_CompanyId ", ChamCong.tbl_CompanyId  ?? ""),
                 new SqlParameter("@tbl_CoSoId", ChamCong.tbl_CoSoId ?? ""),
                 new SqlParameter("@tbl_PhongBanId", ChamCong.tbl_PhongBanId ?? ""),
                 new SqlParameter("@tbl_NhanSuId", ChamCong.tbl_NhanSuId ?? ""),

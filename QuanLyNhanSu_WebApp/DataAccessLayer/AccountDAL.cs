@@ -6,6 +6,8 @@ using Microsoft.AspNet.Identity;
 using System.ComponentModel.Design;
 using System.Web.Security;
 using System.Xml.Linq;
+using System.Collections.Generic;
+using System.Data;
 
 namespace QuanLyNhanSu_WebApp.DataAccessLayer.CommonDAL
 {
@@ -194,6 +196,74 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer.CommonDAL
             }
 
             return account;
+        }
+
+
+        public static List<AccountModel> AccountSearch(AccountModel Account, out int totalRows)
+        {
+            List<AccountModel> AccountList = new List<AccountModel>();
+            totalRows = 0;
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Keyword", Account.Keyword ?? ""),
+                new SqlParameter("@tbl_CompanyId", Account.CompanyId ?? ""),
+                new SqlParameter("@tbl_CoSoId", Account.CoSoId ?? ""),
+                new SqlParameter("@tbl_PhongBanId", Account.PhongBanId ?? ""),
+                new SqlParameter("@StatusId", Account.StatusId),
+                new SqlParameter("@PageIndex", Account.pageIndex),
+                new SqlParameter("@PageSize", Account.pageSize),
+                new SqlParameter("@TotalRow", SqlDbType.Int) { Direction = ParameterDirection.Output }
+            };
+
+            using (SqlDataReader reader = DataAccessHelper.ExecuteReader("tbl_Account_Search", parameters))
+            {
+                while (reader.Read())
+                {
+                    AccountModel newAccount = new AccountModel();
+                    EntityBase.SetObjectValue(reader, ref newAccount);
+                    AccountList.Add(newAccount);
+                }
+            }
+
+            totalRows = int.Parse(parameters[parameters.Length - 1].Value.ToString());
+
+            return AccountList;
+        }
+        public static void Account_UpdateStatusId(AccountModel Account)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", Account.C1),
+                new SqlParameter("@StatusId", Account.StatusId) 
+            };
+
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_Account_UpdateStatusId", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating status: {ex.Message}");
+            }
+        }
+        public static void Account_Update(AccountModel Account)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", Account.Id),
+                new SqlParameter("@Name", Account.Name), 
+                new SqlParameter("@Note", Account.Note ?? "")
+            };
+
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_Account_Update", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating Account: {ex.Message}");
+            }
         }
 
     }

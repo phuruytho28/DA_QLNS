@@ -26,26 +26,32 @@
                 <li class="nav-item">
                     <a class="nav-link" href="@Url.Action("DashboardView", "Dashboard")">Trang chủ</a>
                 </li>
-
-                <!-- Dropdown cho Danh mục -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="nav_DanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Danh mục <i class="fas fa-chevron-down"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="nav_DanhMuc">
-                        @if (danhMucItems != null && !string.IsNullOrEmpty(userRoleId))
-                        {
-                            foreach (var item in danhMucItems)
+                @if ((userRoleId != "3") && (userRoleId != "4"))
+                {
+                    <!-- Dropdown cho Danh mục -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="nav_DanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Danh mục <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="nav_DanhMuc">
+                            @if (danhMucItems != null && !string.IsNullOrEmpty(userRoleId))
                             {
-                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
-                                if (roleIds.Contains(userRoleId))
+                                foreach (var item in danhMucItems)
                                 {
-                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                    var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                                    if (roleIds.Contains(userRoleId))
+                                    {
+                                        <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                    }
                                 }
-                            }
-                        }
-                    </ul>
-                </li>
+                            } 
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li> </li>
+                }
 
                 <!-- Dropdown cho Nhân sự -->
                 <li class="nav-item dropdown">
@@ -70,12 +76,12 @@
                                         pathId = @item.PathInFolder;
                                     }
                                     @*if (C3session != "NHANSU" && item.PositionInNav == 3 && userRoleId == "3")
-                                    {
-                                        <li></li>
-                                    } 
-                                    else
-                                    {*@
-                                        <li><a class="dropdown-item" href="@pathId">@item.FunctionName</a></li>
+                            {
+                                <li></li>
+                            }
+                            else
+                            {*@
+                                    <li><a class="dropdown-item" href="@pathId">@item.FunctionName</a></li>
                                     //}
                                 }
                             }
@@ -103,7 +109,7 @@
                                     }
                                     else
                                     {
-                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
+                                        <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
                                     }
                                 }
                             }
@@ -149,29 +155,29 @@
                                     }
                                 }
                             }
-                         }
+                        }
                     </ul>
                 </li>
 
                 <!-- Dropdown cho Hoạt động -->
                 @*<li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="nav_HoatDong" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Hoạt động <i class="fas fa-chevron-down"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="nav_HoatDong">
-                        @if (hoatDongItems != null && !string.IsNullOrEmpty(userRoleId))
+            <a class="nav-link dropdown-toggle" href="#" id="nav_HoatDong" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Hoạt động <i class="fas fa-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav_HoatDong">
+                @if (hoatDongItems != null && !string.IsNullOrEmpty(userRoleId))
+                {
+                    foreach (var item in hoatDongItems)
+                    {
+                        var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
+                        if (roleIds.Contains(userRoleId))
                         {
-                            foreach (var item in hoatDongItems)
-                            {
-                                var roleIds = item.tblAcconut_RoleId.Split(',').Select(id => id.Trim()).ToList();
-                                if (roleIds.Contains(userRoleId))
-                                {
-                                    <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
-                                }
-                            }
+                            <li><a class="dropdown-item" href="@item.PathInFolder">@item.FunctionName</a></li>
                         }
-                    </ul>
-                </li>*@
+                    }
+                }
+            </ul>
+        </li>*@
 
                 <!-- Dropdown cho Hỗ trợ -->
                 <li class="nav-item dropdown">

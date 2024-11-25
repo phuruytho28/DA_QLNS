@@ -177,7 +177,13 @@ DetailTuyenDung.prototype = {
                     });
                     break; 
             }
-        });   
+        });  
+
+        $('#btnPhanCong_T').click(function () { 
+            localStorage.setItem('previousUrl', window.location.href);
+             
+            window.open("/CongViec/ListCongViecView", '_self');
+        });
     },
     init_action: function () {
         var me = this;
@@ -546,6 +552,9 @@ DetailTuyenDung.prototype = {
                             case 2:
                                 $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-info');
                                 $('#bd_TrangThaiNS').text('Đã duyệt(Đang tuyển)');
+                                if ((me.roleId == 99) ||(me.roleId == 1) ||(me.roleId == 2) || ((me.roleId == 3) && (me.tkC3 != 'NHANSU'))) {
+                                    $('#btnPhanCong_T').prop('hidden', false);
+                                }
                                 break;
                             case 3:
                                 $('#bd_TrangThaiNS').removeClass('bg-primary').addClass('bg-success');
@@ -631,11 +640,10 @@ DetailTuyenDung.prototype = {
                         me.add_account(hoten, email);
                         Core.showModal_Confirm(
                             'Thông báo',
-                            'Hệ thống đã tự động tạo tài khoản cho nhân sự này? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi chuyển về trang danh sách.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân có trạng thái là hoạt động!</span></em>'
+                            'Hệ thống đã tự động tạo tài khoản cho nhân sự này! </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi chuyển về trang danh sách.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân có trạng thái là hoạt động!</span></em>'
                         );
                         $("#btnYes").click(function (e) {
-                            $('#modalconfirm').modal('hide');
-                            //me.add_account(hoten, email);
+                            $('#modalconfirm').modal('hide'); 
                         });
                     }
                 } else {

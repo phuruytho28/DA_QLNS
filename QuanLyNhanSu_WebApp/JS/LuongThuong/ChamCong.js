@@ -68,8 +68,8 @@ ChamCong.prototype = {
 
             }; 
         });
-        $("#btnHuyTimKiem").on("click", function () {
-            me.resetSearch();
+        $("#btnBack").on("click", function () {
+            window.open('/HDLD_lstBangLuong/ListHDLD_lstBangLuongView', '_self');
         });   
         $("#btnThemMoi").on("click", function () {
             me.resetEdit();
@@ -107,7 +107,7 @@ ChamCong.prototype = {
                 Core.showToast('Bạn đã hoàn thành chấm công cho hôm nay!', 'warning');
             } else { 
                 if (txtGioVao) {
-                    $("#txtGioRa").val("12:55:07");
+                    $("#txtGioRa").val(currentTime);
                     var gioralast = $("#txtGioRa").val();  
                     let [hoursIn, minutesIn] = txtGioVao.split(':').map(Number);
                     let [hoursOut, minutesOut] = gioralast.split(':').map(Number);
@@ -619,7 +619,10 @@ ChamCong.prototype = {
     hiddenShowByRoleId: function () {
         var me = this;
         if (Core.tknhansuId != Core.exportValueUrl('id')) {
-            $('#z_buttonChamCong').prop('hidden', true);
+            $('#z_buttonChamCong').prop('hidden', true); 
+        }
+        if (Core.tknhansuId == Core.exportValueUrl('id')) { 
+            $('#btnBack').prop('hidden', true);
         }
         switch (me.roleId) {
             case '99':   
@@ -764,7 +767,7 @@ ChamCong.prototype = {
             'KhoanTru3': khoanTru3,
 
             'TinhTrang': 2,
-            'RoleId':  me.roleId,
+            'RoleId': me.roleId,
             'tbl_CompanyId': tbl_CompanyId ? tbl_CompanyId : me.CongTyId,
             'tbl_CoSoId': tbl_CoSoId ? tbl_CoSoId : me.tkcosoId,
             'tbl_PhongBanId': tbl_PhongBanId ? tbl_PhongBanId : me.tkphongbanId,

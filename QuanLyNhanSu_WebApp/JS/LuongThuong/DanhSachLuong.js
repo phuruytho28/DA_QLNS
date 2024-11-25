@@ -77,6 +77,11 @@ HDLD_lstBangLuong.prototype = {
                     break; 
             }
         }); 
+        $('#btnPhanCong_T').click(function () {
+            localStorage.setItem('previousUrl', window.location.href);
+
+            window.open("/CongViec/ListCongViecView", '_self');
+        });
     }, 
 
 
@@ -98,7 +103,7 @@ HDLD_lstBangLuong.prototype = {
             Keyword: $("#searchTuKhoa").val() || '',
             tbl_CompanyId: (me.roleId == 99) ? $("#searchDropCongTy").val() : me.CongTyId, 
             tbl_CoSoId: ((me.roleId == 1) || (me.roleId == 99)) ? $("#searchDropCoSo").val() : me.tkcosoId, 
-            tbl_PhongBanId: '',
+            tbl_PhongBanId: $("#searchDropPhongBan").val(),
             Thang: thangTK,
             Nam: namTK,
             tbl_NhanSuId: '', 
@@ -271,6 +276,9 @@ HDLD_lstBangLuong.prototype = {
                 break;
 
             case '4':
+                if (me.tkC3 != 'NHANSu') {
+                    $('#btnPhanCong_T').prop('hidden', true);
+                }
                 $('#zone_ChucVu').appendTo('#first_row'); 
                 $('#zone_Thang').appendTo('#first_row');
                 $('#zone_Nam').appendTo('#first_row');

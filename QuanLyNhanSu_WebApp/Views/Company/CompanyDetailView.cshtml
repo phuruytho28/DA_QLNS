@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Chi tiết công ty";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-2 d-flex justify-content-center" style="height: 1000px">
+    <div class="card">
+        <div class="col-12 text-center">
+            <h3 class="mt-5">Thông tin công ty</h3>
+
+            <div class="row mt-3 mb-2 align-items-center">
+                <div class="col-md-4 text-end">
+                    <label for="txtMaCongTy" class="col-form-label">
+                        <i class="fa-solid fa-bars-staggered me-2"></i>Mã công ty:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    <input class="form-custom w-50" id="txtMaCongTy" placeholder="Mã công ty" />
+                </div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <div class="col-md-4 text-end">
+                    <label for="txtTenCongTy" class="col-form-label">
+                        <i class="fa-solid fa-building me-2"></i>Tên công ty:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    <input class="form-custom w-50" id="txtTenCongTy" placeholder="Tên công ty" />
+                </div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <div class="col-md-4 text-end">
+                    <label for="txtDiaChi" class="col-form-label">
+                        <i class="fa-solid fa-location-dot me-2"></i>Địa chỉ:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    <input class="form-custom w-50" id="txtDiaChi" placeholder="Địa chỉ công ty" />
+                </div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <div class="col-md-4 text-end">
+                    <label for="txtSDT" class="col-form-label">
+                        <i class="fa-solid fa-phone me-2"></i>Số điện thoại:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    <input class="form-custom w-50" id="txtSDT" placeholder="Số điện thoại công ty" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/JS/DanhMuc/CompanyDetail.js"></script>
+    <script>
+        $(document).ready(function () {
+            var CompanyDetailInstance = new CompanyDetail();
+            CompanyDetailInstance.init();
+        });
+    </script>
+}

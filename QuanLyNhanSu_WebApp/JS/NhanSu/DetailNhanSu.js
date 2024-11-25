@@ -393,14 +393,7 @@ DetailNhanSu.prototype = {
                 if (response.Success) {
                     Core.showToast(response.Message, 'success');
                     if ((!me.TuyenDungId && !me.Id) || (me.Id && (me.type == 'copy'))) {
-                        Core.showModal_Confirm(
-                            'Thông báo',
-                            'Hệ thống sẽ tự động tạo mới tài khoản cho nhân sự? </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + Email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự của bạn ở tình trạng hoạt động!</span></em>'
-                        );
-                        $("#btnYes").click(function (e) {
-                            $('#modalconfirm').modal('hide');
-                            me.add_account();
-                        });
+                        me.add_account();
                     } else if (me.type != 'HSTD' && me.roleId != 4) {
                         Core.showModal_Confirm(
                             'Thông báo',
@@ -712,16 +705,25 @@ DetailNhanSu.prototype = {
             success: function (response) {
                 if (response.Success) {
                     Core.showToast(response.Message, 'success'); 
+
+
                     Core.showModal_Confirm(
                         'Thông báo',
-                        'Thành công! Đang chuyển hướng về trang danh sách...'
+                        'Hệ thống đã tự động tạo mới tài khoản cho nhân sự này! </br> Tài khoản của nhân sự sau khi tạo mới thành công là:</br> Email:<span class="text-primary"> ' + Email + '</span></br> Mật khẩu: <span class="text-primary">Abcdef1234.</span> </br> <em><span class="text-primary">Lưu ý lưu lại thông tin tài khoản trước khi lưu.Tài khoản chỉ sử dụng được sau khi hồ sơ nhân sự của bạn ở tình trạng hoạt động!</span></em>'
                     );
-                    $('.modal-footer').hide();
-                    setTimeout(function () {
+                    $("#btnYes").click(function (e) {
+                        $('#modalconfirm').modal('hide');
+                        Core.showModal_Confirm(
+                            'Thông báo',
+                            'Thành công! Đang chuyển hướng về trang danh sách...'
+                        );
+                        $('.modal-footer').hide();
+                        setTimeout(function () {
 
-                        window.open('/NhanSu/ListNhanSuView', '_self');
+                            window.open('/NhanSu/ListNhanSuView', '_self');
 
-                    }, 2500);
+                        }, 2500);
+                    }); 
                 } else {
                     Core.showToast(response.Message, 'danger');
                 } 
@@ -798,6 +800,9 @@ DetailNhanSu.prototype = {
         if (me.Id && !me.type) {
             $('#btnReset_T').prop('hidden', true);
             $('#btnHDLD').prop('hidden', false);
+        }
+        if (!me.Id && !me.type) {
+            $('#btnThemMoi_T').prop('hidden', true); 
         }
         if ((me.roleId == 4) && (me.type != 'HSTD')) { 
             $("#btnBack_T").hide();

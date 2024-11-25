@@ -25,10 +25,10 @@
         <div class="card ms-3">
             <div class="card-body">
                 <!--input search-->
-                <div class="row mb-2">
+                <div class="row mb-2" id="row_one">
                     <div class="col-sm-6 col-lg-3 mb-1">
                         <p class="mb-1 fw-bold text-muted">Từ khóa</p>
-                        <input type="search" class="form-control" id="searchTenCoSo" placeholder="Nhập từ khóa cần tìm" />
+                        <input type="search" class="form-control" id="searchTenPhongBan" placeholder="Nhập từ khóa cần tìm" />
                     </div>
                     <div class="col-sm-6 col-lg-3 mb-1"  hidden="hidden" id="zone_company">
                         <p class="mb-1 fw-bold text-muted">Công ty</p>
@@ -49,12 +49,11 @@
                             <option value="1">Đang hoạt động(đã duyệt) </option>
                             <option value="2">Dừng hoạt động </option>
                         </select>
-                    </div>
-
+                    </div> 
                 </div>
                 <div id="dieukientimkiem" style="display: none">
                     <div class="row mb-0">
-                        <div class="col-sm-6 col-lg-3 mb-1">
+                        <div class="col-sm-6 col-lg-3 mb-1" id="z_trangthai">
                             <p class="mb-1 fw-bold text-muted">Trạng thái</p>
                             <select id="DropTrangThai" class="form-control select2" data-no-search>
                                 <option value="1">Đang hoạt động </option>
@@ -97,7 +96,7 @@
                                     <th class="text-center">Mã phòng ban</th>
                                     <th class="text-center">Tên phòng ban</th>
                                     <th class="text-center">Thuộc cơ sở</th> 
-                                    <th class="text-center" style="width: 100px">Trạng thái</th>
+                                    <th class="text-center" style="width: 100px">Tình trạng</th>
                                     <th style="width: 30px">NB</th>
                                     <th style="width: 30px">Sửa</th>
                                     <th style="width: 30px">Xóa</th>

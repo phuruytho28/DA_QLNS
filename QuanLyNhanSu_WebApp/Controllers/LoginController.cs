@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using QuanLyNhanSu_WebApp.Controllers.CommonController;
+using QuanLyNhanSu_WebApp.DataAccessLayer;
 using QuanLyNhanSu_WebApp.DataAccessLayer.CommonDAL;
 using QuanLyNhanSu_WebApp.Filter;
 using QuanLyNhanSu_WebApp.Models;

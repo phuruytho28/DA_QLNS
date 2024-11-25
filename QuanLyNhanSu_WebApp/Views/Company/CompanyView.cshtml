@@ -1,26 +1,24 @@
 ﻿
 @{
-    ViewBag.Title = "Cơ sở";
+    ViewBag.Title = "Công ty";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
 
 <div class="row mx-3">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="page-title" id="page-header">Cơ sở</h4>
+            <h4 class="page-title" id="page-header">Công ty</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item text-success"><a class="text-decoration-none text-success" href="/Dashboard/DashboardView">Trang chủ</a></li>
                     <li class="breadcrumb-item text-success"><a class="text-decoration-none text-success" href="javascript: void(0);">Danh mục</a></li>
-                    <li class="breadcrumb-item active" id="nav_danhmuc">Cơ sở</li>
+                    <li class="breadcrumb-item active" id="nav_danhmuc">Công ty</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
- 
+
 <div class="row mx-1" style="border:none">
     <div class="col-12">
         <div class="card ms-3">
@@ -29,26 +27,12 @@
                 <div class="row mb-2">
                     <div class="col-sm-6 col-lg-3 mb-1">
                         <p class="mb-1 fw-bold text-muted">Từ khóa</p>
-                        <input type="search" class="form-control" id="searchTenCoSo" placeholder="Nhập từ khóa cần tìm" />
-                    </div>
-                    <div class="col-sm-6 col-lg-3 mb-1" id="zone_company" hidden="hidden">
-                        <p class="mb-1 fw-bold text-muted">Công ty</p>
-                        <select id="searchDropCongTy" class="form-control select2" data-placeholder="Chọn công ty">
-                            <option value="">-- Chọn công ty --</option>
-                        </select>
-                    </div> 
-                    <div class="col-sm-6 col-lg-3 mb-1">
-                        <p class="mb-1 fw-bold text-muted">Tình trạng</p>
-                        <select id="DropTinhTrang_search" class="form-control select2" data-no-search>
-                            <option value="">Chọn dữ liệu</option>  
-                            <option value="1">Đang hoạt động </option> 
-                            <option value="2">Dừng hoạt động </option>
-                        </select>
+                        <input type="search" class="form-control" id="searchTenCompany" placeholder="Nhập từ khóa cần tìm" />
                     </div>
                     <div class="col-sm-6 col-lg-3 mb-1">
                         <p class="mb-1 fw-bold text-muted">Trạng thái</p>
                         <select id="DropTrangThai" class="form-control select2" data-no-search>
-                            <option value="1">Đang hoạt động </option> 
+                            <option value="1">Đang hoạt động </option>
                             <option value="2">Đã xoá </option>
                         </select>
                     </div>
@@ -61,7 +45,7 @@
                     </div>
                     <div class="col-sm-7 col-6">
                         <div class="text-sm-end">
-                            <button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>
+                            @*<button type="button" class="btn btn-success mb-2 ms-sm-1" id="btnThemMoi" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-solid fa-circle-plus me-1"></i>Thêm mới</button>*@
                             <button type="button" class="btn btn-secondary mb-2 ms-sm-1" id="btnRecycleBin"><i class="uil uil-trash-alt"></i>Thùng rác</button>
                         </div>
                     </div>
@@ -76,11 +60,10 @@
                                 <tr>
                                     <th class="text-center" hidden="hidden">Id</th>
                                     <th style="width: 30px" class="text-center">Stt</th>
-                                    <th class="text-center">Tên cơ sở</th>
+                                    <th class="text-center">Tên công ty</th>
                                     <th class="text-center">Địa chỉ</th>
-                                    <th class="text-center">Mô tả</th> 
-                                    <th class="text-center" style="width: 80px">Tình trạng</th>
-                                    <th style="width: 30px">NB</th>
+                                    <th class="text-center">Mô tả</th>
+                                    @*<th style="width: 30px">NB</th>*@
                                     <th style="width: 30px">Sửa</th>
                                     <th style="width: 30px">Xóa</th>
                                     <th style="width: 30px; text-align: center">
@@ -101,19 +84,18 @@
     </div>
 </div>
 
-<!-- Modal CRUD -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Thêm mới danh mục cơ sở</h4>
+                <h4 class="modal-title" id="myModalLabel">Thêm mới danh mục công ty</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
-                        <label id="lbMaDoiTuong" for="txtMaDoiTuong" class="form-label">Tên sơ sở (*)</label>
-                        <input type="text" id="txTenCS" class="form-control" placeholder="Nhập tên sơ sở" required="" />
+                        <label id="lbMaDoiTuong" for="txtMaDoiTuong" class="form-label">Tên công ty (*)</label>
+                        <input type="text" id="txTenCS" class="form-control" placeholder="Nhập tên công ty" required="" />
                     </div>
                 </div>
                 <div class="row">
@@ -131,7 +113,7 @@
                 <div class="row">
                     <div class="col-12">
                         <label id="lbTinhTrang" for="DropTinhTrang" class="form-label">Tình trạng</label>
-                        <select id="DropTinhTrang" class="form-control select2" data-no-search> 
+                        <select id="DropTinhTrang" class="form-control select2" data-no-search>
                             <option value="">Chọn giá trị </option>
                             <option value="1">Đang hoạt động </option>
                             <option value="2">Dừng hoạt động </option>
@@ -146,21 +128,20 @@
                 <button type="button" class="btn btn-success" id="btnSave">
                     <i class="bi bi-floppy me-2"></i>Lưu
                 </button>
-                <button type="button" class="btn btn-success" id="btnSaveAndNew">
+                @*<button type="button" class="btn btn-success" id="btnSaveAndNew">
                     <i class="bi bi-plus-circle me-2"></i>Lưu và Thêm mới
-                </button>
+                </button>*@
             </div>
         </div>
     </div>
 </div>
-<!-- end modal-->
 
 @section Scripts {
-    <script src="~/JS/DanhMuc/CoSo.js"></script>
+    <script src="~/JS/DanhMuc/Company.js"></script>
     <script>
         $(document).ready(function () {
-            var CoSoInstance = new CoSo();
-            CoSoInstance.init();
+            var CompanyInstance = new Company();
+            CompanyInstance.init();
         });
     </script>
 }

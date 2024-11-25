@@ -13,6 +13,7 @@ namespace QuanLyNhanSu_WebApp.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
+        public string oldPassword { get; set; }
         public string HasPassword { get; set; }
         public int RoleId { get; set; }
         public string Gmail { get; set; }

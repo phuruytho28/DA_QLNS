@@ -61,5 +61,72 @@ namespace QuanLyNhanSu_WebApp.DataAccessLayer.CommonDAL
 
             return companyList;
         }
+
+        
+
+        public static void Company_Update(CompanyModel Company)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", Company.Id ?? ""),
+                new SqlParameter("@TenCongTy", Company.TenCongTy ?? ""),
+                new SqlParameter("@MaCongTy", Company.MaCongTy ?? ""),
+                new SqlParameter("@tbl_AccountId", Company.tbl_AccountId ?? ""),
+                new SqlParameter("@DiaChi", Company.DiaChi ?? ""),
+                new SqlParameter("@SoDienThoai", Company.SoDienThoai),
+                new SqlParameter("@StatusId", Company.StatusId),
+                new SqlParameter("@ModifyDate", Company.ModifyDate ?? ""),
+                new SqlParameter("@ModifyBy", Company.ModifyBy ?? ""),
+                new SqlParameter("@Note", Company.Note ?? ""),
+            };
+
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_Company_Update", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating Company: {ex.Message}");
+            }
+        }
+        public static CompanyModel GetCompanyId_Info(string Id)
+        {
+            CompanyModel infoCompany = null;
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", Id ?? "")
+            };
+
+            using (var reader = DataAccessHelper.ExecuteReader("tbl_Company_GetById_Info", parameters))
+            {
+                if (reader.Read())
+                {
+                    infoCompany = new CompanyModel();
+                    EntityBase.SetObjectValue(reader, ref infoCompany);
+                }
+            }
+
+            return infoCompany;
+        }
+        public static void Company_UpdateStatusId(CompanyModel Company)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", Company.C1), 
+                new SqlParameter("@StatusId", Company.StatusId), 
+                new SqlParameter("@ModifyDate", Company.ModifyDate),
+                new SqlParameter("@ModifyBy", Company.ModifyBy ?? "")
+            };
+
+            try
+            {
+                DataAccessHelper.ExecuteNonQuery("tbl_Company_UpdateStatusId", parameters);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception($"Error updating status: {ex.Message}");
+            }
+        }
     }
 }
